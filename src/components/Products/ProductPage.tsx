@@ -48,7 +48,17 @@ const ProductPage: React.FC = () => {
     setLogoRotation((prevRotation) => prevRotation + 15); // Rotate by 15 degrees
   };
 
-  const startDragging = () => setIsDragging(true);
+  const handleDeleteLogo = () => {
+    setUploadedImage(null);
+    setLogoPosition(null);
+  };
+
+  const startDragging = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (uploadedImage) {
+      setIsDragging(true);
+    }
+  };
+
   const stopDragging = () => setIsDragging(false);
 
   return (
@@ -127,12 +137,31 @@ const ProductPage: React.FC = () => {
             )}
 
             {uploadedImage && (
-              <button
-                onClick={handleRotateLogo}
-                className="w-full py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg mb-4"
-              >
-                Rotate Logo
-              </button>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-4">
+                  <label className="block text-sm font-medium">Quantity</label>
+                  <input
+                    type="number"
+                    min="1"
+                    defaultValue="1"
+                    className="w-16 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleRotateLogo}
+                    className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
+                  >
+                    Rotate
+                  </button>
+                  <button
+                    onClick={handleDeleteLogo}
+                    className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             )}
 
             <button

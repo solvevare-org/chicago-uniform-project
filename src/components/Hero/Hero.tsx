@@ -53,7 +53,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl my-4 mx-4 md:mx-6 lg:mx-8">
+    <div className="relative overflow-hidden rounded-2xl my-4 mx-4 md:mx-6 lg:mx-8 z-0">
       <div className="max-w-screen-2xl mx-auto">
         {slides.map((slide, index) => (
           <div

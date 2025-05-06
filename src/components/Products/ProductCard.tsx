@@ -30,38 +30,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+    <div className="bg-gradient-to-r from-gray-100 via-white to-gray-100 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105">
       <a href={`/product/${product.id}`} className="block">
         <div className="relative">
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-48 object-cover"
+            className="w-full h-56 object-cover rounded-t-xl"
           />
           <button
             onClick={toggleFavorite}
-            className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white transition"
+            className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition"
             aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           >
             <Heart
-              className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`}
+              className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`}
             />
           </button>
         </div>
-        <div className="p-4">
-          <h3 className="font-medium text-gray-900 line-clamp-2">{product.name}</h3>
+        <div className="p-5">
+          <h3 className="font-semibold text-gray-800 text-lg line-clamp-2">{product.name}</h3>
           {product.subname && (
-            <p className="text-sm text-gray-600 mt-1">{product.subname}</p>
+            <p className="text-sm text-gray-500 mt-1">{product.subname}</p>
           )}
-          <div className="mt-2">
+          <div className="mt-3">
             {product.lowestAskPrice && (
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-400">
                 {product.askText || "Lowest Ask"}
               </div>
             )}
-            <div className="font-bold text-lg">{formatPrice(product.price)}</div>
+            <div className="font-bold text-xl text-green-600">{formatPrice(product.price)}</div>
             {product.lastSalePrice && (
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 Last Sale: {formatPrice(product.lastSalePrice)}
               </div>
             )}
