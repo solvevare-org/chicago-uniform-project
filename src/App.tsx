@@ -12,6 +12,7 @@ import HowItWorks from './components/HowItWorks/HowItWorks';
 import ProductPage from './components/Products/ProductPage';
 import CategoryPage from './components/Category/CategoryPage';
 import WishlistPage from './components/Products/WishlistPage';
+import EmbroideryPage from './pages/EmbroideryPage';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/categories" element={<CategoryPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/embroidery" element={<EmbroideryPage />} />
           </Routes>
         </main>
         <Footer />

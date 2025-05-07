@@ -1,11 +1,12 @@
 import React from 'react';
-import { ShoppingBag } from 'lucide-react';
+import logoImage from '../../../public/IMG_6018 (1).jpeg'; // Assuming the logo is stored in the public folder
 
 const Logo: React.FC = () => {
   return (
-    <a href="/" className="flex items-center space-x-2">
-      <span className="text-green-500 font-bold text-2xl">StockX</span>
-    </a>
+    <div className="flex items-center gap-2">
+      <img src={logoImage} alt="South Loop Prints Logo" className="h-16 w-16 object-contain" />
+    
+    </div>
   );
 };
 
