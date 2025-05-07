@@ -10,9 +10,18 @@ import SignupScreen from './components/Auth/SignupScreen';
 import ForgotPasswordScreen from './components/Auth/ForgotPasswordScreen';
 import HowItWorks from './components/HowItWorks/HowItWorks';
 import ProductPage from './components/Products/ProductPage';
-import CategoryPage from './components/Category/CategoryPage';
+import Brands from './pages/Categories/Brands';
 import WishlistPage from './components/Products/WishlistPage';
 import EmbroideryPage from './pages/EmbroideryPage';
+import CustomAccessories from './pages/Categories/CustomAccessories';
+import CustomBags from './pages/Categories/CustomBags';
+import CustomHeadwear from './pages/Categories/CustomHeadwear';
+import CustomOutwear from './pages/Categories/CustomOutwear';
+import CustomShirts from './pages/Categories/CustomShirts';
+import PantsAndShorts from './pages/Categories/PantsAndShorts'; 
+import CustomEmbroideredShirts from './pages/Categories/CustomEmbroideredShirts';
+import CustomEmbroideredOutwear from './pages/Categories/CustomEmbroideredOutwear';
+
 
 function App() {
   return (
@@ -40,9 +49,17 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/product/:id" element={<ProductPage />} />
-            <Route path="/categories" element={<CategoryPage />} />
+            <Route path="/brands" element={<Brands />} />
+            <Route path="/customaccessories" element={<CustomAccessories />} />
+            <Route path="/custombags" element={<CustomBags />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/customheadwear" element={<CustomHeadwear />} />
+            <Route path="/customoutwear" element={<CustomOutwear />} />
             <Route path="/embroidery" element={<EmbroideryPage />} />
+            <Route path="/customembroideredshirts" element={<CustomEmbroideredShirts />} />
+            <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
+            <Route path="/customshirts" element={<CustomShirts />} />
+            <Route path="/pantsandshorts" element={<PantsAndShorts />} />
           </Routes>
         </main>
         <Footer />
