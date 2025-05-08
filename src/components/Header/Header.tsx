@@ -22,6 +22,26 @@ const Header: React.FC = () => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
 
+  const dropdownMenuNames = {
+    brands: [
+      'Carhartt', 'Patagonia', 'Gildan', 'Champion', 'The North Face', 'Comfort Colors', 'Under Armour'
+    ],
+    'Custom Embroidered Apparel': [
+      'custom embroidered polo shirts', 'custom embroidered t-shirts', 'custom embroidered dress shirts',
+      'custom embroidered hoodies', 'custom embroidered sweaters', 'custom embroidered sweatshirts',
+      'custom embroidered jackets', 'custom embroidered vests'
+    ],
+    'Custom Printed Apparel': [
+      'custom polo shirts', 'custom t-shirts', 'custom tank tops', 'custom long sleeve shirts', 'custom dress shirts',
+      'custom hoodies', 'custom sweaters', 'custom sweatshirts', 'custom jackets', 'custom vests',
+      'Custom Hats', 'Custom Embroidered Hats', 'Embroidered Baseball Hats', 'Embroidered Trucker Hats',
+      'Custom Beanies', 'Custom Richardson 112 Hats', 'Custom Headbands', 'Custom Bucket Hats', 'Custom Dad Hats',
+      'custom pants', 'custom sweatpants', 'custom shorts',
+      'custom backpacks', 'custom tote bags', 'custom drawstring bags', 'custom paper bags',
+      'custom blankets', 'custom hand towels', 'custom scarves', 'custom aprons', 'custom bandanas'
+    ]
+  };
+
   return (
     <header className="w-full font-sans">
       <div className="relative z-10">
@@ -102,6 +122,7 @@ const Header: React.FC = () => {
         {menuOpen && (
           <div className="bg-[#1A1A1A] text-white py-4 px-4 md:px-10 relative">
             <nav className="flex flex-col gap-4 text-sm px-2">
+              {/* Brands Dropdown */}
               <div>
                 <div className="flex items-center justify-between">
                   <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('brands')}>Brands</span>
@@ -112,12 +133,7 @@ const Header: React.FC = () => {
                 </div>
                 {openDropdown === 'brands' && (
                   <ul className="mt-2 space-y-1">
-                    {[
-                      'A4', 'Adams', 'All Sport', 'Alpine Fleece', 'Alternative', 'American Apparel', 'Anvil', 'Anywear',
-                      'ASP', 'Augusta Sportswear', 'Authentic Pigment', 'Blauer', 'Liberty', 'Propper',
-                      'Backpacker', 'BAGedge', 'Bayside', 'Bella + Canvas', 'Big Accessories', 'Boston Leather', 'Bright Shield', 'Burnside',
-                      'Carmel Towel Company', 'Champion', 'Cherokee Medical', 'Cherokee Workwear', 'Chicago Uniform Company', 'Cobmex', 'View All'
-                    ].map((brand) => (
+                    {dropdownMenuNames.brands.map((brand) => (
                       <li key={brand}>
                         <Link to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
                           {brand}
@@ -128,257 +144,48 @@ const Header: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('police')}>Police</span>
-                    <ChevronDown
-                      className={`cursor-pointer transition-transform ${openDropdown === 'police' ? 'rotate-180' : ''}`}
-                      onClick={() => toggleDropdown('police')}
-                    />
-                  </div>
-                  {openDropdown === 'police' && (
-                    <ul className="mt-2 space-y-1">
-                      <li>
-                        <Link to="/police/bibs-overalls" className="block hover:text-green-400">
-                          Bibs & Overalls
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/police/bottoms" className="block hover:text-green-400">
-                          Bottoms
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/police/duty-gear" className="block hover:text-green-400">
-                          Duty Gear
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/police/emblems-insignia" className="block hover:text-green-400">
-                          Emblems - Insignia
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/police/equipment" className="block hover:text-green-400">
-                          Equipment
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/police/neckwear" className="block hover:text-green-400">
-                          Neckwear
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/police/sweaters" className="block hover:text-green-400">
-                          Sweaters
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
+              {/* Custom Embroidered Apparel Dropdown */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('Custom Embroidered Apparel')}>Custom Embroidered Apparel</span>
+                  <ChevronDown
+                    className={`cursor-pointer transition-transform ${openDropdown === 'Custom Embroidered Apparel' ? 'rotate-180' : ''}`}
+                    onClick={() => toggleDropdown('Custom Embroidered Apparel')}
+                  />
                 </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('ems')}>EMS</span>
-                    <ChevronDown
-                      className={`cursor-pointer transition-transform ${openDropdown === 'ems' ? 'rotate-180' : ''}`}
-                      onClick={() => toggleDropdown('ems')}
-                    />
-                  </div>
-                  {openDropdown === 'ems' && (
-                    <ul className="mt-2 space-y-1">
-                      <li>
-                        <Link to="/ems/t-shirts" className="block hover:text-green-400">
-                          T-Shirts
+                {openDropdown === 'Custom Embroidered Apparel' && (
+                  <ul className="mt-2 space-y-1">
+                    {dropdownMenuNames['Custom Embroidered Apparel'].map((item) => (
+                      <li key={item}>
+                        <Link to={`/Custom Embroidered Apparel/${item.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
+                          {item}
                         </Link>
                       </li>
-                      <li>
-                        <Link to="/ems/jackets" className="block hover:text-green-400">
-                          Jackets
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/station-boots" className="block hover:text-green-400">
-                          Station Boots
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/accessories" className="block hover:text-green-400">
-                          Accessories
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/base-layers" className="block hover:text-green-400">
-                          Base Layers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/footwear" className="block hover:text-green-400">
-                          Footwear
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/mid-layers" className="block hover:text-green-400">
-                          Mid Layers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/outerwear" className="block hover:text-green-400">
-                          Outerwear
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/ems/pants" className="block hover:text-green-400">
-                          Pants
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Custom Printed Apparel Dropdown */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('Custom Printed Apparel')}>Custom Printed Apparel</span>
+                  <ChevronDown
+                    className={`cursor-pointer transition-transform ${openDropdown === 'Custom Printed Apparel' ? 'rotate-180' : ''}`}
+                    onClick={() => toggleDropdown('Custom Printed Apparel')}
+                  />
                 </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('food-service')}>Food Service</span>
-                    <ChevronDown
-                      className={`cursor-pointer transition-transform ${openDropdown === 'food-service' ? 'rotate-180' : ''}`}
-                      onClick={() => toggleDropdown('food-service')}
-                    />
-                  </div>
-                  {openDropdown === 'food-service' && (
-                    <ul className="mt-2 space-y-1">
-                      {['Aprons', 'Blazers', 'Coats', 'Skirts', 'Suits', 'Sweaters', 'Neckwear'].map((item) => (
-                        <li key={item}>
-                          <Link to={`/food-service/${item.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
-                            {item}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('fire')}>Fire</span>
-                    <ChevronDown
-                      className={`cursor-pointer transition-transform ${openDropdown === 'fire' ? 'rotate-180' : ''}`}
-                      onClick={() => toggleDropdown('fire')}
-                    />
-                  </div>
-                  {openDropdown === 'fire' && (
-                    <ul className="mt-2 space-y-1">
-                      <li>
-                        <Link to="/fire/t-shirts" className="block hover:text-green-400">
-                          T-Shirts
+                {openDropdown === 'Custom Printed Apparel' && (
+                  <ul className="mt-2 space-y-1">
+                    {dropdownMenuNames['Custom Printed Apparel'].map((item) => (
+                      <li key={item}>
+                        <Link to={`/Custom Printed Apparel/${item.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
+                          {item}
                         </Link>
                       </li>
-                      <li>
-                        <Link to="/fire/jackets" className="block hover:text-green-400">
-                          Jackets
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/fire/station-boots" className="block hover:text-green-400">
-                          Station Boots
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/fire/accessories" className="block hover:text-green-400">
-                          Accessories
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/fire/firefighting-accessories" className="block hover:text-green-400">
-                          Firefighting Accessories
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/fire/mid-layers" className="block hover:text-green-400">
-                          Mid Layers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/fire/outerwear" className="block hover:text-green-400">
-                          Outerwear
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/fire/pants" className="block hover:text-green-400">
-                          Pants
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('security')}>Security</span>
-                    <ChevronDown
-                      className={`cursor-pointer transition-transform ${openDropdown === 'security' ? 'rotate-180' : ''}`}
-                      onClick={() => toggleDropdown('security')}
-                    />
-                  </div>
-                  {openDropdown === 'security' && (
-                    <ul className="mt-2 space-y-1">
-                      <li>
-                        <Link to="/security/accessories" className="block hover:text-green-400">
-                          Accessories
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/security/apparel" className="block hover:text-green-400">
-                          Apparel
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/security/pants" className="block hover:text-green-400">
-                          Pants
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/security/shirts" className="block hover:text-green-400">
-                          Shirts
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('medical')}>Medical</span>
-                    <ChevronDown
-                      className={`cursor-pointer transition-transform ${openDropdown === 'medical' ? 'rotate-180' : ''}`}
-                      onClick={() => toggleDropdown('medical')}
-                    />
-                  </div>
-                  {openDropdown === 'medical' && (
-                    <ul className="mt-2 space-y-1">
-                      <li>
-                        <Link to="/medical/bottoms" className="block hover:text-green-400">
-                          Bottoms
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/medical/coats" className="block hover:text-green-400">
-                          Coats
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/medical/equipment" className="block hover:text-green-400">
-                          Equipment
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/medical/lab-coats" className="block hover:text-green-400">
-                          Lab Coats
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-                {['Embroidery'].map((item) => (
-                  <Link key={item} to={`/${item.toLowerCase()}`} className="hover:text-green-400">
-                    {item}
-                  </Link>
-                ))}
+                    ))}
+                  </ul>
+                )}
               </div>
             </nav>
           </div>
@@ -404,13 +211,10 @@ const Header: React.FC = () => {
                   Brands
                 </span>
                 {openDropdown === 'brands' && (
-                  <div className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[800px] z-50 p-6 grid grid-cols-4 gap-6 animate-fadeIn">
-                    {/* Adjusted left alignment to prevent it from going off-screen */}
+                  <div className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[800px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     {[
-                      ['A4', 'Adams', 'All Sport', 'Alpine Fleece', 'Alternative', 'American Apparel', 'Anvil', 'Anywear'],
-                      ['ASP', 'Augusta Sportswear', 'Authentic Pigment', 'Blauer', 'Liberty', 'Propper'],
-                      ['Backpacker', 'BAGedge', 'Bayside', 'Bella + Canvas', 'Big Accessories', 'Boston Leather', 'Bright Shield', 'Burnside'],
-                      ['Carmel Towel Company', 'Champion', 'Cherokee Medical', 'Cherokee Workwear', 'Chicago Uniform Company', 'Cobmex', 'View All']
+                      ['Carhartt', 'Patagonia', 'Gildan', 'Champion'],
+                      ['The North Face', 'Comfort Colors', 'Under Armour']
                     ].map((column, index) => (
                       <div key={index}>
                         <h4 className="text-base font-semibold text-gray-400 mb-3">BRANDS</h4>
@@ -426,64 +230,70 @@ const Header: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                )}
+         )}
+
               </div>
 
-              {/* Police Dropdown */}
+              {/* Custom Embroidered Apparel Dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('police')}
+                onMouseEnter={() => isDesktop && setOpenDropdown('Custom Embroidered Apparel')}
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
                 <span
                   className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('police')}
+                  onClick={() => !isDesktop && toggleDropdown('Custom Embroidered Apparel')}
                 >
-                  Police
+                  Custom Embroidered Apparel
                 </span>
-                {openDropdown === 'police' && (
+                {openDropdown === 'Custom Embroidered Apparel' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Police</h4>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Embroidered Shirts</h4>
                       <ul className="space-y-1 text-base">
                         <li>
-                          <Link to="/police/bibs-overalls" className="hover:text-green-400 transition duration-200">
-                            Bibs & Overalls
+                          <Link to="/Custom Embroidered Apparel/custom embroidered polo shirts" className="hover:text-green-400 transition duration-200">
+                          custom embroidered polo shirts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/police/bottoms" className="hover:text-green-400 transition duration-200">
-                            Bottoms
+                          <Link to="/Custom Embroidered Apparel/custom embroidered t-shirts" className="hover:text-green-400 transition duration-200">
+                          custom embroidered t-shirts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/police/duty-gear" className="hover:text-green-400 transition duration-200">
-                            Duty Gear
+                          <Link to="/Custom Embroidered Apparel/custom embroidered dress shirts" className="hover:text-green-400 transition duration-200">
+                          custom embroidered dress shirts
                           </Link>
                         </li>
                       </ul>
                     </div>
                     <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Police</h4>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Embroidered Outerwear</h4>
                       <ul className="space-y-1 text-base">
                         <li>
-                          <Link to="/police/emblems-insignia" className="hover:text-green-400 transition duration-200">
-                            Emblems - Insignia
+                          <Link to="/Custom Embroidered Apparel/custom embroidered hoodies" className="hover:text-green-400 transition duration-200">
+                          custom embroidered hoodies
                           </Link>
                         </li>
                         <li>
-                          <Link to="/police/equipment" className="hover:text-green-400 transition duration-200">
-                            Equipment
+                          <Link to="/Custom Embroidered Apparel/custom embroidered sweaters" className="hover:text-green-400 transition duration-200">
+                          custom embroidered sweaters
                           </Link>
                         </li>
                         <li>
-                          <Link to="/police/neckwear" className="hover:text-green-400 transition duration-200">
-                            Neckwear
+                          <Link to="/Custom Embroidered Apparel/custom embroidered sweatshirts" className="hover:text-green-400 transition duration-200">
+                          custom embroidered sweatshirts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/police/sweaters" className="hover:text-green-400 transition duration-200">
-                            Sweaters
+                          <Link to="/Custom Embroidered Apparel/custom embroidered jackets" className="hover:text-green-400 transition duration-200">
+                          custom embroidered jackets
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Embroidered Apparel/custom embroidered vests" className="hover:text-green-400 transition duration-200">
+                          custom embroidered vests
                           </Link>
                         </li>
                       </ul>
@@ -495,58 +305,198 @@ const Header: React.FC = () => {
               {/* Food Service Dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('food-service')}
+                onMouseEnter={() => isDesktop && setOpenDropdown('Custom Printed Apparel')}
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
                 <span
                   className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('food-service')}
+                  onClick={() => !isDesktop && toggleDropdown('Custom Printed Apparel')}
                 >
-                  Food Service
+                  Custom Printed Apparel
                 </span>
-                {openDropdown === 'food-service' && (
+                {openDropdown === 'Custom Printed Apparel' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Food Service</h4>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom  Shirts</h4>
                       <ul className="space-y-1 text-base">
                         <li>
-                          <Link to="/food-service/aprons" className="hover:text-green-400 transition duration-200">
-                            Aprons
+                          <Link to="/Custom Printed Apparel/custom polo shirts" className="hover:text-green-400 transition duration-200">
+                          custom polo shirts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/food-service/blazers" className="hover:text-green-400 transition duration-200">
-                            Blazers
+                          <Link to="/Custom Printed Apparel/custom  t-shirts" className="hover:text-green-400 transition duration-200">
+                          custom  t-shirts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/food-service/coats" className="hover:text-green-400 transition duration-200">
-                            Coats
+                          <Link to="/Custom Printed Apparel/custom tank tops" className="hover:text-green-400 transition duration-200">
+                          custom tank tops
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom long sleeve shirts" className="hover:text-green-400 transition duration-200">
+                          custom long sleeve shirts
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom dress shirts" className="hover:text-green-400 transition duration-200">
+                          custom dress shirts
                           </Link>
                         </li>
                       </ul>
                     </div>
                     <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Food Service</h4>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Outerwear</h4>
                       <ul className="space-y-1 text-base">
                         <li>
-                          <Link to="/food-service/skirts" className="hover:text-green-400 transition duration-200">
-                            Skirts
+                          <Link to="/Custom Printed Apparel/custom hoodies" className="hover:text-green-400 transition duration-200">
+                          custom hoodies
                           </Link>
                         </li>
                         <li>
-                          <Link to="/food-service/suits" className="hover:text-green-400 transition duration-200">
-                            Suits
+                          <Link to="/Custom Printed Apparel/custom sweaters" className="hover:text-green-400 transition duration-200">
+                          custom sweaters
                           </Link>
                         </li>
                         <li>
-                          <Link to="/food-service/sweaters" className="hover:text-green-400 transition duration-200">
-                            Sweaters
+                          <Link to="/Custom Printed Apparel/custom sweatshirts" className="hover:text-green-400 transition duration-200">
+                          custom sweatshirts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/food-service/neckwear" className="hover:text-green-400 transition duration-200">
-                            Neckwear
+                          <Link to="/Custom Printed Apparel/custom jackets" className="hover:text-green-400 transition duration-200">
+                          custom jackets
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom vests" className="hover:text-green-400 transition duration-200">
+                          custom vests
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Headwear</h4>
+                      <ul className="space-y-1 text-base">
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Hats" className="hover:text-green-400 transition duration-200">
+                          Custom Hats
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Embroidered Hats" className="hover:text-green-400 transition duration-200">
+                          Custom Embroidered Hats
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Embroidered Baseball Hats" className="hover:text-green-400 transition duration-200">
+                          Embroidered Baseball Hats
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Embroidered Trucker Hats" className="hover:text-green-400 transition duration-200">
+                          Embroidered Trucker Hats
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Beanies" className="hover:text-green-400 transition duration-200">
+                          Custom Beanies
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Richardson 112 Hats" className="hover:text-green-400 transition duration-200">
+                          Custom Richardson 112 Hats
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Headbands" className="hover:text-green-400 transition duration-200">
+                          Custom Headbands
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Bucket Hats" className="hover:text-green-400 transition duration-200">
+                          Custom Bucket Hats
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/Custom Dad Hats" className="hover:text-green-400 transition duration-200">
+                          Custom Dad Hats
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Pants&Shorts</h4>
+                      <ul className="space-y-1 text-base">
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom pants" className="hover:text-green-400 transition duration-200">
+                          custom pants
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom sweatpants" className="hover:text-green-400 transition duration-200">
+                          custom sweatpants
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom shorts" className="hover:text-green-400 transition duration-200">
+                          custom shorts
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Bags</h4>
+                      <ul className="space-y-1 text-base">
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom backpacks" className="hover:text-green-400 transition duration-200">
+                          custom backpacks
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom tote bags" className="hover:text-green-400 transition duration-200">
+                          custom tote bags
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom drawstring bags" className="hover:text-green-400 transition duration-200">
+                          custom drawstring bags
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom paper bags" className="hover:text-green-400 transition duration-200">
+                          custom paper bags
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Accessories</h4>
+                      <ul className="space-y-1 text-base">
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom blankets" className="hover:text-green-400 transition duration-200">
+                          custom blankets
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom hand towels" className="hover:text-green-400 transition duration-200">
+                          custom hand towels
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom scarves" className="hover:text-green-400 transition duration-200">
+                          custom scarves
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom aprons" className="hover:text-green-400 transition duration-200">
+                          custom aprons
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/Custom Printed Apparel/custom bandanas" className="hover:text-green-400 transition duration-200">
+                          custom bandanas
                           </Link>
                         </li>
                       </ul>
@@ -554,252 +504,6 @@ const Header: React.FC = () => {
                   </div>
                 )}
               </div>
-
-              {/* EMS Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('ems')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('ems')}
-                >
-                  EMS
-                </span>
-                {openDropdown === 'ems' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">EMS</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/ems/t-shirts" className="hover:text-green-400 transition duration-200">
-                            T-Shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/jackets" className="hover:text-green-400 transition duration-200">
-                            Jackets
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/station-boots" className="hover:text-green-400 transition duration-200">
-                            Station Boots
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">EMS</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/ems/accessories" className="hover:text-green-400 transition duration-200">
-                            Accessories
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/base-layers" className="hover:text-green-400 transition duration-200">
-                            Base Layers
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/footwear" className="hover:text-green-400 transition duration-200">
-                            Footwear
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/mid-layers" className="hover:text-green-400 transition duration-200">
-                            Mid Layers
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/outerwear" className="hover:text-green-400 transition duration-200">
-                            Outerwear
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/ems/pants" className="hover:text-green-400 transition duration-200">
-                            Pants
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Fire Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('fire')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('fire')}
-                >
-                  Fire
-                </span>
-                {openDropdown === 'fire' && (
-                  <div className={`absolute ${isDesktop ? 'top-full left-1/2 -translate-x-1/2' : 'relative'} mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn`}>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">FIRE</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/fire/t-shirts" className="hover:text-green-400 transition duration-200">
-                            T-Shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/fire/jackets" className="hover:text-green-400 transition duration-200">
-                            Jackets
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/fire/station-boots" className="hover:text-green-400 transition duration-200">
-                            Station Boots
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">FIRE</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/fire/accessories" className="hover:text-green-400 transition duration-200">
-                            Accessories
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/fire/firefighting-accessories" className="hover:text-green-400 transition duration-200">
-                            Firefighting Accessories
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/fire/mid-layers" className="hover:text-green-400 transition duration-200">
-                            Mid Layers
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/fire/outerwear" className="hover:text-green-400 transition duration-200">
-                            Outerwear
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/fire/pants" className="hover:text-green-400 transition duration-200">
-                            Pants
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Security Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('security')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('security')}
-                >
-                  Security
-                </span>
-                {openDropdown === 'security' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Security</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/security/accessories" className="hover:text-green-400 transition duration-200">
-                            Accessories
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/security/apparel" className="hover:text-green-400 transition duration-200">
-                            Apparel
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/security/pants" className="hover:text-green-400 transition duration-200">
-                            Pants
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Security</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/security/shirts" className="hover:text-green-400 transition duration-200">
-                            Shirts
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Medical Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('medical')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('medical')}
-                >
-                  Medical
-                </span>
-                {openDropdown === 'medical' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Medical</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/medical/bottoms" className="hover:text-green-400 transition duration-200">
-                            Bottoms
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/medical/coats" className="hover:text-green-400 transition duration-200">
-                            Coats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/medical/equipment" className="hover:text-green-400 transition duration-200">
-                            Equipment
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Medical</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/medical/lab-coats" className="hover:text-green-400 transition duration-200">
-                            Lab Coats
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Static Menu Items */}
-              <Link
-                to="/embroidery"
-                className="hover:text-green-400 text-base md:text-lg font-medium transition duration-200"
-              >
-                Embroidery
-              </Link>
             </nav>
 
             {/* Mobile Nav */}
