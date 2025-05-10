@@ -21,7 +21,8 @@ import CustomShirts from './pages/Categories/CustomShirts';
 import PantsAndShorts from './pages/Categories/PantsAndShorts'; 
 import CustomEmbroideredShirts from './pages/Categories/CustomEmbroideredShirts';
 import CustomEmbroideredOutwear from './pages/Categories/CustomEmbroideredOutwear';
-
+import DynamicCategoryPage from './pages/DynamicCategoryPage';
+import DynamicProductPage from './pages/DynamicProductPage';
 
 function App() {
   return (
@@ -60,6 +61,8 @@ function App() {
             <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
             <Route path="/customshirts" element={<CustomShirts />} />
             <Route path="/pantsandshorts" element={<PantsAndShorts />} />
+            <Route path="/category/:categoryId" element={<DynamicCategoryPage />} />
+            <Route path="/product/:productId" element={<DynamicProductPage />} />
           </Routes>
         </main>
         <Footer />
