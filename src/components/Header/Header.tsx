@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Logo from '../Logo/Logo';
 import NavLinks from './NavLinks';
 import SearchBar from './SearchBar';
+import '../../pages/Categories/CustomEmbroideredOutwear';
 
 const Header: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null); // State to manage which dropdown is open
@@ -302,6 +303,7 @@ const Header: React.FC = () => {
                   </div>
                 )}
               </div>
+              
 
               {/* Food Service Dropdown */}
               <div
@@ -309,12 +311,13 @@ const Header: React.FC = () => {
                 onMouseEnter={() => isDesktop && setOpenDropdown('Custom Printed Apparel')}
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6]  transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('Custom Printed Apparel')}
-                >
-                  Custom Printed Apparel
-                </span>
+              <Link
+                to="/customembroideredoutwear"
+                className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
+                onClick={() => !isDesktop && toggleDropdown('Custom Printed Apparel')}
+              >
+                Custom Printed Apparel
+              </Link>
                 {openDropdown === 'Custom Printed Apparel' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     <div>

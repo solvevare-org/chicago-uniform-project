@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { AiFillStar } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   { name: 'Collectibles', subcategories: ['Figures', 'Toys', 'Comic Books', 'Homeware', 'Skate Decks', 'Games'] },
@@ -66,10 +67,16 @@ const products = [
 ];
 
 const CustomEmbroideredOutwears: React.FC = () => {
+  console.log('CustomEmbroideredOutwears component rendered');
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const toggleTab = (tabName: string) => {
     setActiveTab(activeTab === tabName ? null : tabName);
+  };
+
+  const handleCardClick = (productName: string) => {
+    navigate(`/product/${encodeURIComponent(productName)}`);
   };
 
   return (
@@ -135,7 +142,8 @@ const CustomEmbroideredOutwears: React.FC = () => {
             {products.map((product, index) => (
               <div
                 key={index}
-                className="bg-[#1a1a1a] p-4 rounded-xl border border-gray-700 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1"
+                className="bg-[#1a1a1a] p-4 rounded-xl border border-gray-700 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 cursor-pointer"
+                onClick={() => handleCardClick(product.name)}
               >
                 <img src={product.image} alt={product.name} className="h-48 w-full object-cover rounded-lg mb-4" />
                 <h3 className="text-lg font-bold mb-1 truncate">{product.name}</h3>
