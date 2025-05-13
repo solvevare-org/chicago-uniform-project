@@ -43,15 +43,16 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="w-full font-sans">
+    <header className="w-full font-sans bg-[#f1f0e7]">
       <div className="relative z-10">
         {/* Top Header */}
-        <div className="bg-gradient-to-r from-[#111] via-[#1b1b1b] to-[#111] text-white py-5 px-4 md:px-10 shadow-lg shadow-black/30">
+        <div className="bg-gradient-to-r from-[#f2f1e6] via-[#f2f1e6] to-[#f2f1e6] text-[#333333] py-1 px-2 md:px-10 shadow-lg shadow-black/30">
+
           <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
             <div className="flex items-center justify-between md:justify-start gap-6">
               <Logo />
               <button
-                className="md:hidden text-white hover:text-green-400 transition-transform transform hover:scale-110"
+                className="md:hidden text-black hover:text-green-400 transition-transform transform hover:scale-110"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle Menu"
               >
@@ -62,8 +63,8 @@ const Header: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-center md:justify-end gap-6 md:gap-8">
-              <div className="hidden md:flex items-center gap-8">
+            <div className="flex items-center  justify-center md:justify-end gap-6 md:gap-8">
+              <div className="hidden md:flex text- items-center gap-8">
                 <NavLinks
                   links={[
                     { label: 'News', href: '/news' },
@@ -84,15 +85,15 @@ const Header: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-6">
-                <Link to="/wishlist" aria-label="Wishlist" className="text-white hover:text-green-400 transition-transform transform hover:scale-110">
+                <Link to="/wishlist" aria-label="Wishlist" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
                   <Heart size={20} />
                 </Link>
-                <button aria-label="Notifications" className="text-white hover:text-green-400 transition-transform transform hover:scale-110">
+                <button aria-label="Notifications" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
                   <Bell size={20} />
                 </button>
 
                 <div className="hidden md:flex gap-4">
-                  <Link to="/login" className="px-5 py-2 rounded-full border border-white hover:bg-white hover:text-black transition-all duration-300 text-base">
+                  <Link to="/login" className="px-5 py-2 rounded-full border border-black hover:bg-white hover:text-black transition-all duration-300 text-base">
                     Login
                   </Link>
                   <Link to="/signup" className="px-5 py-2 rounded-full bg-white text-black hover:bg-green-400 hover:text-white transition-all duration-300 text-base">
@@ -114,7 +115,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Mobile Search */}
-        <div className="md:hidden bg-[#121212] border-t border-gray-800 px-4 py-3">
+        <div className="md:hidden bg-[#333333] border-t border-gray-800 px-4 py-3">
           <SearchBar />
         </div>
 
@@ -192,7 +193,7 @@ const Header: React.FC = () => {
         )}
 
         {/* Navigation Bar */}
-        <div className="bg-[#1A1A1A] text-white py-4 px-4 md:px-10 relative">
+        <div className="bg-green-500 text-black py-4 px-4 md:px-10 relative">
           <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-center gap-6 md:gap-10">
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-10">
@@ -205,7 +206,7 @@ const Header: React.FC = () => {
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
                 <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
+                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
                   onClick={() => !isDesktop && toggleDropdown('brands')}
                 >
                   Brands
@@ -221,7 +222,7 @@ const Header: React.FC = () => {
                         <ul className="space-y-1 text-base">
                           {column.map((brand) => (
                             <li key={brand}>
-                              <Link to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-green-400 transition duration-200">
+                              <Link to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-green-400 text-white transition duration-200">
                                 {brand}
                               </Link>
                             </li>
@@ -241,18 +242,18 @@ const Header: React.FC = () => {
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
                 <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
+                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6]  transition duration-200"
                   onClick={() => !isDesktop && toggleDropdown('Custom Embroidered Apparel')}
                 >
                   Custom Embroidered Apparel
                 </span>
                 {openDropdown === 'Custom Embroidered Apparel' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     <div>
                       <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Embroidered Shirts</h4>
                       <ul className="space-y-1 text-base">
                         <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered polo shirts" className="hover:text-green-400 transition duration-200">
+                          <Link to="/Custom Embroidered Apparel/custom embroidered polo shirts" className="hover:text-green-400  transition duration-200">
                           custom embroidered polo shirts
                           </Link>
                         </li>
@@ -309,13 +310,13 @@ const Header: React.FC = () => {
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
                 <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-green-400 transition duration-200"
+                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6]  transition duration-200"
                   onClick={() => !isDesktop && toggleDropdown('Custom Printed Apparel')}
                 >
                   Custom Printed Apparel
                 </span>
                 {openDropdown === 'Custom Printed Apparel' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     <div>
                       <h4 className="text-base font-semibold text-gray-400 mb-3">Custom  Shirts</h4>
                       <ul className="space-y-1 text-base">
