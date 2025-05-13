@@ -76,7 +76,7 @@ const ProductPage: React.FC = () => {
               <ThreeSixty
                 amount={36}
                 imagePath="/360-images/"
-                fileName={`img${rotationIndex}.avif`}
+                fileName={`img02.avif`}
                 spinReverse
                 autoplay={false}
                 drag
