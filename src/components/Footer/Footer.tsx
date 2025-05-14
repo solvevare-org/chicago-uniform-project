@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
         </div>
         <div className="mt-8 flex flex-col md:flex-row items-center justify-between">
           <div className="text-center md:text-left">
-            <p>&copy; 2025 StockX. All Rights Reserved.</p>
+            <p>&copy; 2025 Southloop Print. All Rights Reserved.</p>
           </div>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white">Terms</a>

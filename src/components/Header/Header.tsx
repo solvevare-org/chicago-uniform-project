@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                     { label: 'News', href: '/news' },
                     {
                       label: 'About', dropdown: [
-                        { label: 'How StockX Works', href: '/how-it-works' },
+                        { label: 'How Works', href: '/how-it-works' },
                         { label: 'Buying Guide', href: '/buying-guide' },
                         { label: 'Selling Guide', href: '/selling-guide' },
                         { label: 'Our Process', href: '/our-process' },
