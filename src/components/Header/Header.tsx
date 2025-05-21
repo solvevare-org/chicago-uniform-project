@@ -10,7 +10,22 @@ const Header: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null); // State to manage which dropdown is open
   const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth >= 768);
   const [menuOpen, setMenuOpen] = useState(false); // State to manage menu toggle
+const [brandNames, setBrandNames] = useState<string[]>([]);
+const [categories, setCategories] = useState<string[]>([]);
+const [hoverBuffer, setHoverBuffer] = useState(false);
 
+  useEffect(() => {
+    // ...existing resize logic...
+    // Fetch brand names dynamically
+    fetch('http://localhost:3000/api/styles/brand-names')
+      .then(res => res.json())
+      .then(data => setBrandNames(data.brandNames || []))
+      .catch(() => setBrandNames([]));
+   fetch('http://localhost:3000/api/styles/base-categories')
+      .then(res => res.json())
+      .then(data => setCategories(data.baseCategories || []))
+      .catch(() => setCategories([]));
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768);
@@ -23,25 +38,128 @@ const Header: React.FC = () => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
 
-  const dropdownMenuNames = {
-    brands: [
-      'Carhartt', 'Patagonia', 'Gildan', 'Champion', 'The North Face', 'Comfort Colors', 'Under Armour'
-    ],
-    'Custom Embroidered Apparel': [
-      'custom embroidered polo shirts', 'custom embroidered t-shirts', 'custom embroidered dress shirts',
-      'custom embroidered hoodies', 'custom embroidered sweaters', 'custom embroidered sweatshirts',
-      'custom embroidered jackets', 'custom embroidered vests'
-    ],
-    'Custom Printed Apparel': [
-      'custom polo shirts', 'custom t-shirts', 'custom tank tops', 'custom long sleeve shirts', 'custom dress shirts',
-      'custom hoodies', 'custom sweaters', 'custom sweatshirts', 'custom jackets', 'custom vests',
-      'Custom Hats', 'Custom Embroidered Hats', 'Embroidered Baseball Hats', 'Embroidered Trucker Hats',
-      'Custom Beanies', 'Custom Richardson 112 Hats', 'Custom Headbands', 'Custom Bucket Hats', 'Custom Dad Hats',
-      'custom pants', 'custom sweatpants', 'custom shorts',
-      'custom backpacks', 'custom tote bags', 'custom drawstring bags', 'custom paper bags',
-      'custom blankets', 'custom hand towels', 'custom scarves', 'custom aprons', 'custom bandanas'
-    ]
+  // Prevent dropdown from closing when hovering over dropdown content
+  const handleDropdownMouseEnter = (dropdown: string) => {
+    if (isDesktop) setOpenDropdown(dropdown);
+    setHoverBuffer(false);
   };
+  const handleDropdownMouseLeave = () => {
+    if (isDesktop) setHoverBuffer(true);
+    setTimeout(() => {
+      setHoverBuffer(false);
+      if (isDesktop) setOpenDropdown(null);
+    }, 200);
+  };
+
+const renderBrandsDropdown = (isMobile = false) => {
+  const showAll = brandNames.length > 15;
+  const visibleBrands = showAll ? brandNames.slice(0, 15) : brandNames;
+
+  // Dynamically set columns: 2 for <=10, 3 for <=20, 4 for more
+  let columns = 2;
+  if (visibleBrands.length > 10) columns = 3;
+  if (visibleBrands.length > 20) columns = 4;
+
+  const perCol = Math.ceil(visibleBrands.length / columns);
+  const brandColumns = Array.from({ length: columns }, (_, i) =>
+    visibleBrands.slice(i * perCol, (i + 1) * perCol)
+  );
+
+  return (
+    <div className={`w-full max-w-5xl mx-auto py-6 px-8`}>
+      {!isMobile && (
+        <div className="mb-4">
+          <h4 className="text-2xl font-bold text-green-400 border-b border-green-400 pb-2">Brands</h4>
+        </div>
+      )}
+      <div className="flex gap-8">
+        {brandColumns.map((col, idx) => (
+          <div key={idx} className="flex-1 min-w-0 flex flex-col space-y-2">
+            {col.map((brand) => (
+              <Link
+                key={brand}
+                to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`}
+                className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 transition break-words text-lg text-white"
+                onClick={isMobile ? () => setMenuOpen(false) : undefined}
+              >
+                {brand}
+              </Link>
+            ))}
+          </div>
+        ))}
+      </div>
+      {showAll && (
+        <div className="pt-6">
+          <Link
+            to="/all-brands"
+            className="block px-4 py-2 text-center font-semibold text-blue-600 hover:underline"
+            onClick={isMobile ? () => setMenuOpen(false) : undefined}
+          >
+            Show all Brands
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+};
+ // ...existing code...
+// ...existing code...
+
+const renderCategoriesDropdown = (isMobile = false) => {
+  const showAll = categories.length > 15;
+  const visibleCategories = showAll ? categories.slice(0, 15) : categories;
+
+  // Dynamically set columns: 2 for <=10, 3 for <=20, 4 for more
+  let columns = 2;
+  if (visibleCategories.length > 10) columns = 3;
+  if (visibleCategories.length > 20) columns = 4;
+
+  // Split categories into columns as evenly as possible
+  const perCol = Math.ceil(visibleCategories.length / columns);
+  const categoryColumns = Array.from({ length: columns }, (_, i) =>
+    visibleCategories.slice(i * perCol, (i + 1) * perCol)
+  );
+
+  return (
+    <div className={`w-full max-w-5xl mx-auto py-6 px-8`}>
+      {!isMobile && (
+        <div className="mb-4">
+          <h4 className="text-2xl font-bold text-green-400 border-b border-green-400 pb-2">Categories</h4>
+        </div>
+      )}
+      <div className={`flex gap-8`}>
+        {categoryColumns.map((col, idx) => (
+          <div key={idx} className="flex-1 min-w-0 flex flex-col space-y-2">
+            {col.map((cat) => (
+              <Link
+                key={cat}
+                to={`/${cat.toLowerCase().replace(/\s+/g, '%20')}`}
+                className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 transition break-words text-lg text-white"
+                onClick={isMobile ? () => setMenuOpen(false) : undefined}
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+        ))}
+      </div>
+      {showAll && (
+        <div className="pt-6">
+          <Link
+            to="/all-categories"
+            className="block px-4 py-2 text-center font-semibold text-blue-600 hover:underline"
+            onClick={isMobile ? () => setMenuOpen(false) : undefined}
+          >
+            Show all Categories
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+};
+// ...existing code...
+
+// ...existing code...
 
   return (
     <header className="w-full font-sans bg-[#f1f0e7]">
@@ -65,7 +183,7 @@ const Header: React.FC = () => {
             </div>
 
             <div className="flex items-center  justify-center md:justify-end gap-6 md:gap-8">
-              <div className="hidden md:flex text- items-center gap-8">
+              <div className="hidden md:flex items-center gap-8">
                 <NavLinks
                   links={[
                     { label: 'News', href: '/news' },
@@ -82,6 +200,7 @@ const Header: React.FC = () => {
                     { label: 'Help', href: '/help' },
                     { label: 'Sell', href: '/sell' }
                   ]}
+                  className="text-black hover:text-green-500"
                 />
               </div>
 
@@ -94,8 +213,8 @@ const Header: React.FC = () => {
                 </button>
 
                 <div className="hidden md:flex gap-4">
-                  <Link to="/login" className="px-5 py-2 rounded-full border border-black hover:bg-white hover:text-black transition-all duration-300 text-base">
-                    Login
+                 <Link to="/login" className="px-5 py-2 rounded-full bg-white text-black hover:bg-green-400 hover:text-white transition-all duration-300 text-base">
+                    Log In
                   </Link>
                   <Link to="/signup" className="px-5 py-2 rounded-full bg-white text-black hover:bg-green-400 hover:text-white transition-all duration-300 text-base">
                     Sign Up
@@ -135,13 +254,7 @@ const Header: React.FC = () => {
                 </div>
                 {openDropdown === 'brands' && (
                   <ul className="mt-2 space-y-1">
-                    {dropdownMenuNames.brands.map((brand) => (
-                      <li key={brand}>
-                        <Link to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
-                          {brand}
-                        </Link>
-                      </li>
-                    ))}
+                    {renderBrandsDropdown(true)}
                   </ul>
                 )}
               </div>
@@ -201,109 +314,73 @@ const Header: React.FC = () => {
               {/* Category Dropdown */}
 
               {/* Brands Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('brands')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('brands')}
-                >
-                  Brands
-                </span>
-                {openDropdown === 'brands' && (
-                  <div className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-[800px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
-                    {[
-                      ['Carhartt', 'Patagonia', 'Gildan', 'Champion'],
-                      ['The North Face', 'Comfort Colors', 'Under Armour']
-                    ].map((column, index) => (
-                      <div key={index}>
-                        <h4 className="text-base font-semibold text-gray-400 mb-3">BRANDS</h4>
-                        <ul className="space-y-1 text-base">
-                          {column.map((brand) => (
-                            <li key={brand}>
-                              <Link to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-green-400 text-white transition duration-200">
-                                {brand}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-         )}
+<div
+  className="relative"
+  onMouseEnter={() => handleDropdownMouseEnter('brands')}
+  onMouseLeave={handleDropdownMouseLeave}
+>
+  <Link
+    to="/all-brands"
+    className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
+    onClick={() => setOpenDropdown(null)}
+  >
+    Brands
+  </Link>
+  {openDropdown === 'brands' && (
+    <>
+      {/* Hover buffer area above dropdown */}
+      <div
+        style={{ position: 'absolute', top: '-10px', left: 0, width: '100%', height: '10px', zIndex: 60 }}
+        onMouseEnter={() => setHoverBuffer(false)}
+        onMouseLeave={handleDropdownMouseLeave}
+      />
+      <div
+  className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-full max-w-screen-xl z-50 px-8 py-6 animate-fadeIn"
+  style={{ minWidth: 600 }}
+  onMouseEnter={() => setHoverBuffer(false)}
+  onMouseLeave={handleDropdownMouseLeave}
+>
+  {renderBrandsDropdown()}
+</div>
+    </>
+  )}
+</div>
 
-              </div>
+{/* Categories Dropdown */}
+<div
+  className="relative"
+  onMouseEnter={() => handleDropdownMouseEnter('categories')}
+  onMouseLeave={handleDropdownMouseLeave}
+>
+  <Link
+    to="/all-categories"
+    className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
+    onClick={() => setOpenDropdown(null)}
+  >
+    Categories
+  </Link>
+  {openDropdown === 'categories' && (
+    <>
+      {/* Hover buffer area above dropdown */}
+      <div
+        style={{ position: 'absolute', top: '-10px', left: 0, width: '100%', height: '10px', zIndex: 60 }}
+        onMouseEnter={() => setHoverBuffer(false)}
+        onMouseLeave={handleDropdownMouseLeave}
+      />
 
-              {/* Custom Embroidered Apparel Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('Custom Embroidered Apparel')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-                <span
-                  className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6]  transition duration-200"
-                  onClick={() => !isDesktop && toggleDropdown('Custom Embroidered Apparel')}
-                >
-                  Custom Embroidered Apparel
-                </span>
-                {openDropdown === 'Custom Embroidered Apparel' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Embroidered Shirts</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered polo shirts" className="hover:text-green-400  transition duration-200">
-                          custom embroidered polo shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered t-shirts" className="hover:text-green-400 transition duration-200">
-                          custom embroidered t-shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered dress shirts" className="hover:text-green-400 transition duration-200">
-                          custom embroidered dress shirts
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Embroidered Outerwear</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered hoodies" className="hover:text-green-400 transition duration-200">
-                          custom embroidered hoodies
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered sweaters" className="hover:text-green-400 transition duration-200">
-                          custom embroidered sweaters
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered sweatshirts" className="hover:text-green-400 transition duration-200">
-                          custom embroidered sweatshirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered jackets" className="hover:text-green-400 transition duration-200">
-                          custom embroidered jackets
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Embroidered Apparel/custom embroidered vests" className="hover:text-green-400 transition duration-200">
-                          custom embroidered vests
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
+
+<div
+  className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-full max-w-screen-xl z-50 px-8 py-6 animate-fadeIn"
+  style={{ minWidth: 600 }}
+  onMouseEnter={() => setHoverBuffer(false)}
+  onMouseLeave={handleDropdownMouseLeave}
+>
+  {renderCategoriesDropdown()}
+</div>
+
+    </>
+  )}
+</div>
 
               {/* Food Service Dropdown */}
               <div

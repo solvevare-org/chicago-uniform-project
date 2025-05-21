@@ -1,4 +1,5 @@
 import { Product } from '../components/Products/ProductCard';
+import axios from 'axios';
 
 export const recommendedProducts: Product[] = [
   {
@@ -101,3 +102,14 @@ export const trendingProducts: Product[] = [
     lowestAskPrice: 532
   }
 ];
+
+export const getAccessoriesProducts = async (limit: number = 10): Promise<Product[]> => {
+  try {
+    const res = await axios.get('http://localhost:3000/api/products/by-base-category/Accessories', {
+      params: { limit }
+    });
+    return Array.isArray(res.data.products) ? res.data.products.slice(0, limit) : [];
+  } catch (error) {
+    return [];
+  }
+};

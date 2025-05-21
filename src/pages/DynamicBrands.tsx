@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 
-const DynamicCategoryPage: React.FC = () => {
+const DynamicBrands: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ const DynamicCategoryPage: React.FC = () => {
       } catch {
         setCategories([]);
       }
-    };
+    };-
     fetchCategories();
   }, []);
 
@@ -38,7 +38,7 @@ const DynamicCategoryPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:3000/api/products/by-title/${category}?limit=100`);
+        const response = await fetch(`http://localhost:3000/api/products/by-brand/${category}`);
         if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
         const data = await response.json();
         setProducts(data.products || []);
@@ -239,4 +239,4 @@ const DynamicCategoryPage: React.FC = () => {
   );
 };
 
-export default DynamicCategoryPage;
+export default DynamicBrands;
