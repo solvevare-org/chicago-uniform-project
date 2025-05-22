@@ -17,11 +17,11 @@ const [hoverBuffer, setHoverBuffer] = useState(false);
   useEffect(() => {
     // ...existing resize logic...
     // Fetch brand names dynamically
-    fetch('http://localhost:3000/api/styles/brand-names')
+    fetch('http://31.97.41.27:5000/api/styles/brand-names')
       .then(res => res.json())
       .then(data => setBrandNames(data.brandNames || []))
       .catch(() => setBrandNames([]));
-   fetch('http://localhost:3000/api/styles/base-categories')
+   fetch('http://31.97.41.27:5000/api/styles/base-categories')
       .then(res => res.json())
       .then(data => setCategories(data.baseCategories || []))
       .catch(() => setCategories([]));
