@@ -21,7 +21,7 @@ const AllBrandPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('http://localhost:3000/api/brands/');
+        const res = await fetch('http://31.97.41.27:5000/api/brands/');
         const data = await res.json();
         setBrands(Array.isArray(data.brands) ? data.brands : []);
       } catch (err: any) {
