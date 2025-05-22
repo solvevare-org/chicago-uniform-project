@@ -14,29 +14,29 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    image: 'https://images.pexels.com/photos/1456705/pexels-photo-1456705.jpeg',
-    title: 'Jumpman Jack',
-    subtitle: 'Bright Cactus',
+    image: 'https://i5.walmartimages.com/seo/adidas-mens-Go-To-Utility-Jacket-l-Black_39a68ff4-3e86-4992-ad8a-58883e10356a.127d0d78b0d9158110626c62524d22a2.jpeg',
+    title: 'adidas Mens Go-to Utility DWR Full Zip Jacket',
+    subtitle: 'Black',
     buttonText: 'Shop Now',
-    buttonLink: '/products/jumpman-jack',
+    buttonLink: '/product/B57153503',
     bgColor: 'bg-lime-300'
   },
   {
     id: 2,
-    image: 'https://images.pexels.com/photos/2385477/pexels-photo-2385477.jpeg',
-    title: 'Air Max 95',
-    subtitle: 'Honey Black',
+    image: 'https://media.futbolmania.com/media/catalog/product/cache/1/thumbnail/9df78eab33525d08d6e5fb8d27136e95/H/G/HG6294_pantalon-corto-color-azul-adidas-entrada-22_1_completa-frontal.jpg',
+    title: 'A4 N5283',
+    subtitle: 'Blue',
     buttonText: 'View Details',
-    buttonLink: '/products/air-max-95',
+    buttonLink: '/product/B00674753',
     bgColor: 'bg-amber-400'
   },
   {
     id: 3,
-    image: 'https://images.pexels.com/photos/1478442/pexels-photo-1478442.jpeg',
-    title: 'Jordan 1 Retro',
-    subtitle: 'UNC Reimagined',
+    image: 'https://m.media-amazon.com/images/I/51K068ankEL._AC_SX569_.jpg',
+    title: 'Adidas A450',
+    subtitle: 'Collegiate Royal',
     buttonText: 'Buy Now',
-    buttonLink: '/products/jordan-1-retro',
+    buttonLink: '/product/B00153753',
     bgColor: 'bg-sky-400'
   }
 ];
@@ -64,14 +64,15 @@ const Hero: React.FC = () => {
           >
             <div className={`${slide.bgColor} rounded-2xl overflow-hidden`}>
               <div className="flex flex-col md:flex-row items-center justify-between p-8 md:p-0">
-                <div className="md:w-3/5 lg:w-2/3">
+                <div className="md:w-1/2 w-full">
                   <img 
                     src={slide.image} 
                     alt={slide.title} 
-                    className="w-full h-auto object-cover"
+                    className="w-full object-cover"
+                    style={{ height: '540px', maxHeight: '540px' }}
                   />
                 </div>
-                <div className="md:w-2/5 lg:w-1/3 p-4 md:p-8 flex flex-col items-center md:items-end text-center md:text-right">
+                <div className="md:w-1/2 w-full p-4 md:p-8 flex flex-col items-center md:items-end text-center md:text-right">
                   <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black">
                     {slide.title}
                   </h2>

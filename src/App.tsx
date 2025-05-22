@@ -4,7 +4,7 @@ import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import ProductGrid from './components/Products/ProductGrid';
 import Footer from './components/Footer/Footer';
-import { recommendedProducts, trendingProducts, getAccessoriesProducts } from './data/products';
+import { getAccessoriesProducts, getHeadwearProducts, getOuterwearProducts } from './data/products';
 import LoginScreen from './components/Auth/LoginScreen';
 import SignupScreen from './components/Auth/SignupScreen';
 import ForgotPasswordScreen from './components/Auth/ForgotPasswordScreen';
@@ -32,13 +32,16 @@ import { Product } from './components/Products/ProductCard';
 function App() {
   const [accessories, setAccessories] = useState<Product[]>([]);
   const [loadingAccessories, setLoadingAccessories] = useState(true);
+  const [outerwear, setOuterwear] = useState<Product[]>([]);
+  const [loadingOuterwear, setLoadingOuterwear] = useState(true);
+  const [headwear, setHeadwear] = useState<Product[]>([]);
+  const [loadingHeadwear, setLoadingHeadwear] = useState(true);
 
   useEffect(() => {
     async function fetchAccessories() {
       setLoadingAccessories(true);
       try {
         const data = await getAccessoriesProducts(10);
-        // Defensive: ensure data is an array
         setAccessories(Array.isArray(data) ? data : []);
       } catch (e) {
         setAccessories([]);
@@ -47,6 +50,36 @@ function App() {
       }
     }
     fetchAccessories();
+  }, []);
+
+  useEffect(() => {
+    async function fetchOuterwear() {
+      setLoadingOuterwear(true);
+      try {
+        const data = await getOuterwearProducts(10);
+        setOuterwear(Array.isArray(data) ? data : []);
+      } catch (e) {
+        setOuterwear([]);
+      } finally {
+        setLoadingOuterwear(false);
+      }
+    }
+    fetchOuterwear();
+  }, []);
+
+  useEffect(() => {
+    async function fetchHeadwear() {
+      setLoadingHeadwear(true);
+      try {
+        const data = await getHeadwearProducts(10);
+        setHeadwear(Array.isArray(data) ? data : []);
+      } catch (e) {
+        setHeadwear([]);
+      } finally {
+        setLoadingHeadwear(false);
+      }
+    }
+    fetchHeadwear();
   }, []);
 
   return (
@@ -58,15 +91,26 @@ function App() {
             <Route path="/" element={
               <>
                 <Hero />
-                <ProductGrid 
-                  title="Recommended For You" 
-                  products={recommendedProducts}
-                  infoIcon={true}
-                />
-                <ProductGrid 
-                  title="Trending Products" 
-                  products={trendingProducts}
-                />
+                {loadingOuterwear ? (
+                  <div className="text-gray-400 px-4 py-8">Loading outerwear...</div>
+                ) : !outerwear || outerwear.length === 0 ? (
+                  <div className="text-red-400 px-4 py-8">No outerwear found.</div>
+                ) : (
+                  <ProductGrid 
+                    title="Outerwear Products" 
+                    products={outerwear}
+                  />
+                )}
+                {loadingHeadwear ? (
+                  <div className="text-gray-400 px-4 py-8">Loading headwear...</div>
+                ) : !headwear || headwear.length === 0 ? (
+                  <div className="text-red-400 px-4 py-8">No headwear found.</div>
+                ) : (
+                  <ProductGrid 
+                    title="Headwear Products" 
+                    products={headwear}
+                  />
+                )}
                 {loadingAccessories ? (
                   <div className="text-gray-400 px-4 py-8">Loading accessories...</div>
                 ) : !accessories || accessories.length === 0 ? (
@@ -77,6 +121,7 @@ function App() {
                     products={accessories}
                   />
                 )}
+                
               </>
             } />
             <Route path="/login" element={<LoginScreen />} />

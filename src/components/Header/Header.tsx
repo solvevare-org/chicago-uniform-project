@@ -169,7 +169,11 @@ const renderCategoriesDropdown = (isMobile = false) => {
 
           <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
             <div className="flex items-center justify-between md:justify-start gap-6">
+          <Link to="/">
               <Logo />
+              </Link>
+            
+              
               <button
                 className="md:hidden text-black hover:text-green-400 transition-transform transform hover:scale-110"
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -389,7 +393,7 @@ const renderCategoriesDropdown = (isMobile = false) => {
                 onMouseLeave={() => isDesktop && setOpenDropdown(null)}
               >
               <Link
-                to="/customembroideredoutwear"
+                to="/"
                 className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
                 onClick={() => !isDesktop && toggleDropdown('Custom Printed Apparel')}
               >
@@ -398,190 +402,10 @@ const renderCategoriesDropdown = (isMobile = false) => {
                 {openDropdown === 'Custom Printed Apparel' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
                     <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom  Shirts</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom polo shirts" className="hover:text-green-400 transition duration-200">
-                          custom polo shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom  t-shirts" className="hover:text-green-400 transition duration-200">
-                          custom  t-shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom tank tops" className="hover:text-green-400 transition duration-200">
-                          custom tank tops
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom long sleeve shirts" className="hover:text-green-400 transition duration-200">
-                          custom long sleeve shirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom dress shirts" className="hover:text-green-400 transition duration-200">
-                          custom dress shirts
-                          </Link>
-                        </li>
-                      </ul>
+                      <h4 className="text-base font-semibold text-white mb-3">Coming Soon . . . . . . . . . . . </h4>
+                     
                     </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Outerwear</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom hoodies" className="hover:text-green-400 transition duration-200">
-                          custom hoodies
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom sweaters" className="hover:text-green-400 transition duration-200">
-                          custom sweaters
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom sweatshirts" className="hover:text-green-400 transition duration-200">
-                          custom sweatshirts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom jackets" className="hover:text-green-400 transition duration-200">
-                          custom jackets
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom vests" className="hover:text-green-400 transition duration-200">
-                          custom vests
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Headwear</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Hats" className="hover:text-green-400 transition duration-200">
-                          Custom Hats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Embroidered Hats" className="hover:text-green-400 transition duration-200">
-                          Custom Embroidered Hats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Embroidered Baseball Hats" className="hover:text-green-400 transition duration-200">
-                          Embroidered Baseball Hats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Embroidered Trucker Hats" className="hover:text-green-400 transition duration-200">
-                          Embroidered Trucker Hats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Beanies" className="hover:text-green-400 transition duration-200">
-                          Custom Beanies
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Richardson 112 Hats" className="hover:text-green-400 transition duration-200">
-                          Custom Richardson 112 Hats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Headbands" className="hover:text-green-400 transition duration-200">
-                          Custom Headbands
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Bucket Hats" className="hover:text-green-400 transition duration-200">
-                          Custom Bucket Hats
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/Custom Dad Hats" className="hover:text-green-400 transition duration-200">
-                          Custom Dad Hats
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Pants&Shorts</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom pants" className="hover:text-green-400 transition duration-200">
-                          custom pants
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom sweatpants" className="hover:text-green-400 transition duration-200">
-                          custom sweatpants
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom shorts" className="hover:text-green-400 transition duration-200">
-                          custom shorts
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Bags</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom backpacks" className="hover:text-green-400 transition duration-200">
-                          custom backpacks
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom tote bags" className="hover:text-green-400 transition duration-200">
-                          custom tote bags
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom drawstring bags" className="hover:text-green-400 transition duration-200">
-                          custom drawstring bags
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom paper bags" className="hover:text-green-400 transition duration-200">
-                          custom paper bags
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-gray-400 mb-3">Custom Accessories</h4>
-                      <ul className="space-y-1 text-base">
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom blankets" className="hover:text-green-400 transition duration-200">
-                          custom blankets
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom hand towels" className="hover:text-green-400 transition duration-200">
-                          custom hand towels
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom scarves" className="hover:text-green-400 transition duration-200">
-                          custom scarves
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom aprons" className="hover:text-green-400 transition duration-200">
-                          custom aprons
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="/Custom Printed Apparel/custom bandanas" className="hover:text-green-400 transition duration-200">
-                          custom bandanas
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
+                   
                   </div>
                 )}
               </div>

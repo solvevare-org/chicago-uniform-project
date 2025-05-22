@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
+interface Brand {
+  _id: string;
+  brandID: number;
+  name: string;
+  image: string;
+  noeRetailing: boolean;
+  activeProducts: number;
+  __v: number;
+}
+
 const AllBrandPage: React.FC = () => {
-  const [brands, setBrands] = useState<string[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState<number>(30);
@@ -11,9 +21,9 @@ const AllBrandPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/styles/brand-names');
+        const res = await fetch('http://localhost:3000/api/brands/');
         const data = await res.json();
-        setBrands(data.brandNames || []);
+        setBrands(Array.isArray(data.brands) ? data.brands : []);
       } catch (err: any) {
         setError('Failed to load brands');
       } finally {
@@ -36,11 +46,17 @@ const AllBrandPage: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {brands.slice(0, visibleCount).map((brand) => (
                 <a
-                  key={brand}
-                  href={`/brands/${encodeURIComponent(brand)}`}
-                  className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-4 flex items-center justify-center text-lg font-semibold shadow hover:shadow-lg transition-all text-center w-full cursor-pointer hover:text-green-400"
+                  key={brand._id}
+                  href={`/brands/${encodeURIComponent(brand.name)}`}
+                  className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-4 flex flex-col items-center justify-center text-lg font-semibold shadow hover:shadow-lg transition-all text-center w-full cursor-pointer hover:text-green-400"
                 >
-                  {brand}
+                  <img
+                    src={`https://www.ssactivewear.com/${brand.image}`}
+                    alt={brand.name}
+                    className="w-16 h-16 object-contain mb-2 rounded bg-white"
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                  />
+                  {brand.name}
                 </a>
               ))}
             </div>

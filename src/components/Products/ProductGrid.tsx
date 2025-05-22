@@ -25,27 +25,33 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {products.slice(0, 4).map((product) => (
-            <div key={product._id || product.id} className="bg-gradient-to-r from-gray-100 via-white to-gray-100 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105">
+            <div key={product._id || product.id} className="bg-black rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105 border border-gray-800">
               <a href={product.sku ? `/product/${product.sku}` : '#'} className="block">
                 <div className="relative">
                   <img
                     src={product.colorFrontImage ? `https://www.ssactivewear.com/${product.colorFrontImage}` : product.image}
                     alt={product.styleName || product.name}
-                    className="w-full h-56 object-cover rounded-t-xl"
+                    className="w-full h-56 object-cover rounded-t-xl bg-gray-900"
                   />
                 </div>
                 <div className="p-5">
-                  <h3 className="font-semibold text-gray-800 text-lg line-clamp-2">{product.styleName || product.name}</h3>
+                  <h3 className="font-semibold text-gray-100 text-lg line-clamp-2">{product.styleName || product.name}</h3>
                   {product.colorName && (
-                    <p className="text-sm text-gray-500 mt-1">{product.colorName}</p>
+                    <div className="flex items-center mt-1">
+                      <span
+                        className="inline-block w-4 h-4 rounded-full border border-gray-300 mr-2"
+                        style={{ backgroundColor: product.hexColor || '#888' }}
+                      ></span>
+                      <p className="text-sm text-gray-400">{product.colorName}</p>
+                    </div>
                   )}
                   <div className="mt-3">
-                    <div className="font-bold text-xl text-green-600">
+                    <div className="font-bold text-xl text-green-400">
                       ${product.salePrice ? product.salePrice.toFixed(2) : product.price}
                     </div>
                     {product.qty !== undefined && (
-                      <div className="text-xs text-gray-400 mt-1">
-                        In Stock: {product.qty}
+                      <div className="text-xs text-gray-500 mt-1">
+                        In Stock: {product.caseQty}
                       </div>
                     )}
                   </div>

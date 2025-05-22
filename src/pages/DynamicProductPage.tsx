@@ -254,7 +254,7 @@ const DynamicProductPage: React.FC = () => {
               <p className="text-sm text-gray-400">GTIN: {product.gtin}</p>
               <p className="text-sm text-gray-400">Country of Origin: {product.countryOfOrigin}</p>
               <p className="text-sm text-gray-400">
-                Available Quantity: <span className="font-bold">{product.qty}</span>
+                Available Quantity: <span className="font-bold">{product.caseQty}</span>
               </p>
               <p className="text-sm text-gray-400">Case Quantity (Max): {product.caseQty}</p>
               <p className="text-sm text-gray-400">Unit Weight: {product.unitWeight} lbs</p>
@@ -312,21 +312,22 @@ const DynamicProductPage: React.FC = () => {
               />
             </div>
 
-            {uploadedImage && (
+            {/* Logo Size Slider (show only if logo is present for the current image) */}
+            {logoData[currentImageIndex]?.image && (
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">Logo Size</label>
                 <input
                   type="range"
                   min="20"
                   max="200"
-                  value={logoSize}
+                  value={logoData[currentImageIndex]?.size || 50}
                   onChange={handleLogoSizeChange}
                   className="w-full appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             )}
-
-            {uploadedImage && (
+            {/* Logo controls (show only if logo is present for the current image) */}
+            {logoData[currentImageIndex]?.image && (
               <div className="flex items-center justify-between mb-4">
                 <button
                   onClick={handleRotateLogo}
@@ -340,7 +341,8 @@ const DynamicProductPage: React.FC = () => {
                 >
                   Delete
                 </button>
-              </div>)}
+              </div>
+            )}
 
             <button
               onClick={handlePurchase}
