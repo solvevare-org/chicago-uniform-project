@@ -187,7 +187,7 @@ const renderCategoriesDropdown = (isMobile = false) => {
             </div>
 
             <div className="flex items-center  justify-center md:justify-end gap-6 md:gap-8">
-              <div className="hidden md:flex items-center gap-8">
+              {/* <div className="hidden md:flex items-center gap-8">
                 <NavLinks
                   links={[
                     { label: 'News', href: '/news' },
@@ -206,15 +206,15 @@ const renderCategoriesDropdown = (isMobile = false) => {
                   ]}
                   className="text-black hover:text-green-500"
                 />
-              </div>
+              </div> */}
 
               <div className="flex items-center gap-6">
-                <Link to="/wishlist" aria-label="Wishlist" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
+                {/* <Link to="/wishlist" aria-label="Wishlist" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
                   <Heart size={20} />
                 </Link>
                 <button aria-label="Notifications" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
                   <Bell size={20} />
-                </button>
+                </button> */}
 
                 <div className="hidden md:flex gap-4">
                  <Link to="/login" className="px-5 py-2 rounded-full bg-white text-black hover:bg-green-400 hover:text-white transition-all duration-300 text-base">
@@ -400,12 +400,10 @@ const renderCategoriesDropdown = (isMobile = false) => {
                 Custom Printed Apparel
               </Link>
                 {openDropdown === 'Custom Printed Apparel' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-2 gap-6 animate-fadeIn">
-                    <div>
-                      <h4 className="text-base font-semibold text-white mb-3">Coming Soon . . . . . . . . . . . </h4>
-                     
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-1 place-items-center animate-fadeIn">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <h4 className="text-2xl font-semibold text-green-400 mb-3 text-center">Coming Soon</h4>
                     </div>
-                   
                   </div>
                 )}
               </div>

@@ -15,7 +15,7 @@ const slides: Slide[] = [
   {
     id: 1,
     image: 'https://i5.walmartimages.com/seo/adidas-mens-Go-To-Utility-Jacket-l-Black_39a68ff4-3e86-4992-ad8a-58883e10356a.127d0d78b0d9158110626c62524d22a2.jpeg',
-    title: 'adidas Mens Go-to Utility DWR Full Zip Jacket',
+    title: 'Adidas Men Full Zip Jacket',
     subtitle: 'Black',
     buttonText: 'Shop Now',
     buttonLink: '/product/B57153503',
@@ -23,7 +23,7 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    image: 'https://media.futbolmania.com/media/catalog/product/cache/1/thumbnail/9df78eab33525d08d6e5fb8d27136e95/H/G/HG6294_pantalon-corto-color-azul-adidas-entrada-22_1_completa-frontal.jpg',
+    image: '',
     title: 'A4 N5283',
     subtitle: 'Blue',
     buttonText: 'View Details',
