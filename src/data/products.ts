@@ -116,7 +116,7 @@ export const getAccessoriesProducts = async (limit: number = 10): Promise<Produc
 
 export const getOuterwearProducts = async (limit: number = 10): Promise<Product[]> => {
   try {
-    const res = await axios.get('http://31.97.41.27:5000/api/products/by-base-category/t-shirts%20-%20core', {
+    const res = await axios.get('http://31.97.41.27:5000/api/products/by-base-category/quarter-zips', {
       params: { limit }
     });
     return Array.isArray(res.data.products) ? res.data.products.slice(0, limit) : [];
