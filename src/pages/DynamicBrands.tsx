@@ -88,7 +88,7 @@ const DynamicBrands: React.FC = () => {
       <div className="max-w-screen-2xl mx-auto">
         {/* Breadcrumb */}
         <div className="text-gray-400 text-sm mb-6">
-          <span className="hover:underline cursor-pointer">Home</span> /Category/
+          <span className="hover:underline cursor-pointer">Home</span> /Brands/
           <span className="text-white font-semibold">{category}</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

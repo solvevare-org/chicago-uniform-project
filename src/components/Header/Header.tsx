@@ -78,7 +78,7 @@ const renderBrandsDropdown = (isMobile = false) => {
             {col.map((brand) => (
               <Link
                 key={brand}
-                to={`/brands/${brand.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/brands/${brand.toLowerCase().replace(/\s+/g, '%20')}`}
                 className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 transition break-words text-lg text-white"
                 onClick={isMobile ? () => setMenuOpen(false) : undefined}
               >

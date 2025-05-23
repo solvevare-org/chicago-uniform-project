@@ -240,12 +240,12 @@ const DynamicProductPage: React.FC = () => {
 
           {/* Product Details Section */}
          <div>
-            <h1 className="text-5xl font-extrabold mb-4 text-green-400 text-center md:text-left">
+            <h1 className="text-5xl font-extrabold mb-4 text-green-400">
               {product.brandName} {product.styleName}
             </h1>
-            <p className="text-lg text-gray-400 mb-6 italic text-center md:text-left">{product.colorName}</p>
-            <p className="text-3xl font-bold mb-2 text-green-500 text-center md:text-left">${product.salePrice.toFixed(2)}</p>
-            <p className="text-lg font-medium mb-6 text-gray-300 text-center md:text-left">
+            <p className="text-lg text-gray-400 mb-6 italic">{product.colorName}</p>
+            <p className="text-3xl font-bold mb-2 text-green-500">${product.salePrice.toFixed(2)}</p>
+            <p className="text-lg font-medium mb-6 text-gray-300">
               Subtotal: <span className="text-green-400">${subtotal}</span>
             </p>
 
