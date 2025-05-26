@@ -4,7 +4,7 @@ import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import ProductGrid from './components/Products/ProductGrid';
 import Footer from './components/Footer/Footer';
-import { getAccessoriesProducts, getHeadwearProducts, getOuterwearProducts } from './data/products';
+import { getAccessoriesProducts, getHeadwearProducts, getOuterwearProducts,  getBrandsProducts } from './data/products';
 import LoginScreen from './components/Auth/LoginScreen';
 import SignupScreen from './components/Auth/SignupScreen';
 import ForgotPasswordScreen from './components/Auth/ForgotPasswordScreen';
@@ -28,12 +28,17 @@ import CategoryPage from './pages/Category';
 import AllBrandPage from './pages/all-brand';
 import AllCategoriesPage from './pages/all-categories';
 import { Product } from './components/Products/ProductCard';
+import TestProductPage from './pages/testProductPage';
 
+import SecondTestProductPage from './pages/testProductPagesecond';
+import HomeBrandGrid from './components/Products/HomeBrandGrid';
 function App() {
   const [accessories, setAccessories] = useState<Product[]>([]);
   const [loadingAccessories, setLoadingAccessories] = useState(true);
   const [outerwear, setOuterwear] = useState<Product[]>([]);
   const [loadingOuterwear, setLoadingOuterwear] = useState(true);
+  const [loadingBrands, setLoadingBrands] = useState(true);
+  const [brand, setBrand] = useState<Product[]>([]);
   const [headwear, setHeadwear] = useState<Product[]>([]);
   const [loadingHeadwear, setLoadingHeadwear] = useState(true);
 
@@ -91,6 +96,9 @@ function App() {
             <Route path="/" element={
               <>
                 <Hero />
+                
+                <HomeBrandGrid />
+                
                 {loadingOuterwear ? (
                   <div className="text-gray-400 px-4 py-8">Loading outerwear...</div>
                 ) : !outerwear || outerwear.length === 0 ? (
@@ -139,11 +147,14 @@ function App() {
             <Route path="/customembroideredshirts" element={<CustomEmbroideredShirts />} />
             <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
             <Route path="/customshirts" element={<CustomShirts />} />
+            <Route path="/testproduct" element={<TestProductPage/>} />
+            <Route path="/sectestproduct" element={<SecondTestProductPage/>} />
             <Route path="/pantsandshorts" element={<PantsAndShorts />} />
             <Route path="/category/:category" element={<DynamicCategoryPage />} />
             <Route path="/:category" element={<CategoryPage />} />
             <Route path="/product/:sku" element={<DynamicProductPage />} />
             <Route path='/brands/:category' element={<DynamicBrands/>} />
+
              <Route path='/all-brands' element={<AllBrandPage/>} />
              <Route path='/all-categories' element={<AllCategoriesPage/>} />
           </Routes>

@@ -211,7 +211,7 @@ const DynamicCategoryPage: React.FC = () => {
                   className="bg-[#1a1a1a] p-4 rounded-xl border border-gray-700 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1"
                 >
                   <img
-                    src={`https://www.ssactivewear.com/${product.colorFrontImage}`}
+                    src={`https://www.ssactivewear.com/${product.colorOnModelFrontImage && product.colorOnModelFrontImage !== "" ? product.colorOnModelFrontImage : product.colorFrontImage}`}
                     alt={product.styleName}
                     className="h-48 w-full object-cover rounded-lg mb-4"
                   />

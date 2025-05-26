@@ -1,420 +1,734 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Bell, Heart, Menu, X, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Logo from '../Logo/Logo';
-import NavLinks from './NavLinks';
-import SearchBar from './SearchBar';
-import '../../pages/Categories/CustomEmbroideredOutwear';
+"use client"
+
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
+import { Menu, X, ChevronDown } from "lucide-react"
+import { Link } from "react-router-dom"
+import SearchBar from "./SearchBar"
+
+// Use the existing dropdown menu names from your code
+const dropdownMenuNames = {
+  "Custom Embroidered Apparel": [
+    "Embroidered Polo Shirts",
+    "Custom Hoodies",
+    "Embroidered Caps",
+    "Corporate Uniforms",
+    "Team Jerseys",
+  ],
+  "Custom Printed Apparel": [
+    "Screen Printed T-Shirts",
+    "Digital Print Hoodies",
+    "Vinyl Graphics",
+    "Heat Transfer Designs",
+  ],
+}
 
 const Header: React.FC = () => {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null); // State to manage which dropdown is open
-  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth >= 768);
-  const [menuOpen, setMenuOpen] = useState(false); // State to manage menu toggle
-const [brandNames, setBrandNames] = useState<string[]>([]);
-const [categories, setCategories] = useState<string[]>([]);
-const [hoverBuffer, setHoverBuffer] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth >= 768)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [brandNames, setBrandNames] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>([])
+  const [isClosing, setIsClosing] = useState(false)
+  const [mouseInDropdown, setMouseInDropdown] = useState(false)
+  const [mouseInNav, setMouseInNav] = useState(false)
+
+  // Refs for dropdown containers to handle hover properly
+  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({
+    brands: null,
+    categories: null,
+    "Custom Embroidered Apparel": null,
+    "Custom Printed Apparel": null,
+  })
+
+  const navRefs = useRef<{ [key: string]: HTMLDivElement | null }>({
+    brands: null,
+    categories: null,
+    "Custom Embroidered Apparel": null,
+    "Custom Printed Apparel": null,
+  })
+
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    // ...existing resize logic...
     // Fetch brand names dynamically
-    fetch('http://31.97.41.27:5000/api/styles/brand-names')
-      .then(res => res.json())
-      .then(data => setBrandNames(data.brandNames || []))
-      .catch(() => setBrandNames([]));
-   fetch('http://31.97.41.27:5000/api/styles/base-categories')
-      .then(res => res.json())
-      .then(data => setCategories(data.baseCategories || []))
-      .catch(() => setCategories([]));
-  }, []);
+    fetch("http://31.97.41.27:5000/api/styles/brand-names")
+      .then((res) => res.json())
+      .then((data) => setBrandNames(data.brandNames || []))
+      .catch(() => setBrandNames([]))
+
+    fetch("http://31.97.41.27:5000/api/styles/base-categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data.baseCategories || []))
+      .catch(() => setCategories([]))
+  }, [])
+
   useEffect(() => {
     const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+      setIsDesktop(window.innerWidth >= 768)
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openDropdown) {
+        const currentDropdownRef = dropdownRefs.current[openDropdown]
+        const currentNavRef = navRefs.current[openDropdown]
+
+        if (
+          currentDropdownRef &&
+          !currentDropdownRef.contains(event.target as Node) &&
+          currentNavRef &&
+          !currentNavRef.contains(event.target as Node)
+        ) {
+          handleCloseDropdown()
+        }
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [openDropdown])
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Monitor mouse position for dropdown
+  useEffect(() => {
+    if (isDesktop) {
+      if (!mouseInNav && !mouseInDropdown && openDropdown && !isClosing) {
+        startCloseTimer()
+      } else if ((mouseInNav || mouseInDropdown) && isClosing) {
+        cancelCloseTimer()
+      }
+    }
+  }, [mouseInNav, mouseInDropdown, openDropdown, isClosing, isDesktop])
+
+  const startCloseTimer = () => {
+    setIsClosing(true)
+    closeTimeoutRef.current = setTimeout(() => {
+      if (!mouseInNav && !mouseInDropdown) {
+        setOpenDropdown(null)
+      }
+      setIsClosing(false)
+    }, 300)
+  }
+
+  const cancelCloseTimer = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    setIsClosing(false)
+  }
 
   const toggleDropdown = (dropdown: string) => {
-    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
-  };
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown))
+  }
 
-  // Prevent dropdown from closing when hovering over dropdown content
-  const handleDropdownMouseEnter = (dropdown: string) => {
-    if (isDesktop) setOpenDropdown(dropdown);
-    setHoverBuffer(false);
-  };
-  const handleDropdownMouseLeave = () => {
-    if (isDesktop) setHoverBuffer(true);
+  const handleCloseDropdown = () => {
+    setIsClosing(true)
     setTimeout(() => {
-      setHoverBuffer(false);
-      if (isDesktop) setOpenDropdown(null);
-    }, 200);
-  };
+      setOpenDropdown(null)
+      setIsClosing(false)
+    }, 300)
+  }
 
-const renderBrandsDropdown = (isMobile = false) => {
-  const showAll = brandNames.length > 15;
-  const visibleBrands = showAll ? brandNames.slice(0, 15) : brandNames;
+  // Improved dropdown handling
+  const handleNavMouseEnter = (dropdown: string) => {
+    if (isDesktop) {
+      setMouseInNav(true)
+      cancelCloseTimer()
+      setOpenDropdown(dropdown)
+    }
+  }
 
-  // Dynamically set columns: 2 for <=10, 3 for <=20, 4 for more
-  let columns = 2;
-  if (visibleBrands.length > 10) columns = 3;
-  if (visibleBrands.length > 20) columns = 4;
+  const handleNavMouseLeave = () => {
+    if (isDesktop) {
+      setMouseInNav(false)
+      // Don't close immediately, wait to see if mouse enters dropdown
+    }
+  }
 
-  const perCol = Math.ceil(visibleBrands.length / columns);
-  const brandColumns = Array.from({ length: columns }, (_, i) =>
-    visibleBrands.slice(i * perCol, (i + 1) * perCol)
-  );
+  const handleDropdownMouseEnter = () => {
+    if (isDesktop) {
+      setMouseInDropdown(true)
+      cancelCloseTimer()
+    }
+  }
 
-  return (
-    <div className={`w-full max-w-5xl mx-auto py-6 px-8`}>
-      {!isMobile && (
-        <div className="mb-4">
-          <h4 className="text-2xl font-bold text-green-400 border-b border-green-400 pb-2">Brands</h4>
-        </div>
-      )}
-      <div className="flex gap-8">
-        {brandColumns.map((col, idx) => (
-          <div key={idx} className="flex-1 min-w-0 flex flex-col space-y-2">
-            {col.map((brand) => (
+  const handleDropdownMouseLeave = () => {
+    if (isDesktop) {
+      setMouseInDropdown(false)
+      // Don't close immediately, wait to see if mouse enters nav
+    }
+  }
+
+  // Get top brands (first 8 brands)
+  const getTopBrands = () => {
+    return brandNames.slice(0, 8)
+  }
+
+  // Get trending brands (next 8 brands)
+  const getTrendingBrands = () => {
+    return brandNames.slice(8, 16)
+  }
+
+  const renderBrandsDropdown = (isMobile = false) => {
+    const topBrands = getTopBrands()
+    const trendingBrands = getTrendingBrands()
+
+    if (isMobile) {
+      return (
+        <div className="w-full py-4 px-2">
+          <div className="grid grid-cols-2 gap-2">
+            {brandNames.map((brand) => (
               <Link
                 key={brand}
-                to={`/brands/${brand.toLowerCase().replace(/\s+/g, '%20')}`}
-                className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 transition break-words text-lg text-white"
-                onClick={isMobile ? () => setMenuOpen(false) : undefined}
+                to={`/brands/${brand.toLowerCase().replace(/\s+/g, "%20")}`}
+                className="block px-3 py-2 rounded hover:bg-gray-700 text-white"
+                onClick={() => setMenuOpen(false)}
               >
                 {brand}
               </Link>
             ))}
           </div>
-        ))}
+          <div className="mt-4 text-center">
+            <Link
+              to="/all-brands"
+              className="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
+              onClick={() => setMenuOpen(false)}
+            >
+              Show all Brands
+            </Link>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="max-w-7xl mx-auto py-8 px-8 grid grid-cols-3 gap-12">
+        {/* All Brands (Alphabetical) */}
+
+        {/* Top Brands */}
+        <div>
+          <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Top Brands</h3>
+          <div className="space-y-3">
+            {topBrands.map((brand) => (
+              <Link
+                key={brand}
+                to={`/brands/${brand.toLowerCase().replace(/\s+/g, "%20")}`}
+                className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                onClick={() => setOpenDropdown(null)}
+              >
+                {brand}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Trending Brands */}
+        <div>
+          <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Trending Brands</h3>
+          <div className="space-y-3">
+            {trendingBrands.map((brand) => (
+              <Link
+                key={brand}
+                to={`/brands/${brand.toLowerCase().replace(/\s+/g, "%20")}`}
+                className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                onClick={() => setOpenDropdown(null)}
+              >
+                {brand}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
-      {showAll && (
-        <div className="pt-6">
-          <Link
-            to="/all-brands"
-            className="block px-4 py-2 text-center font-semibold text-blue-600 hover:underline"
-            onClick={isMobile ? () => setMenuOpen(false) : undefined}
-          >
-            Show all Brands
-          </Link>
-        </div>
-      )}
-    </div>
-  );
-};
- // ...existing code...
-// ...existing code...
+    )
+  }
 
-const renderCategoriesDropdown = (isMobile = false) => {
-  const showAll = categories.length > 15;
-  const visibleCategories = showAll ? categories.slice(0, 15) : categories;
+  const renderCategoriesDropdown = (isMobile = false) => {
+    // Split categories into 3 columns
+    const categoriesColumn1 = categories.slice(0, Math.ceil(categories.length / 3))
+    const categoriesColumn2 = categories.slice(Math.ceil(categories.length / 3), Math.ceil((categories.length / 3) * 2))
+    const categoriesColumn3 = categories.slice(Math.ceil((categories.length / 3) * 2))
 
-  // Dynamically set columns: 2 for <=10, 3 for <=20, 4 for more
-  let columns = 2;
-  if (visibleCategories.length > 10) columns = 3;
-  if (visibleCategories.length > 20) columns = 4;
-
-  // Split categories into columns as evenly as possible
-  const perCol = Math.ceil(visibleCategories.length / columns);
-  const categoryColumns = Array.from({ length: columns }, (_, i) =>
-    visibleCategories.slice(i * perCol, (i + 1) * perCol)
-  );
-
-  return (
-    <div className={`w-full max-w-5xl mx-auto py-6 px-8`}>
-      {!isMobile && (
-        <div className="mb-4">
-          <h4 className="text-2xl font-bold text-green-400 border-b border-green-400 pb-2">Categories</h4>
-        </div>
-      )}
-      <div className={`flex gap-8`}>
-        {categoryColumns.map((col, idx) => (
-          <div key={idx} className="flex-1 min-w-0 flex flex-col space-y-2">
-            {col.map((cat) => (
+    if (isMobile) {
+      return (
+        <div className="w-full py-4 px-2">
+          <div className="grid grid-cols-2 gap-2">
+            {categories.map((cat) => (
               <Link
                 key={cat}
-                to={`/${cat.toLowerCase().replace(/\s+/g, '%20')}`}
-                className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 transition break-words text-lg text-white"
-                onClick={isMobile ? () => setMenuOpen(false) : undefined}
+                to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
+                className="block px-3 py-2 rounded hover:bg-gray-700 text-white"
+                onClick={() => setMenuOpen(false)}
               >
                 {cat}
               </Link>
             ))}
           </div>
-        ))}
-      </div>
-      {showAll && (
-        <div className="pt-6">
+          <div className="mt-4 text-center">
+            <Link
+              to="/all-categories"
+              className="inline-block px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors duration-200"
+              onClick={() => setMenuOpen(false)}
+            >
+              Show all Categories
+            </Link>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="max-w-7xl mx-auto py-8 px-8">
+        <div className="grid grid-cols-3 gap-12 mb-8">
+          {/* Categories Column 1 */}
+          <div>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Popular Categories</h3>
+            <div className="space-y-3">
+              {categoriesColumn1.map((cat) => (
+                <Link
+                  key={cat}
+                  to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  onClick={() => setOpenDropdown(null)}
+                >
+                  {cat}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Categories Column 2 */}
+          <div>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Trending Categories</h3>
+            <div className="space-y-3">
+              {categoriesColumn2.map((cat) => (
+                <Link
+                  key={cat}
+                  to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  onClick={() => setOpenDropdown(null)}
+                >
+                  {cat}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Categories Column 3 */}
+          <div>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">All Categories</h3>
+            <div className="space-y-3">
+              {categoriesColumn3.map((cat) => (
+                <Link
+                  key={cat}
+                  to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  onClick={() => setOpenDropdown(null)}
+                >
+                  {cat}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Show All Categories Button */}
+        <div className="text-center border-t border-gray-600 pt-6">
           <Link
             to="/all-categories"
-            className="block px-4 py-2 text-center font-semibold text-blue-600 hover:underline"
-            onClick={isMobile ? () => setMenuOpen(false) : undefined}
+            className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium"
+            onClick={() => setOpenDropdown(null)}
           >
-            Show all Categories
+            Show All Categories
           </Link>
         </div>
-      )}
-    </div>
-  );
-};
-// ...existing code...
+      </div>
+    )
+  }
 
-// ...existing code...
+  const renderCustomApparel = (type: string, isMobile = false) => {
+    const items = dropdownMenuNames[type as keyof typeof dropdownMenuNames] || []
+
+    if (isMobile) {
+      return (
+        <div className="w-full py-4 px-2">
+          <div className="grid grid-cols-1 gap-2">
+            {items.map((item) => (
+              <Link
+                key={item}
+                to={`/${type}/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                className="block px-3 py-2 rounded hover:bg-gray-700 text-white"
+                onClick={() => setMenuOpen(false)}
+              >
+                {item}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="max-w-7xl mx-auto py-8 px-8">
+        <div className="grid grid-cols-2 gap-12">
+          <div>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">{type}</h3>
+            <div className="space-y-3">
+              {items.map((item) => (
+                <Link
+                  key={item}
+                  to={`/${type}/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Coming Soon</h3>
+            <p className="text-gray-400">More options will be available soon!</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <header className="w-full font-sans bg-[#f1f0e7]">
-      <div className="relative z-10">
-        {/* Top Header */}
-        <div className="bg-gradient-to-r from-[#f2f1e6] via-[#f2f1e6] to-[#f2f1e6] text-[#333333] py-1 px-2 md:px-10 shadow-lg shadow-black/30">
-
-          <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
-            <div className="flex items-center justify-between md:justify-start gap-6">
-          <Link to="/">
-              <Logo />
+    <>
+      <header className="w-full font-sans bg-[#f1f0e7] relative z-50 sticky top-0 left-0 right-0 shadow-lg">
+        <div className="relative z-10">
+          {/* Top Header */}
+          {/* Top Header - Dark Theme */}
+          <div className="bg-gray-900 text-white py-3 px-4 shadow-lg shadow-black/30 border-b border-gray-700">
+            <div className="max-w-screen-2xl mx-auto flex items-center justify-between gap-4">
+              <Link to="/" className="text-xl md:text-2xl font-bold text-white hover:text-gray-300 transition-colors">
+                South Loop Prints
               </Link>
-            
-              
+
+              {/* Desktop Search and Auth */}
+              <div className="hidden md:flex items-center gap-6">
+                <div className="w-96">
+                  <SearchBar />
+                </div>
+                <div className="flex gap-3">
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 border border-gray-600 transition-all duration-300 text-sm font-medium"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 border border-gray-600 transition-all duration-300 text-sm font-medium"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              </div>
+
+              {/* Mobile Menu Button */}
               <button
-                className="md:hidden text-black hover:text-green-400 transition-transform transform hover:scale-110"
+                className="md:hidden text-white hover:text-gray-300 transition-transform transform hover:scale-110"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle Menu"
               >
                 {menuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <div className="hidden md:block w-[500px]">
-                <SearchBar />
-              </div>
+            </div>
+          </div>
+
+          {/* Mobile Search and Auth - Dark Theme */}
+          <div className="md:hidden">
+            {/* Search Bar */}
+            <div className="bg-gray-800 border-t border-gray-700 px-4 py-3">
+              <SearchBar />
             </div>
 
-            <div className="flex items-center  justify-center md:justify-end gap-6 md:gap-8">
-              {/* <div className="hidden md:flex items-center gap-8">
-                <NavLinks
-                  links={[
-                    { label: 'News', href: '/news' },
-                    {
-                      label: 'About', dropdown: [
-                        { label: 'How Works', href: '/how-it-works' },
-                        { label: 'Buying Guide', href: '/buying-guide' },
-                        { label: 'Selling Guide', href: '/selling-guide' },
-                        { label: 'Our Process', href: '/our-process' },
-                        { label: 'Newsroom', href: '/newsroom' },
-                        { label: 'Company', href: '/company' }
-                      ]
-                    },
-                    { label: 'Help', href: '/help' },
-                    { label: 'Sell', href: '/sell' }
-                  ]}
-                  className="text-black hover:text-green-500"
-                />
-              </div> */}
-
-              <div className="flex items-center gap-6">
-                {/* <Link to="/wishlist" aria-label="Wishlist" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
-                  <Heart size={20} />
+            {/* Auth Buttons */}
+            <div className="bg-gray-800 border-t border-gray-700 px-4 py-3">
+              <div className="flex gap-2 justify-center">
+                <Link
+                  to="/login"
+                  className="flex-1 text-center text-white bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-gray-600 border border-gray-600 transition-all duration-300"
+                >
+                  Login
                 </Link>
-                <button aria-label="Notifications" className="text-black hover:text-green-400 transition-transform transform hover:scale-110">
-                  <Bell size={20} />
-                </button> */}
-
-                <div className="hidden md:flex gap-4">
-                 <Link to="/login" className="px-5 py-2 rounded-full bg-white text-black hover:bg-green-400 hover:text-white transition-all duration-300 text-base">
-                    Log In
-                  </Link>
-                  <Link to="/signup" className="px-5 py-2 rounded-full bg-white text-black hover:bg-green-400 hover:text-white transition-all duration-300 text-base">
-                    Sign Up
-                  </Link>
-                </div>
-
-                <div className="md:hidden flex gap-2 justify-center">
-                  <Link to="/login" className="text-white bg-green-500 px-4 py-2 rounded-full text-sm font-medium shadow-md hover:bg-green-400 transition-all duration-300">
-                    Login
-                  </Link>
-                  <Link to="/signup" className="text-white bg-green-500 px-4 py-2 rounded-full text-sm font-medium shadow-md hover:bg-green-400 transition-all duration-300">
-                    Sign Up
-                  </Link>
-                </div>
+                <Link
+                  to="/signup"
+                  className="flex-1 text-center text-white bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-gray-600 border border-gray-600 transition-all duration-300"
+                >
+                  Sign Up
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile Search */}
-        <div className="md:hidden bg-[#333333] border-t border-gray-800 px-4 py-3">
-          <SearchBar />
-        </div>
-
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div className="bg-[#1A1A1A] text-white py-4 px-4 md:px-10 relative">
-            <nav className="flex flex-col gap-4 text-sm px-2">
-              {/* Brands Dropdown */}
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('brands')}>Brands</span>
-                  <ChevronDown
-                    className={`cursor-pointer transition-transform ${openDropdown === 'brands' ? 'rotate-180' : ''}`}
-                    onClick={() => toggleDropdown('brands')}
-                  />
-                </div>
-                {openDropdown === 'brands' && (
-                  <ul className="mt-2 space-y-1">
-                    {renderBrandsDropdown(true)}
-                  </ul>
-                )}
-              </div>
-
-              {/* Custom Embroidered Apparel Dropdown */}
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('Custom Embroidered Apparel')}>Custom Embroidered Apparel</span>
-                  <ChevronDown
-                    className={`cursor-pointer transition-transform ${openDropdown === 'Custom Embroidered Apparel' ? 'rotate-180' : ''}`}
-                    onClick={() => toggleDropdown('Custom Embroidered Apparel')}
-                  />
-                </div>
-                {openDropdown === 'Custom Embroidered Apparel' && (
-                  <ul className="mt-2 space-y-1">
-                    {dropdownMenuNames['Custom Embroidered Apparel'].map((item) => (
-                      <li key={item}>
-                        <Link to={`/Custom Embroidered Apparel/${item.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
-                          {item}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              {/* Custom Printed Apparel Dropdown */}
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown('Custom Printed Apparel')}>Custom Printed Apparel</span>
-                  <ChevronDown
-                    className={`cursor-pointer transition-transform ${openDropdown === 'Custom Printed Apparel' ? 'rotate-180' : ''}`}
-                    onClick={() => toggleDropdown('Custom Printed Apparel')}
-                  />
-                </div>
-                {openDropdown === 'Custom Printed Apparel' && (
-                  <ul className="mt-2 space-y-1">
-                    {dropdownMenuNames['Custom Printed Apparel'].map((item) => (
-                      <li key={item}>
-                        <Link to={`/Custom Printed Apparel/${item.toLowerCase().replace(/\s+/g, '-')}`} className="block hover:text-green-400">
-                          {item}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </nav>
-          </div>
-        )}
-
-        {/* Navigation Bar */}
-        <div className="bg-green-500 text-black py-4 px-4 md:px-10 relative">
-          <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-center gap-6 md:gap-10">
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-10">
-              {/* Category Dropdown */}
-
-              {/* Brands Dropdown */}
-<div
-  className="relative"
-  onMouseEnter={() => handleDropdownMouseEnter('brands')}
-  onMouseLeave={handleDropdownMouseLeave}
->
-  <Link
-    to="/all-brands"
-    className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
-    onClick={() => setOpenDropdown(null)}
-  >
-    Brands
-  </Link>
-  {openDropdown === 'brands' && (
-    <>
-      {/* Hover buffer area above dropdown */}
-      <div
-        style={{ position: 'absolute', top: '-10px', left: 0, width: '100%', height: '10px', zIndex: 60 }}
-        onMouseEnter={() => setHoverBuffer(false)}
-        onMouseLeave={handleDropdownMouseLeave}
-      />
-      <div
-  className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-full max-w-screen-xl z-50 px-8 py-6 animate-fadeIn"
-  style={{ minWidth: 600 }}
-  onMouseEnter={() => setHoverBuffer(false)}
-  onMouseLeave={handleDropdownMouseLeave}
->
-  {renderBrandsDropdown()}
-</div>
-    </>
-  )}
-</div>
-
-{/* Categories Dropdown */}
-<div
-  className="relative"
-  onMouseEnter={() => handleDropdownMouseEnter('categories')}
-  onMouseLeave={handleDropdownMouseLeave}
->
-  <Link
-    to="/all-categories"
-    className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
-    onClick={() => setOpenDropdown(null)}
-  >
-    Categories
-  </Link>
-  {openDropdown === 'categories' && (
-    <>
-      {/* Hover buffer area above dropdown */}
-      <div
-        style={{ position: 'absolute', top: '-10px', left: 0, width: '100%', height: '10px', zIndex: 60 }}
-        onMouseEnter={() => setHoverBuffer(false)}
-        onMouseLeave={handleDropdownMouseLeave}
-      />
 
 
-<div
-  className="absolute top-full left-0 mt-3 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl w-full max-w-screen-xl z-50 px-8 py-6 animate-fadeIn"
-  style={{ minWidth: 600 }}
-  onMouseEnter={() => setHoverBuffer(false)}
-  onMouseLeave={handleDropdownMouseLeave}
->
-  {renderCategoriesDropdown()}
-</div>
-
-    </>
-  )}
-</div>
-
-              {/* Food Service Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => isDesktop && setOpenDropdown('Custom Printed Apparel')}
-                onMouseLeave={() => isDesktop && setOpenDropdown(null)}
-              >
-              <Link
-                to="/"
-                className="cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200"
-                onClick={() => !isDesktop && toggleDropdown('Custom Printed Apparel')}
-              >
-                Custom Printed Apparel
-              </Link>
-                {openDropdown === 'Custom Printed Apparel' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-[#121212] text-white border border-gray-700 rounded-xl shadow-2xl w-[600px] z-50 p-6 grid grid-cols-1 place-items-center animate-fadeIn">
-                    <div className="flex flex-col items-center justify-center w-full">
-                      <h4 className="text-2xl font-semibold text-green-400 mb-3 text-center">Coming Soon</h4>
-                    </div>
+          {/* Mobile Menu */}
+          {menuOpen && (
+            <div className="bg-[#1A1A1A] text-white py-4 px-4 md:px-10 relative">
+              <nav className="flex flex-col gap-4 text-sm px-2">
+                {/* Brands Dropdown */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown("brands")}>
+                      Brands
+                    </span>
+                    <ChevronDown
+                      className={`cursor-pointer transition-transform ${openDropdown === "brands" ? "rotate-180" : ""}`}
+                      onClick={() => toggleDropdown("brands")}
+                    />
                   </div>
-                )}
-              </div>
-            </nav>
+                  {openDropdown === "brands" && <div className="mt-2">{renderBrandsDropdown(true)}</div>}
+                </div>
 
-            {/* Mobile Nav */}
+                {/* Categories Dropdown */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold cursor-pointer" onClick={() => toggleDropdown("categories")}>
+                      Categories
+                    </span>
+                    <ChevronDown
+                      className={`cursor-pointer transition-transform ${openDropdown === "categories" ? "rotate-180" : ""}`}
+                      onClick={() => toggleDropdown("categories")}
+                    />
+                  </div>
+                  {openDropdown === "categories" && <div className="mt-2">{renderCategoriesDropdown(true)}</div>}
+                </div>
+
+                {/* Custom Embroidered Apparel Dropdown */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="font-semibold cursor-pointer"
+                      onClick={() => toggleDropdown("Custom Embroidered Apparel")}
+                    >
+                      Custom Embroidered Apparel
+                    </span>
+                    <ChevronDown
+                      className={`cursor-pointer transition-transform ${
+                        openDropdown === "Custom Embroidered Apparel" ? "rotate-180" : ""
+                      }`}
+                      onClick={() => toggleDropdown("Custom Embroidered Apparel")}
+                    />
+                  </div>
+                  {openDropdown === "Custom Embroidered Apparel" && (
+                    <div className="mt-2">{renderCustomApparel("Custom Embroidered Apparel", true)}</div>
+                  )}
+                </div>
+
+                {/* Custom Printed Apparel Dropdown */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="font-semibold cursor-pointer"
+                      onClick={() => toggleDropdown("Custom Printed Apparel")}
+                    >
+                      Custom Printed Apparel
+                    </span>
+                    <ChevronDown
+                      className={`cursor-pointer transition-transform ${
+                        openDropdown === "Custom Printed Apparel" ? "rotate-180" : ""
+                      }`}
+                      onClick={() => toggleDropdown("Custom Printed Apparel")}
+                    />
+                  </div>
+                  {openDropdown === "Custom Printed Apparel" && (
+                    <div className="mt-2">{renderCustomApparel("Custom Printed Apparel", true)}</div>
+                  )}
+                </div>
+              </nav>
+            </div>
+          )}
+
+          {/* Navigation Bar */}
+          <div className="bg-green-500 text-black py-4 px-4 md:px-10 relative">
+            <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-center gap-6 md:gap-10">
+              {/* Desktop Nav */}
+              <nav className="hidden md:flex items-center gap-10">
+                {/* Brands Dropdown */}
+                <div
+                  ref={(el) => (navRefs.current["brands"] = el)}
+                  className="relative group"
+                  onMouseEnter={() => handleNavMouseEnter("brands")}
+                  onMouseLeave={handleNavMouseLeave}
+                >
+                  <Link
+                    to="/all-brands"
+                    className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
+                      openDropdown === "brands" ? "text-[#f2f1e6]" : ""
+                    }`}
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    Brands
+                  </Link>
+                  {/* Invisible buffer to prevent dropdown from closing */}
+                  <div className="absolute h-8 w-full bottom-0 left-0 translate-y-full opacity-0" />
+                </div>
+
+                {/* Categories Dropdown */}
+                <div
+                  ref={(el) => (navRefs.current["categories"] = el)}
+                  className="relative group"
+                  onMouseEnter={() => handleNavMouseEnter("categories")}
+                  onMouseLeave={handleNavMouseLeave}
+                >
+                  <Link
+                    to="/all-categories"
+                    className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
+                      openDropdown === "categories" ? "text-[#f2f1e6]" : ""
+                    }`}
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    Categories
+                  </Link>
+                  {/* Invisible buffer to prevent dropdown from closing */}
+                  <div className="absolute h-8 w-full bottom-0 left-0 translate-y-full opacity-0" />
+                </div>
+
+                {/* Custom Embroidered Apparel Dropdown */}
+                <div
+                  ref={(el) => (navRefs.current["Custom Embroidered Apparel"] = el)}
+                  className="relative group"
+                  onMouseEnter={() => handleNavMouseEnter("Custom Embroidered Apparel")}
+                  onMouseLeave={handleNavMouseLeave}
+                >
+                  <Link
+                    to="/custom-embroidered-apparel"
+                    className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
+                      openDropdown === "Custom Embroidered Apparel" ? "text-[#f2f1e6]" : ""
+                    }`}
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    Custom Embroidered Apparel
+                  </Link>
+                  {/* Invisible buffer to prevent dropdown from closing */}
+                  <div className="absolute h-8 w-full bottom-0 left-0 translate-y-full opacity-0" />
+                </div>
+
+                {/* Custom Printed Apparel Dropdown */}
+                <div
+                  ref={(el) => (navRefs.current["Custom Printed Apparel"] = el)}
+                  className="relative group"
+                  onMouseEnter={() => handleNavMouseEnter("Custom Printed Apparel")}
+                  onMouseLeave={handleNavMouseLeave}
+                >
+                  <Link
+                    to="/custom-printed-apparel"
+                    className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
+                      openDropdown === "Custom Printed Apparel" ? "text-[#f2f1e6]" : ""
+                    }`}
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    Custom Printed Apparel
+                  </Link>
+                  {/* Invisible buffer to prevent dropdown from closing */}
+                  <div className="absolute h-8 w-full bottom-0 left-0 translate-y-full opacity-0" />
+                </div>
+              </nav>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-  );
-};
+      </header>
+
+      {/* Full-width Dropdown Overlay */}
+      {openDropdown && isDesktop && (
+        <div className={`fixed inset-0 z-40 ${isClosing ? "animate-fadeOut" : "animate-fadeIn"}`}>
+          {/* Background Overlay with Blue Tint */}
+          <div className="absolute inset-0 bg-blue-900/20 backdrop-blur-sm" onClick={handleCloseDropdown} />
+
+          {/* Dropdown Content */}
+          <div
+            ref={(el) => (dropdownRefs.current[openDropdown] = el)}
+            className={`absolute top-[120px] left-0 right-0 bg-[#1a1a1a] border-t border-gray-700 shadow-2xl ${
+              isClosing ? "animate-slideUp" : "animate-slideDown"
+            }`}
+            onMouseEnter={handleDropdownMouseEnter}
+            onMouseLeave={handleDropdownMouseLeave}
+          >
+            {openDropdown === "brands" && renderBrandsDropdown()}
+            {openDropdown === "categories" && renderCategoriesDropdown()}
+            {openDropdown === "Custom Embroidered Apparel" && renderCustomApparel("Custom Embroidered Apparel")}
+            {openDropdown === "Custom Printed Apparel" && renderCustomApparel("Custom Printed Apparel")}
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+        
+        .animate-slideDown {
+          animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .animate-slideUp {
+          animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out;
+        }
+        
+        .animate-fadeOut {
+          animation: fadeOut 0.3s ease-out;
+        }
+      `}</style>
+    </>
+  )
+}
 
 export default Header;
