@@ -29,6 +29,7 @@ import AllBrandPage from './pages/all-brand';
 import AllCategoriesPage from './pages/all-categories';
 import { Product } from './components/Products/ProductCard';
 import TestProductPage from './pages/testProductPage';
+import ThreeDProducts from './pages/testProductPage';
 
 import SecondTestProductPage from './pages/testProductPagesecond';
 import HomeBrandGrid from './components/Products/HomeBrandGrid';
@@ -154,6 +155,7 @@ function App() {
             <Route path="/:category" element={<CategoryPage />} />
             <Route path="/product/:sku" element={<DynamicProductPage />} />
             <Route path='/brands/:category' element={<DynamicBrands/>} />
+            <Route path="/3dproducts/:sku" element={<ThreeDProducts />} />
 
              <Route path='/all-brands' element={<AllBrandPage/>} />
              <Route path='/all-categories' element={<AllCategoriesPage/>} />
