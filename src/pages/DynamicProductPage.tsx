@@ -42,24 +42,26 @@ const DynamicProductPage: React.FC = () => {
 
   if (!product) return <div>Product not found</div>;
 
-  // Collect all available images (filter out empty strings, duplicates, and ensure only unique, non-empty images)
-  let images = [
-    product.colorFrontImage && product.colorFrontImage !== '' ? `https://www.ssactivewear.com/${product.colorFrontImage}` : undefined,
-    product.colorSideImage && product.colorSideImage !== '' ? `https://www.ssactivewear.com/${product.colorSideImage}` : undefined,
-    product.colorBackImage && product.colorBackImage !== '' ? `https://www.ssactivewear.com/${product.colorBackImage}` : undefined,
-    product.colorOnModelFrontImage && product.colorOnModelFrontImage !== '' ? `https://www.ssactivewear.com/${product.colorOnModelFrontImage}` : undefined,
-    product.colorOnModelSideImage && product.colorOnModelSideImage !== '' ? `https://www.ssactivewear.com/${product.colorOnModelSideImage}` : undefined,
-    product.colorOnModelBackImage && product.colorOnModelBackImage !== '' ? `https://www.ssactivewear.com/${product.colorOnModelBackImage}` : undefined,
-  ].filter((img): img is string => !!img && img !== 'https://www.ssactivewear.com/');
-  // Remove duplicates (keep only unique images)
-  images = images.filter((img, idx, arr) => arr.indexOf(img) === idx);
-  // If only one unique image, keep only one
-  if (images.length > 1 && images.every((img) => img === images[0])) {
-    images = [images[0]];
+  // Ensure images is always an array
+  let images: string[] = [];
+  if (product) {
+    images = [
+      product.colorFrontImage && product.colorFrontImage !== '' ? `https://www.ssactivewear.com/${product.colorFrontImage}` : undefined,
+      product.colorSideImage && product.colorSideImage !== '' ? `https://www.ssactivewear.com/${product.colorSideImage}` : undefined,
+      product.colorBackImage && product.colorBackImage !== '' ? `https://www.ssactivewear.com/${product.colorBackImage}` : undefined,
+      product.colorOnModelFrontImage && product.colorOnModelFrontImage !== '' ? `https://www.ssactivewear.com/${product.colorOnModelFrontImage}` : undefined,
+      product.colorOnModelSideImage && product.colorOnModelSideImage !== '' ? `https://www.ssactivewear.com/${product.colorOnModelSideImage}` : undefined,
+      product.colorOnModelBackImage && product.colorOnModelBackImage !== '' ? `https://www.ssactivewear.com/${product.colorOnModelBackImage}` : undefined,
+    ].filter((img): img is string => !!img && img !== 'https://www.ssactivewear.com/');
+    // Remove duplicates (keep only unique images)
+    images = images.filter((img, idx, arr) => arr.indexOf(img) === idx);
+    // If only one unique image, keep only one
+    if (images.length > 1 && images.every((img) => img === images[0])) {
+      images = [images[0]];
+    }
   }
-
   // If there are no images, show a placeholder
-  if (images.length === 0) {
+  if (!Array.isArray(images) || images.length === 0) {
     images = ["/public/img01.avif"];
   }
   // If only one image, disable infinite and arrows in slider

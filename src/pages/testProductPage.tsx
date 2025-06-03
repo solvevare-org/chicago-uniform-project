@@ -52,9 +52,27 @@ const ThreeDProducts: React.FC = () => {
   const [draggedSide, setDraggedSide] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState<{x: number, y: number} | null>(null);
   const [flipped, setFlipped] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // --- FIX: Add selectedLockedArea state and update logic ---
+  const [selectedLockedArea, setSelectedLockedArea] = useState<Record<number, number>>({});
+  // --- FIX: Add missing handlers and state for quantity, subtotal, flipping, and images ---
+  const [subtotal, setSubtotal] = useState(0);
 
-  // Restore selectedLockedArea state variable for locked logo area logic
-  const selectedLockedArea: Record<number, number> = {};
+  useEffect(() => {
+    if (product && product.price) {
+      setSubtotal(product.price * quantity);
+    }
+  }, [product, quantity]);
+
+  const handleQuantityChange = (newQty: number) => {
+    if (newQty < 1) return;
+    setQuantity(newQty);
+  };
+
+  const handleFlip = () => {
+    setFlipped((prev) => !prev);
+    setCurrentImageIndex((prev) => (prev === 0 ? 1 : 0));
+  };
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -79,82 +97,89 @@ const ThreeDProducts: React.FC = () => {
     fetchProductDetails();
   }, [sku]);
 
+  // --- FIX: Robust fallback image logic ---
+  const images: string[] = React.useMemo(() => {
+    if (!product) return [];
+    let imgs = [
+      product.colorFrontImage && product.colorFrontImage !== '' ? product.colorFrontImage : undefined,
+      product.colorBackImage && product.colorBackImage !== '' ? product.colorBackImage : undefined,
+    ].filter((img): img is string => !!img);
+    imgs = imgs.filter((img, idx, arr) => arr.indexOf(img) === idx);
+    if (imgs.length > 1 && imgs.every((img) => img === imgs[0])) {
+      imgs = [imgs[0]];
+    }
+    if (imgs.length === 0) {
+      if (product.image && product.image !== '') {
+        imgs = [product.image];
+      } else {
+        imgs = ["/public/img01.avif"];
+      }
+    }
+    return imgs;
+  }, [product]);
+
   if (loading) return <TypewriterLoading />;
   if (!product || !product.sku) {
     console.log('DEBUG: Product fetch result:', product);
     return <div className="flex flex-col items-center justify-center min-h-screen text-2xl text-red-400">Product not found</div>;
   }
 
-  // Collect only front and back images for 3D effect, using direct API links
-  let images = [
-    product.colorFrontImage && product.colorFrontImage !== '' ? product.colorFrontImage : undefined,
-    product.colorBackImage && product.colorBackImage !== '' ? product.colorBackImage : undefined,
-  ].filter((img): img is string => !!img);
-  // Remove duplicates (keep only unique images)
-  images = images.filter((img, idx, arr) => arr.indexOf(img) === idx);
-  // If only one unique image, keep only one
-  if (images.length > 1 && images.every((img) => img === images[0])) {
-    images = [images[0]];
-  }
-  // If there are no images, show a placeholder
-  if (images.length === 0) {
-    images = ["/public/img01.avif"];
-  }
-  // If only one image, disable infinite and arrows in slider
-  const handleFlip = () => setFlipped(f => !f);
-
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= product.caseQty) {
-      setQuantity(newQuantity);
-    }
-  };
-
   // Define locked logo positions for baseCategoryID 16 (different for front/back)
-  const lockedLogoAreas = product.baseCategoryID === '16'
+  const isLockedLogo = product.baseCategoryID === '16';
+  const lockedLogoAreas = isLockedLogo
     ? [
-        // Front image boxes
         [
-          { x: 80, y: 20, w: 40, h: 40, label: 'Shoulder' },
-          { x: 20, y: 70, w: 40, h: 40, label: 'Pocket' },
-          { x: 50, y: 45, w: 50, h: 50, label: 'Chest' },
+          { x: 90,  y: 90,  w: 55,  h: 45,  label: 'Pocket (Left)' },
+          { x: 220, y: 90,  w: 55,  h: 45,  label: 'Pocket (Right)' },
+          { x: 105, y: 200, w: 140, h: 110, label: 'Front Center' },
         ],
-        // Back image boxes (example: different positions/sizes)
         [
-          { x: 75, y: 25, w: 35, h: 35, label: 'Shoulder' },
-          { x: 25, y: 75, w: 45, h: 45, label: 'Pocket' },
-          { x: 50, y: 60, w: 60, h: 40, label: 'Back Center' },
+          { x: 105, y: 60, w: 140, h: 60, label: 'Back Top' },
+          { x: 105, y: 200, w: 140, h: 110, label: 'Back Center' },
         ],
       ]
-    : [];
+    : [[], []]; // Always provide two arrays for front/back
 
   // --- 3D Flip Card ---
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const reader = new FileReader();
       reader.onload = () => {
-        if (selectedLockedArea[flipped ? 1 : 0] !== undefined) {
-          const areaIdx = selectedLockedArea[flipped ? 1 : 0];
+        if (!flipped) {
+          let areaIdx = selectedLockedArea[0];
+          if (areaIdx === undefined) areaIdx = 0;
+          const area = lockedLogoAreas[0][areaIdx];
+          setSelectedLockedArea(prev => ({ ...prev, 0: areaIdx }));
+          // Auto-size logo to fit inside the box (with margin)
+          const margin = 8;
+          const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
           setLogoData((prev) => ({
             ...prev,
-            [flipped ? 1 : 0]: {
-              ...prev[flipped ? 1 : 0],
+            0: {
+              ...prev[0],
               image: reader.result as string,
-              x: lockedLogoAreas[flipped ? 1 : 0][areaIdx].x + lockedLogoAreas[flipped ? 1 : 0][areaIdx].w / 2,
-              y: lockedLogoAreas[flipped ? 1 : 0][areaIdx].y + lockedLogoAreas[flipped ? 1 : 0][areaIdx].h / 2,
-              size: prev[flipped ? 1 : 0]?.size || 50,
-              rotation: prev[flipped ? 1 : 0]?.rotation || 0,
+              x: area.x + area.w / 2,
+              y: area.y + area.h / 2,
+              size: logoSize,
+              rotation: prev[0]?.rotation || 0,
+              _noTransition: false,
             },
           }));
         } else {
+          // BACK: Place in center, auto-size to back box
+          const area = lockedLogoAreas[1][0];
+          const margin = 8;
+          const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
           setLogoData((prev) => ({
             ...prev,
-            [flipped ? 1 : 0]: {
-              ...prev[flipped ? 1 : 0],
+            1: {
+              ...prev[1],
               image: reader.result as string,
-              x: prev[flipped ? 1 : 0]?.x || 50,
-              y: prev[flipped ? 1 : 0]?.y || 50,
-              size: prev[flipped ? 1 : 0]?.size || 50,
-              rotation: prev[flipped ? 1 : 0]?.rotation || 0,
+              x: area.x + area.w / 2,
+              y: area.y + area.h / 2,
+              size: logoSize,
+              rotation: prev[1]?.rotation || 0,
+              _noTransition: false,
             },
           }));
         }
@@ -212,21 +237,33 @@ const ThreeDProducts: React.FC = () => {
   const handleLogoDragMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (isDragging && draggedSide !== null && logoData[draggedSide]?.image) {
       const rect = event.currentTarget.getBoundingClientRect();
-      let x = event.clientX - rect.left - (dragOffset?.x || 0);
-      let y = event.clientY - rect.top - (dragOffset?.y || 0);
-      // If locked, restrict to selected box
-      if (selectedLockedArea[draggedSide] !== undefined) {
-        const area = lockedLogoAreas[draggedSide][selectedLockedArea[draggedSide]];
+      let x = event.clientX - rect.left - (logoData[draggedSide].size || 50) / 2;
+      let y = event.clientY - rect.top - (logoData[draggedSide].size || 50) / 2;
+      // FRONT: Always restrict to currently selected box, but allow full movement inside the box
+      if (isLockedLogo && draggedSide === 0 && lockedLogoAreas[0].length > 0) {
+        const areaIdx = selectedLockedArea[0] ?? 0;
+        const area = lockedLogoAreas[0][areaIdx];
+        // Clamp logo so its center stays inside the box
         x = Math.max(area.x, Math.min(x, area.x + area.w));
         y = Math.max(area.y, Math.min(y, area.y + area.h));
+        setLogoData((prev) => ({
+          ...prev,
+          0: {
+            ...prev[0],
+            x,
+            y,
+            _noTransition: true,
+          },
+        }));
+        return;
       }
+      // BACK: No snap/restrict for other categories
       setLogoData((prev) => ({
         ...prev,
         [draggedSide]: {
           ...prev[draggedSide],
           x,
           y,
-          // Add a flag to disable transition while dragging
           _noTransition: true,
         },
       }));
@@ -234,38 +271,45 @@ const ThreeDProducts: React.FC = () => {
   };
 
   const stopDragging = () => {
-    if (draggedSide !== null && selectedLockedArea[draggedSide] !== undefined) {
-      const area = lockedLogoAreas[draggedSide][selectedLockedArea[draggedSide]];
-      const centerX = area.x + area.w / 2;
-      const centerY = area.y + area.h / 2;
-      const logo = logoData[draggedSide];
-      if (logo) {
-        const dist = Math.sqrt(
-          Math.pow((logo.x || 0) - centerX, 2) + Math.pow((logo.y || 0) - centerY, 2)
-        );
-        if (dist < SNAP_THRESHOLD) {
-          // Snap to center with transition
-          setLogoData((prev) => ({
-            ...prev,
-            [draggedSide]: {
-              ...prev[draggedSide],
-              x: centerX,
-              y: centerY,
-              _noTransition: false,
-            },
-          }));
-        } else {
-          // Remove transition flag
-          setLogoData((prev) => ({
-            ...prev,
-            [draggedSide]: {
-              ...prev[draggedSide],
-              _noTransition: false,
-            },
-          }));
+    // FRONT: Snap to nearest box center if close
+    if (isLockedLogo && draggedSide === 0 && lockedLogoAreas[0].length > 0) {
+      const logo = logoData[0];
+      let snapIdx = selectedLockedArea[0] ?? 0;
+      let minDist = Infinity;
+      let snapX = logo.x, snapY = logo.y;
+      lockedLogoAreas[0].forEach((area, idx) => {
+        const centerX = area.x + area.w / 2;
+        const centerY = area.y + area.h / 2;
+        const dist = Math.sqrt(Math.pow((logo.x || 0) - centerX, 2) + Math.pow((logo.y || 0) - centerY, 2));
+        if (dist < SNAP_THRESHOLD && dist < minDist) {
+          minDist = dist;
+          snapIdx = idx;
+          snapX = centerX;
+          snapY = centerY;
         }
+      });
+      if (minDist < SNAP_THRESHOLD) {
+        setSelectedLockedArea(prev => ({ ...prev, 0: snapIdx }));
+        setLogoData((prev) => ({
+          ...prev,
+          0: {
+            ...prev[0],
+            x: snapX,
+            y: snapY,
+            _noTransition: false,
+          },
+        }));
+      } else {
+        setLogoData((prev) => ({
+          ...prev,
+          0: {
+            ...prev[0],
+            _noTransition: false,
+          },
+        }));
       }
     }
+    // BACK: No snap
     setIsDragging(false);
     setDraggedSide(null);
     setDragOffset(null);
@@ -327,25 +371,45 @@ const ThreeDProducts: React.FC = () => {
                     style={{ background: 'none', zIndex: 1 }}
                   />
                   {/* Locked logo areas (front) */}
-                  {lockedLogoAreas[0].map((area, idx) => (
-                    <div
-                      key={idx}
-                      className={`absolute border-2 rounded-lg pointer-events-none ${selectedLockedArea[0] === idx ? 'border-green-400' : 'border-red-500'}`}
-                      style={{
-                        left: `${area.x}%`,
-                        top: `${area.y}%`,
-                        width: `${area.w}px`,
-                        height: `${area.h}px`,
-                        transform: 'translate(-50%, -50%)',
-                        zIndex: 10,
-                        boxShadow: selectedLockedArea[0] === idx ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
-                        pointerEvents: 'none',
-                        background: 'rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 px-2 py-0.5 rounded shadow" style={{ color: selectedLockedArea[0] === idx ? '#22c55e' : '#f87171', zIndex: 11 }}>{area.label}</span>
-                    </div>
-                  ))}
+                  {isLockedLogo && lockedLogoAreas[0] && lockedLogoAreas[0].length > 0 && lockedLogoAreas[0].map((area, idx) => {
+                    const isSelected = selectedLockedArea[0] === idx;
+                    return (
+                      <div
+                        key={idx}
+                        className={`absolute border-2 rounded-lg pointer-events-auto ${isSelected ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
+                        style={{
+                          left: `${area.x}px`,
+                          top: `${area.y}px`,
+                          width: `${area.w}px`,
+                          height: `${area.h}px`,
+                          zIndex: 10,
+                          boxShadow: isSelected ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
+                          background: 'rgba(0,0,0,0.05)',
+                        }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          setSelectedLockedArea(prev => ({ ...prev, 0: idx }));
+                          if (logoData[0]?.image) {
+                            const area = lockedLogoAreas[0][idx];
+                            const margin = 8;
+                            const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+                            setLogoData(prev => ({
+                              ...prev,
+                              0: {
+                                ...prev[0],
+                                x: area.x + area.w / 2,
+                                y: area.y + area.h / 2,
+                                size: logoSize,
+                                _noTransition: false,
+                              },
+                            }));
+                          }
+                        }}
+                      >
+                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 px-2 py-0.5 rounded shadow" style={{ color: isSelected ? '#22c55e' : '#f87171', zIndex: 11 }}>{area.label}</span>
+                      </div>
+                    );
+                  })}
                   {/* Logo overlay on front - moveable and snappable */}
                   {logoData[0]?.image && (
                     <img
@@ -353,8 +417,8 @@ const ThreeDProducts: React.FC = () => {
                       alt="Logo"
                       className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg cursor-move"
                       style={{
-                        top: logoData[0].y || '50%',
-                        left: logoData[0].x || '50%',
+                        top: logoData[0].y ? `${logoData[0].y}px` : '50%',
+                        left: logoData[0].x ? `${logoData[0].x}px` : '50%',
                         width: `${logoData[0].size || 50}px`,
                         height: `${logoData[0].size || 50}px`,
                         transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
@@ -392,25 +456,44 @@ const ThreeDProducts: React.FC = () => {
                     style={{ background: 'none', zIndex: 1 }}
                   />
                   {/* Locked logo areas (back) */}
-                  {lockedLogoAreas[1].map((area, idx) => (
-                    <div
-                      key={idx}
-                      className={`absolute border-2 rounded-lg pointer-events-none ${selectedLockedArea[1] === idx ? 'border-green-400' : 'border-red-500'}`}
-                      style={{
-                        left: `${area.x}%`,
-                        top: `${area.y}%`,
-                        width: `${area.w}px`,
-                        height: `${area.h}px`,
-                        transform: 'translate(-50%, -50%)',
-                        zIndex: 10,
-                        boxShadow: selectedLockedArea[1] === idx ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
-                        pointerEvents: 'none',
-                        background: 'rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 px-2 py-0.5 rounded shadow" style={{ color: selectedLockedArea[1] === idx ? '#22c55e' : '#f87171', zIndex: 11 }}>{area.label}</span>
-                    </div>
-                  ))}
+                  {isLockedLogo && lockedLogoAreas[1] && lockedLogoAreas[1].length > 0 && lockedLogoAreas[1].map((area, idx) => {
+                    const isSelected = selectedLockedArea[1] === idx;
+                    return (
+                      <div
+                        key={idx}
+                        className={`absolute border-2 rounded-lg pointer-events-auto ${isSelected ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
+                        style={{
+                          left: `${area.x}px`,
+                          top: `${area.y}px`,
+                          width: `${area.w}px`,
+                          height: `${area.h}px`,
+                          zIndex: 10,
+                          boxShadow: isSelected ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
+                          background: 'rgba(0,0,0,0.05)',
+                        }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          setSelectedLockedArea(prev => ({ ...prev, 1: idx }));
+                          if (logoData[1]?.image) {
+                            const margin = 8;
+                            const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+                            setLogoData(prev => ({
+                              ...prev,
+                              1: {
+                                ...prev[1],
+                                x: area.x + area.w / 2,
+                                y: area.y + area.h / 2,
+                                size: logoSize,
+                                _noTransition: false,
+                              },
+                            }));
+                          }
+                        }}
+                      >
+                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 px-2 py-0.5 rounded shadow" style={{ color: isSelected ? '#22c55e' : '#f87171', zIndex: 11 }}>{area.label}</span>
+                      </div>
+                    );
+                  })}
                   {/* Logo overlay on back - moveable and snappable */}
                   {logoData[1]?.image && (
                     <img
@@ -418,8 +501,8 @@ const ThreeDProducts: React.FC = () => {
                       alt="Logo"
                       className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg cursor-move"
                       style={{
-                        top: logoData[1].y || '50%',
-                        left: logoData[1].x || '50%',
+                        top: logoData[1].y ? `${logoData[1].y}px` : '50%',
+                        left: logoData[1].x ? `${logoData[1].x}px` : '50%',
                         width: `${logoData[1].size || 50}px`,
                         height: `${logoData[1].size || 50}px`,
                         transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
@@ -449,7 +532,7 @@ const ThreeDProducts: React.FC = () => {
                   className={`cursor-pointer border-2 rounded-lg ${
                     currentImageIndex === index ? 'border-green-500' : 'border-transparent'
                   }`}
-                  onClick={() => handleThumbnailClick(index)}
+                  onClick={() => setCurrentImageIndex(index)}
                 >
                   <img
                     src={image}
