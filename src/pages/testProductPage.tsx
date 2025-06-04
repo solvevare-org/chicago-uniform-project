@@ -462,14 +462,6 @@ const ThreeDProducts: React.FC = () => {
     _noTransition?: boolean;
   };
 
-  // --- Ensure selectedLockedArea resets on product or side change ---
-  // This must be the last hook before any conditional return!
-  useEffect(() => {
-    if (!loading && product && product.baseCategoryID !== undefined) {
-      setSelectedLockedArea({ 0: 0, 1: 0 });
-    }
-  }, [loading, product?.baseCategoryID, flipped]);
-
   return (
     <div className="min-h-screen bg-black from-[#0d0d0d] to-black from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
