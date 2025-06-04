@@ -118,27 +118,164 @@ const ThreeDProducts: React.FC = () => {
     return imgs;
   }, [product]);
 
+  // --- Ensure selectedLockedArea resets on product or side change ---
+  // This must be the last hook before any conditional return!
+  useEffect(() => {
+    if (!loading && product && product.baseCategoryID !== undefined) {
+      setSelectedLockedArea({ 0: 0, 1: 0 });
+    }
+  }, [loading, product?.baseCategoryID, flipped]);
+
   if (loading) return <TypewriterLoading />;
   if (!product || !product.sku) {
     console.log('DEBUG: Product fetch result:', product);
     return <div className="flex flex-col items-center justify-center min-h-screen text-2xl text-red-400">Product not found</div>;
   }
 
-  // Define locked logo positions for baseCategoryID 16 (different for front/back)
-  const isLockedLogo = product.baseCategoryID === '16';
-  const lockedLogoAreas = isLockedLogo
-    ? [
-        [
-          { x: 90,  y: 90,  w: 55,  h: 45,  label: 'Pocket (Left)' },
-          { x: 220, y: 90,  w: 55,  h: 45,  label: 'Pocket (Right)' },
-          { x: 105, y: 200, w: 140, h: 110, label: 'Front Center' },
-        ],
-        [
-          { x: 105, y: 60, w: 140, h: 60, label: 'Back Top' },
-          { x: 105, y: 200, w: 140, h: 110, label: 'Back Center' },
-        ],
-      ]
-    : [[], []]; // Always provide two arrays for front/back
+  // --- Locked Logo Area Mapping ---
+  // Only these baseCategoryIDs will have locked logo areas and snapping logic
+  const LOCKED_BASE_CATEGORY_IDS = [
+    '1', '2', '4', '5', '6', '7', '9', '10', '11', '12', '16', '26', '27'
+  ];
+  const lockedLogoAreaMap: Record<string, [Array<any>, Array<any>]> = {
+    '1': [
+      [
+        { x: 220, y: 90,  w: 55,  h: 45,  label: 'Pocket (Right)' },
+        { x: 105, y: 200, w: 140, h: 110, label: 'Front Center' },
+      ],
+      [
+        { x: 105, y: 60, w: 140, h: 60, label: 'Back Top' },
+        { x: 105, y: 200, w: 140, h: 110, label: 'Back Center' },
+      ],
+    ],
+    '16': [
+      [
+        { x: 220, y: 90,  w: 55,  h: 45,  label: 'Pocket (Right)' },
+        { x: 105, y: 200, w: 140, h: 110, label: 'Front Center' },
+      ],
+      [
+        { x: 105, y: 60, w: 140, h: 60, label: 'Back Top' },
+        { x: 105, y: 200, w: 140, h: 110, label: 'Back Center' },
+      ],
+    ],
+    '2': [
+      [
+        { x: 60,  y: 260, w: 70, h: 90, label: 'Left Leg' },
+        { x: 220, y: 260, w: 70, h: 90, label: 'Right Leg' },
+        { x: 135, y: 180, w: 80, h: 60, label: 'Front Center' },
+      ],
+      [
+        { x: 60,  y: 260, w: 70, h: 90, label: 'Back Left Leg' },
+        { x: 220, y: 260, w: 70, h: 90, label: 'Back Right Leg' },
+        { x: 135, y: 180, w: 80, h: 60, label: 'Back Center' },
+      ],
+    ],
+    '4': [
+      [
+        { x: 120, y: 120, w: 110, h: 70, label: 'Front Center' },
+      ],
+      [
+        { x: 140, y: 220, w: 70, h: 40, label: 'Back Center' },
+      ],
+    ],
+    '5': [
+      [
+        { x: 90, y: 90, w: 90, h: 70, label: 'Chest' },
+        { x: 60, y: 320, w: 60, h: 60, label: 'Left Shorts' },
+        { x: 150, y: 320, w: 60, h: 60, label: 'Right Shorts' },
+      ],
+      [
+        { x: 90, y: 90, w: 90, h: 70, label: 'Back Upper' },
+        { x: 60, y: 320, w: 60, h: 60, label: 'Back Left Shorts' },
+        { x: 150, y: 320, w: 60, h: 60, label: 'Back Right Shorts' },
+      ],
+    ],
+    '6': [
+      [
+        { x: 60, y: 220, w: 70, h: 80, label: 'Left Thigh' },
+        { x: 170, y: 220, w: 70, h: 80, label: 'Right Thigh' },
+        { x: 120, y: 140, w: 80, h: 60, label: 'Front Center' },
+      ],
+      [],
+    ],
+    '7': [
+      [
+        { x: 110, y: 70, w: 60, h: 60, label: 'Left Chest' },
+        { x: 170, y: 70, w: 60, h: 60, label: 'Center Chest' },
+        { x: 220, y: 370, w: 60, h: 40, label: 'Bottom Right' },
+      ],
+      [
+        { x: 120, y: 60, w: 80, h: 50, label: 'Upper Back' },
+        { x: 170, y: 200, w: 60, h: 60, label: 'Center Back' },
+      ],
+    ],
+    '9': [
+      [
+        { x: 80, y: 80, w: 60, h: 60, label: 'Left Chest' },
+        { x: 210, y: 80, w: 60, h: 60, label: 'Right Chest' },
+        { x: 145, y: 140, w: 70, h: 60, label: 'Center Chest' },
+      ],
+      [
+        { x: 120, y: 60, w: 80, h: 50, label: 'Upper Back' },
+        { x: 145, y: 180, w: 70, h: 60, label: 'Center Back' },
+      ],
+    ],
+    '10': [
+      [
+        { x: 90, y: 200, w: 170, h: 60, label: 'Front Center' },
+      ],
+      [
+        { x: 90, y: 200, w: 170, h: 60, label: 'Back Center' },
+      ],
+    ],
+    '11': [
+      [
+        { x: 110, y: 240, w: 60, h: 60, label: 'Left Sock' },
+        { x: 210, y: 240, w: 60, h: 60, label: 'Right Sock' },
+      ],
+      [
+        { x: 110, y: 240, w: 60, h: 60, label: 'Left Sock Back' },
+        { x: 210, y: 240, w: 60, h: 60, label: 'Right Sock Back' },
+      ],
+    ],
+    '12': [
+      [
+        { x: 130, y: 90, w: 110, h: 80, label: 'Front Center' },
+      ],
+      [
+        { x: 130, y: 90, w: 110, h: 80, label: 'Back Center' },
+      ],
+    ],
+    '26': [
+      [
+        // Example: center chest for front
+        { x: 120, y: 100, w: 100, h: 80, label: 'Front Center' },
+      ],
+      [
+        // Example: upper back for back
+        { x: 120, y: 60, w: 100, h: 60, label: 'Back Upper' },
+      ],
+    ],
+    '27': [
+      [
+        // Left chest (front)
+        { x: 70, y: 90, w: 60, h: 60, label: 'Left Chest' },
+        // Center chest (front)
+        { x: 160, y: 90, w: 60, h: 60, label: 'Center Chest' },
+      ],
+      [
+        // Upper back (back)
+        { x: 120, y: 60, w: 100, h: 60, label: 'Back Upper' },
+      ],
+    ],
+  };
+
+  // Always treat baseCategoryID as string for lookup
+  const baseCategoryKey = String(product.baseCategoryID);
+  // Only activate locked logic for the specified IDs
+  const isLockedLogo = LOCKED_BASE_CATEGORY_IDS.includes(baseCategoryKey);
+  // Always use the map for the string key, not a fallback
+  const lockedLogoAreas = lockedLogoAreaMap[baseCategoryKey] ?? [[], []];
 
   // --- 3D Flip Card ---
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,6 +462,14 @@ const ThreeDProducts: React.FC = () => {
     _noTransition?: boolean;
   };
 
+  // --- Ensure selectedLockedArea resets on product or side change ---
+  // This must be the last hook before any conditional return!
+  useEffect(() => {
+    if (!loading && product && product.baseCategoryID !== undefined) {
+      setSelectedLockedArea({ 0: 0, 1: 0 });
+    }
+  }, [loading, product?.baseCategoryID, flipped]);
+
   return (
     <div className="min-h-screen bg-black from-[#0d0d0d] to-black from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
@@ -370,7 +515,7 @@ const ThreeDProducts: React.FC = () => {
                     draggable={false}
                     style={{ background: 'none', zIndex: 1 }}
                   />
-                  {/* Locked logo areas (front) */}
+                  {/* Locked logo areas (front) - always show for locked categories */}
                   {isLockedLogo && lockedLogoAreas[0] && lockedLogoAreas[0].length > 0 && lockedLogoAreas[0].map((area, idx) => {
                     const isSelected = selectedLockedArea[0] === idx;
                     return (
@@ -455,7 +600,7 @@ const ThreeDProducts: React.FC = () => {
                     draggable={false}
                     style={{ background: 'none', zIndex: 1 }}
                   />
-                  {/* Locked logo areas (back) */}
+                  {/* Locked logo areas (back) - always show for locked categories */}
                   {isLockedLogo && lockedLogoAreas[1] && lockedLogoAreas[1].length > 0 && lockedLogoAreas[1].map((area, idx) => {
                     const isSelected = selectedLockedArea[1] === idx;
                     return (
