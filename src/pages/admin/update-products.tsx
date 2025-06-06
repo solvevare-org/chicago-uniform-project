@@ -27,7 +27,7 @@ export default function OrdersManagement() {
   const { data: orders, isLoading } = useQuery<Order[]>({
     queryKey: ["/api/orders/pending"],
     queryFn: async () => {
-      const response = await authenticatedApiRequest("GET", "http://localhost:3000/api/orders/pending");
+      const response = await authenticatedApiRequest("GET", "http://31.97.41.27:5000/api/orders/pending");
       return await response.json();
     },
   });
@@ -37,7 +37,7 @@ export default function OrdersManagement() {
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const response = await authenticatedApiRequest(
         "PATCH",
-        `http://localhost:3000/api/orders/pending/${id}`,
+        `http://31.97.41.27:5000/api/orders/pending/${id}`,
         { status }
       );
       return await response.json();
