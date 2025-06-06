@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000'; // Replace with your actual API base URL
+const API_BASE_URL = 'http://31.97.41.27:5000'; // Replace with your actual API base URL
 
 export const fetchCategories = async () => {
   try {

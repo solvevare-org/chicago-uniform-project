@@ -9,7 +9,7 @@ const HomeBrandGrid: React.FC = () => {
     async function fetchBrands() {
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:3000/api/brands/');
+        const res = await fetch('http://31.97.41.27:5000/api/brands/');
         const data = await res.json();
         setBrands(Array.isArray(data.brands) ? data.brands.slice(0, 8) : []);
       } catch (e) {
