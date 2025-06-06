@@ -52,12 +52,12 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     // Fetch brand names dynamically
-    fetch("http://31.97.41.27:5000/api/styles/brand-names")
+    fetch("http://localhost:3000/api/styles/brand-names")
       .then((res) => res.json())
       .then((data) => setBrandNames(data.brandNames || []))
       .catch(() => setBrandNames([]))
 
-    fetch("http://31.97.41.27:5000/api/styles/base-categories")
+    fetch("http://localhost:3000/api/styles/base-categories")
       .then((res) => res.json())
       .then((data) => setCategories(data.baseCategories || []))
       .catch(() => setCategories([]))
@@ -426,20 +426,7 @@ const Header: React.FC = () => {
                 <div className="w-96">
                   <SearchBar />
                 </div>
-                <div className="flex gap-3">
-                  <Link
-                    to="/login"
-                    className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 border border-gray-600 transition-all duration-300 text-sm font-medium"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 border border-gray-600 transition-all duration-300 text-sm font-medium"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
+                
               </div>
 
               {/* Mobile Menu Button */}

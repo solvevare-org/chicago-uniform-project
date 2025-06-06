@@ -21,7 +21,7 @@ const DynamicBrands: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/categories');
+        const res = await fetch('http://localhost:3000/api/categories');
         const data = await res.json();
         setCategories(data.categories || []);
       } catch {
@@ -38,7 +38,7 @@ const DynamicBrands: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://31.97.41.27:5000/api/products/by-brand/${category}`);
+        const response = await fetch(`http://localhost:3000/api/products/by-brand/${category}`);
         if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
         const data = await response.json();
         setProducts(data.products || []);

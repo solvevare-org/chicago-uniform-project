@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import html2canvas from 'html2canvas';
 
 // Typewriter-style loading component with enhanced animation and style
 const TypewriterLoading: React.FC = () => {
@@ -31,13 +32,64 @@ const TypewriterLoading: React.FC = () => {
       </div>
       <style>{`
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .animate-blink { animation: blink 1s step-end infinite; }
+        .animate-blink { animation: blink 1s step-end infinite; }a
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
         .animate-bounce { animation: bounce 1.2s infinite; }
       `}</style>
     </div>
   );
 };
+
+const PurchasePreview = React.memo(({ images, logoData }: { images: string[]; logoData: Record<number, any> }) => (
+  <div className="flex gap-4 mb-4">
+    {/* Front Preview (same as main preview, but smaller) */}
+    <div className="flex flex-col items-center">
+      <span className="text-sm text-gray-400 mb-1">Front Preview</span>
+      <div className="w-[120px] h-[150px] bg-gray-800 rounded-lg relative flex items-center justify-center">
+        <img src={images[0]} alt="Front Preview" className="absolute w-full h-full object-contain rounded-lg" />
+        {logoData[0]?.image && (
+          <img
+            src={logoData[0].image}
+            alt="Logo Front Preview"
+            className="absolute z-20"
+            style={{
+              top: logoData[0].y ? `${logoData[0].y * 120 / 350}px` : '50%',
+              left: logoData[0].x ? `${logoData[0].x * 150 / 450}px` : '50%',
+              width: `${(logoData[0].size || 50) * 120 / 350}px`,
+              height: `${(logoData[0].size || 50) * 150 / 450}px`,
+              transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
+              opacity: 1,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+      </div>
+    </div>
+    {/* Back Preview (same as main preview, but smaller) */}
+    <div className="flex flex-col items-center">
+      <span className="text-sm text-gray-400 mb-1">Back Preview</span>
+      <div className="w-[120px] h-[150px] bg-gray-800 rounded-lg relative flex items-center justify-center">
+        <img src={images[1] || images[0]} alt="Back Preview" className="absolute w-full h-full object-contain rounded-lg" />
+        {logoData[1]?.image && (
+          <img
+            src={logoData[1].image}
+            alt="Logo Back Preview"
+            className="absolute z-20"
+            style={{
+              top: logoData[1].y ? `${logoData[1].y * 120 / 350}px` : '50%',
+              left: logoData[1].x ? `${logoData[1].x * 150 / 450}px` : '50%',
+              width: `${(logoData[1].size || 50) * 120 / 350}px`,
+              height: `${(logoData[1].size || 50) * 150 / 450}px`,
+              transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
+              opacity: 1,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+      </div>
+    </div>
+  </div>
+));
 
 const ThreeDProducts: React.FC = () => {
   const { sku } = useParams<{ sku: string }>(); // Get the SKU from the route parameters
@@ -50,34 +102,95 @@ const ThreeDProducts: React.FC = () => {
   });
   const [isDragging, setIsDragging] = useState(false);
   const [draggedSide, setDraggedSide] = useState<number | null>(null);
-  const [dragOffset, setDragOffset] = useState<{x: number, y: number} | null>(null);
   const [flipped, setFlipped] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   // --- FIX: Add selectedLockedArea state and update logic ---
-  const [selectedLockedArea, setSelectedLockedArea] = useState<Record<number, number>>({});
-  // --- FIX: Add missing handlers and state for quantity, subtotal, flipping, and images ---
-  const [subtotal, setSubtotal] = useState(0);
+  const [selectedLockedArea, setSelectedLockedArea] = useState<{ side: number, idx: number }>({ side: 0, idx: 0 });
+  // --- Add state for preview modal and slider position ---
+  const [showPreview, setShowPreview] = useState(false);
+  // --- 360-degree rotation state and handlers ---
+  const [rotation360, setRotation360] = useState(0); // 0-359 degrees
+  const [sliderValue, setSliderValue] = useState(0); // 0-180 for blend/flip
+  const dragRef360 = React.useRef<{startX: number, startAngle: number, lastX: number, lastTime: number, velocity: number} | null>(null);
+  const inertiaRef = React.useRef<number | null>(null);
 
-  useEffect(() => {
-    if (product && product.price) {
-      setSubtotal(product.price * quantity);
+  const handleMouseDown360 = (e: React.MouseEvent) => {
+    const now = Date.now();
+    dragRef360.current = {
+      startX: e.clientX,
+      startAngle: rotation360,
+      lastX: e.clientX,
+      lastTime: now,
+      velocity: 0,
+    };
+    document.body.style.cursor = 'grabbing';
+    window.addEventListener('mousemove', handleMouseMove360);
+    window.addEventListener('mouseup', handleMouseUp360);
+    if (inertiaRef.current) {
+      cancelAnimationFrame(inertiaRef.current);
+      inertiaRef.current = null;
     }
-  }, [product, quantity]);
+  };
+
+  const handleMouseMove360 = (e: MouseEvent) => {
+    if (!dragRef360.current) return;
+    const now = Date.now();
+    const deltaX = e.clientX - dragRef360.current.startX;
+    let newAngle = (dragRef360.current.startAngle - deltaX * 0.7) % 360;
+    if (newAngle < 0) newAngle += 360;
+    setRotation360(Math.round(newAngle));
+    // Calculate velocity (pixels/ms)
+    const dx = e.clientX - dragRef360.current.lastX;
+    const dt = now - dragRef360.current.lastTime;
+    let velocity = 0;
+    if (dt > 0) velocity = dx / dt;
+    dragRef360.current.lastX = e.clientX;
+    dragRef360.current.lastTime = now;
+    dragRef360.current.velocity = velocity;
+  };
+
+  const handleMouseUp360 = () => {
+    document.body.style.cursor = '';
+    window.removeEventListener('mousemove', handleMouseMove360);
+    window.removeEventListener('mouseup', handleMouseUp360);
+    if (dragRef360.current && Math.abs(dragRef360.current.velocity) > 0.01) {
+      let velocity = dragRef360.current.velocity * 25;
+      const decay = 0.85;
+      let frameCount = 0;
+      const maxFrames = 18;
+      const animate = () => {
+        if (Math.abs(velocity) < 0.1 || frameCount > maxFrames) return;
+        setRotation360(prev => {
+          let next = (prev - velocity) % 360;
+          if (next < 0) next += 360;
+          return Math.round(next);
+        });
+        velocity *= decay;
+        frameCount++;
+        inertiaRef.current = requestAnimationFrame(animate);
+      };
+      inertiaRef.current = requestAnimationFrame(animate);
+    }
+    dragRef360.current = null;
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (inertiaRef.current) {
+        cancelAnimationFrame(inertiaRef.current);
+        inertiaRef.current = null;
+      }
+    };
+  }, []);
 
   const handleQuantityChange = (newQty: number) => {
     if (newQty < 1) return;
     setQuantity(newQty);
   };
 
-  const handleFlip = () => {
-    setFlipped((prev) => !prev);
-    setCurrentImageIndex((prev) => (prev === 0 ? 1 : 0));
-  };
-
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://31.97.41.27:5000/api/process-product/${sku}`, {
+        const response = await fetch(`http://localhost:3000/api/process-product/${sku}`, {
           method: 'POST'
         });
         if (!response.ok) {
@@ -119,18 +232,388 @@ const ThreeDProducts: React.FC = () => {
   }, [product]);
 
   // --- Ensure selectedLockedArea resets on product or side change ---
-  // This must be the last hook before any conditional return!
+  // This must be before any conditional return!
   useEffect(() => {
     if (!loading && product && product.baseCategoryID !== undefined) {
-      setSelectedLockedArea({ 0: 0, 1: 0 });
+      setSelectedLockedArea({ side: 0, idx: 0 });
     }
   }, [loading, product?.baseCategoryID, flipped]);
+
+  // --- Move handlers above return to avoid ReferenceError ---
+  const handleArrowLeft = () => {
+    setSliderValue(0);
+    setRotation360(0);
+  };
+  const handleArrowRight = () => {
+    setSliderValue(180);
+    setRotation360(180);
+  };
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setSliderValue(value);
+    setRotation360(value); // Sync 3D rotation with slider
+  };
+  // Keep sliderValue in sync with rotation360 (e.g., when dragging or using arrows)
+  useEffect(() => {
+    setSliderValue(rotation360);
+  }, [rotation360]);
+
+  // --- Add purchase modal state ---
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [purchaseStep, setPurchaseStep] = useState<'form' | 'sent'>('form');
+  const [compositedFront, setCompositedFront] = useState<string | null>(null);
+  const [compositedBack, setCompositedBack] = useState<string | null>(null);
+  // --- Add refs for review modal previews (for snapshot) ---
+  const reviewFrontRef = React.useRef<HTMLDivElement>(null);
+  const reviewBackRef = React.useRef<HTMLDivElement>(null);
+
+  // Add refs for front and back preview containers
+  const frontScreenshotRef = React.useRef<HTMLDivElement>(null);
+  const backScreenshotRef = React.useRef<HTMLDivElement>(null);
+
+  // --- Purchase Modal Component ---
+  const PurchaseModal = ({
+    visible,
+    onClose,
+    images,
+    logoData,
+    purchaseStep,
+    setPurchaseStep,
+    frontScreenshotRef,
+    backScreenshotRef,
+    setCompositedFront,
+    setCompositedBack,
+    compositedFront,
+    compositedBack,
+    product,
+    quantity
+  }: {
+    visible: boolean;
+    onClose: () => void;
+    images: string[];
+    logoData: Record<number, any>;
+    purchaseStep: 'form' | 'sent';
+    setPurchaseStep: (step: 'form' | 'sent') => void;
+    frontScreenshotRef: React.RefObject<HTMLDivElement>;
+    backScreenshotRef: React.RefObject<HTMLDivElement>;
+    setCompositedFront: (img: string | null) => void;
+    setCompositedBack: (img: string | null) => void;
+    compositedFront: string | null;
+    compositedBack: string | null;
+    product: any;
+    quantity: number;
+  }) => {
+    const [mergedFront, setMergedFront] = React.useState<string | null>(null);
+    const [mergedBack, setMergedBack] = React.useState<string | null>(null);
+    // Move input states inside modal to prevent focus loss
+    const [localName, setLocalName] = React.useState('');
+    const [localAddress, setLocalAddress] = React.useState('');
+    const [localDescription, setLocalDescription] = React.useState('');
+    const [localEmail, setLocalEmail] = React.useState('');
+    const [localPhone, setLocalPhone] = React.useState('');
+
+    // Helper to merge front image and its logo
+    const mergeFrontImage = async () => {
+      if (!images[0]) return;
+      const width = 350, height = 450;
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const productImg = new window.Image();
+      productImg.crossOrigin = 'anonymous';
+      productImg.src = images[0];
+      await new Promise(res => { productImg.onload = res; });
+      ctx.drawImage(productImg, 0, 0, width, height);
+      if (logoData[0]?.image) {
+        const logoImg = new window.Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.src = logoData[0].image;
+        await new Promise(res => { logoImg.onload = res; });
+        ctx.save();
+        ctx.translate(logoData[0].x || width/2, logoData[0].y || height/2);
+        ctx.rotate(((logoData[0].rotation || 0) * Math.PI) / 180);
+        ctx.drawImage(
+          logoImg,
+          -(logoData[0].size || 50) / 2,
+          -(logoData[0].size || 50) / 2,
+          logoData[0].size || 50,
+          logoData[0].size || 50
+        );
+        ctx.restore();
+      }
+      setMergedFront(canvas.toDataURL());
+    };
+    // Helper to merge back image and its logo
+    const mergeBackImage = async () => {
+      if (!images[1]) return;
+      const width = 350, height = 450;
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const productImg = new window.Image();
+      productImg.crossOrigin = 'anonymous';
+      productImg.src = images[1];
+      await new Promise(res => { productImg.onload = res; });
+      ctx.drawImage(productImg, 0, 0, width, height);
+      if (logoData[1]?.image) {
+        const logoImg = new window.Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.src = logoData[1].image;
+        await new Promise(res => { logoImg.onload = res; });
+        ctx.save();
+        ctx.translate(logoData[1].x || width/2, logoData[1].y || height/2);
+        ctx.rotate(((logoData[1].rotation || 0) * Math.PI) / 180);
+        ctx.drawImage(
+          logoImg,
+          -(logoData[1].size || 50) / 2,
+          -(logoData[1].size || 50) / 2,
+          logoData[1].size || 50,
+          logoData[1].size || 50
+        );
+        ctx.restore();
+      }
+      setMergedBack(canvas.toDataURL());
+    };
+
+    React.useEffect(() => {
+      if (purchaseStep === 'sent') {
+        mergeFrontImage();
+        mergeBackImage();
+      } else {
+        setMergedFront(null);
+        setMergedBack(null);
+      }
+    }, [purchaseStep]);
+
+    if (!visible) return null;
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div className="relative bg-gray-900 rounded-xl shadow-2xl p-6 flex flex-col items-center min-w-[370px] max-w-[95vw]">
+          <button onClick={onClose} className="absolute top-2 right-2 text-white text-2xl">×</button>
+          {purchaseStep === 'form' ? (
+            <>
+              <h2 className="text-2xl font-bold text-green-400 mb-2">Review & Send Custom Order</h2>
+              <PurchasePreview images={images} logoData={logoData} />
+              <textarea
+                className="w-full min-h-[60px] max-h-[120px] mb-3 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Add custom description (optional)"
+                value={localDescription}
+                onChange={e => setLocalDescription(e.target.value)}
+              />
+              <input
+                className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Full Name"
+                type="text"
+                value={localName}
+                onChange={e => setLocalName(e.target.value)}
+              />
+              <input
+                className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Address"
+                type="text"
+                value={localAddress}
+                onChange={e => setLocalAddress(e.target.value)}
+              />
+              <input
+                className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Email address"
+                type="email"
+                value={localEmail}
+                onChange={e => setLocalEmail(e.target.value)}
+              />
+              <input
+                className="w-full mb-4 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Phone number"
+                type="tel"
+                value={localPhone}
+                onChange={e => setLocalPhone(e.target.value)}
+              />
+              <button
+                className="w-full py-2 bg-green-500 text-black rounded-lg font-bold hover:bg-green-400 mb-2"
+                onClick={async () => {
+                  // Take screenshot of front preview
+                  let frontScreenshot = null;
+                  if (frontScreenshotRef.current) {
+                    const canvas = await html2canvas(frontScreenshotRef.current, { backgroundColor: null });
+                    frontScreenshot = canvas.toDataURL();
+                    setCompositedFront(frontScreenshot);
+                    localStorage.setItem('lastOrderMergedFront', frontScreenshot);
+                  }
+                  // Take screenshot of back preview
+                  let backScreenshot = null;
+                  if (backScreenshotRef.current) {
+                    const canvas = await html2canvas(backScreenshotRef.current, { backgroundColor: null });
+                    backScreenshot = canvas.toDataURL();
+                    setCompositedBack(backScreenshot);
+                    localStorage.setItem('lastOrderMergedBack', backScreenshot);
+                  }
+                  // POST order data to backend, using requested structure
+                  try {
+                    const response = await fetch('http://localhost:3000/api/orders/pending', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        user: {
+                          email: localEmail,
+                          phone: localPhone,
+                          name: localName,
+                          address: localAddress,
+                          description: localDescription,
+                        },
+                        product: {
+                          sku: product?.sku || '',
+                          name: product?.styleName || '',
+                        },
+                        quantity: quantity,
+                        images: {
+                          front: frontScreenshot,
+                          back: backScreenshot,
+                          providedFront: images[0] || null,
+                          providedBack: images[1] || null,
+                        }
+                      })
+                    });
+                    if (!response.ok) throw new Error('Failed to submit order');
+                    alert('Order submitted successfully!');
+                  } catch (err) {
+                    alert('Failed to submit order. Please try again.');
+                  }
+                  setPurchaseStep('sent');
+                }}
+                disabled={!localName || !localAddress || !localEmail || !localPhone}
+              >
+                Send
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center min-h-[300px]">
+              <div className="flex flex-col items-center mb-4">
+                <svg className="w-16 h-16 text-green-400 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4"/></svg>
+                <h3 className="text-xl font-bold text-green-400 mb-1">Request Sent!</h3>
+                <p className="text-gray-300 text-center mb-2">Your product information has been sent for review.<br/>We will contact you soon.</p>
+              </div>
+              {/* Only show the merged front image after purchase */}
+              {mergedFront && (
+                <div className="w-full flex flex-col items-center mt-4">
+                  <span className="text-xs text-gray-400 mb-1">Final Merged Front Image</span>
+                  <img src={mergedFront} alt="Merged Front Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
+                </div>
+              )}
+              {mergedBack && (
+                <div className="w-full flex flex-col items-center mt-4">
+                  <span className="text-xs text-gray-400 mb-1">Final Merged Back Image</span>
+                  <img src={mergedBack} alt="Merged Back Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
+                </div>
+              )}
+              {compositedFront && (
+                <div className="w-full flex flex-col items-center mt-4">
+                  <span className="text-xs text-gray-400 mb-1">Final Merged Front Image</span>
+                  <img src={compositedFront} alt="Merged Front Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
+                </div>
+              )}
+              {compositedBack && (
+                <div className="w-full flex flex-col items-center mt-4">
+                  <span className="text-xs text-gray-400 mb-1">Final Merged Back Image</span>
+                  <img src={compositedBack} alt="Merged Back Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
+                </div>
+              )}
+              <button
+                className="mt-6 w-full py-2 bg-green-500 text-black rounded-lg font-bold hover:bg-green-400"
+                onClick={() => { setShowPurchaseModal(false); setPurchaseStep('form'); }}
+              >
+                Close
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Utility to scale logo coordinates from preview to canvas
+  function scaleLogoToCanvas(logo, previewWidth, previewHeight, canvasWidth, canvasHeight) {
+    if (!logo) return logo;
+    const scaleX = canvasWidth / previewWidth;
+    const scaleY = canvasHeight / previewHeight;
+    return {
+      ...logo,
+      x: (logo.x || previewWidth / 2) * scaleX,
+      y: (logo.y || previewHeight / 2) * scaleY,
+      size: (logo.size || 50) * Math.min(scaleX, scaleY),
+    };
+  }
+
+  // Update mergeImages to accept preview size and scale logo
+  const mergeImages = async (
+    baseImgUrl: string,
+    logo: LogoData | undefined,
+    previewWidth = 350,
+    previewHeight = 450,
+    canvasWidth = 350,
+    canvasHeight = 450
+  ) => {
+    return new Promise<string>(async (resolve) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return resolve('');
+      // Draw base image
+      const baseImg = new window.Image();
+      baseImg.crossOrigin = 'anonymous';
+      baseImg.src = baseImgUrl;
+      baseImg.onload = () => {
+        ctx.drawImage(baseImg, 0, 0, canvasWidth, canvasHeight);
+        if (logo && logo.image) {
+          const scaledLogo = scaleLogoToCanvas(logo, previewWidth, previewHeight, canvasWidth, canvasHeight);
+          const logoImg = new window.Image();
+          logoImg.crossOrigin = 'anonymous';
+          logoImg.src = logo.image;
+          logoImg.onload = () => {
+            ctx.save();
+            ctx.translate(scaledLogo.x, scaledLogo.y);
+            ctx.rotate(((scaledLogo.rotation || 0) * Math.PI) / 180);
+            ctx.drawImage(
+              logoImg,
+              -(scaledLogo.size || 50) / 2,
+              -(scaledLogo.size || 50) / 2,
+              scaledLogo.size || 50,
+              scaledLogo.size || 50
+            );
+            ctx.restore();
+            resolve(canvas.toDataURL());
+          };
+          logoImg.onerror = () => resolve(canvas.toDataURL());
+        } else {
+          resolve(canvas.toDataURL());
+        }
+      };
+      baseImg.onerror = () => resolve('');
+    });
+  };
+
+  // Fetch merged images from localStorage when purchase modal opens
+  useEffect(() => {
+    if (showPurchaseModal && purchaseStep === 'sent') {
+      const savedFront = localStorage.getItem('lastOrderMergedFront');
+      const savedBack = localStorage.getItem('lastOrderMergedBack');
+      setCompositedFront(savedFront);
+      setCompositedBack(savedBack);
+    }
+  }, [showPurchaseModal, purchaseStep]);
 
   if (loading) return <TypewriterLoading />;
   if (!product || !product.sku) {
     console.log('DEBUG: Product fetch result:', product);
     return <div className="flex flex-col items-center justify-center min-h-screen text-2xl text-red-400">Product not found</div>;
   }
+
+  // Calculate subtotal (ensure product.price and quantity are defined)
+  const subtotal = (product.price || 0) * (quantity || 1);
 
   // --- Locked Logo Area Mapping ---
   // Only these baseCategoryIDs will have locked logo areas and snapping logic
@@ -282,44 +765,25 @@ const ThreeDProducts: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       const reader = new FileReader();
       reader.onload = () => {
-        if (!flipped) {
-          let areaIdx = selectedLockedArea[0];
-          if (areaIdx === undefined) areaIdx = 0;
-          const area = lockedLogoAreas[0][areaIdx];
-          setSelectedLockedArea(prev => ({ ...prev, 0: areaIdx }));
-          // Auto-size logo to fit inside the box (with margin)
-          const margin = 8;
-          const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
-          setLogoData((prev) => ({
-            ...prev,
-            0: {
-              ...prev[0],
-              image: reader.result as string,
-              x: area.x + area.w / 2,
-              y: area.y + area.h / 2,
-              size: logoSize,
-              rotation: prev[0]?.rotation || 0,
-              _noTransition: false,
-            },
-          }));
-        } else {
-          // BACK: Place in center, auto-size to back box
-          const area = lockedLogoAreas[1][0];
-          const margin = 8;
-          const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
-          setLogoData((prev) => ({
-            ...prev,
-            1: {
-              ...prev[1],
-              image: reader.result as string,
-              x: area.x + area.w / 2,
-              y: area.y + area.h / 2,
-              size: logoSize,
-              rotation: prev[1]?.rotation || 0,
-              _noTransition: false,
-            },
-          }));
-        }
+        const side = selectedLockedArea.side;
+        const areaIdx = selectedLockedArea.idx;
+        const area = lockedLogoAreas[side][areaIdx];
+        setSelectedLockedArea({ side, idx: areaIdx });
+        // Auto-size logo to fit inside the box (with margin)
+        const margin = 8;
+        const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+        setLogoData((prev) => ({
+          ...prev,
+          [side]: {
+            ...prev[side],
+            image: reader.result as string,
+            x: area.x + area.w / 2,
+            y: area.y + area.h / 2,
+            size: logoSize,
+            rotation: prev[side]?.rotation || 0,
+            _noTransition: false,
+          },
+        }));
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -355,9 +819,7 @@ const ThreeDProducts: React.FC = () => {
       },
     }));
   };
- const handlePurchase = () => {
-    alert(`You have purchased ${quantity} units of ${product.styleName}.`);
-  };
+
   const startDragging = (e: React.MouseEvent, sideIdx: number) => {
     if (!logoData[sideIdx]?.image) return;
     e.stopPropagation();
@@ -371,22 +833,22 @@ const ThreeDProducts: React.FC = () => {
 
   const SNAP_THRESHOLD = 30; // px, distance from center to trigger snap
 
+  // --- Update logo drag logic to use selectedLockedArea ---
   const handleLogoDragMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (isDragging && draggedSide !== null && logoData[draggedSide]?.image) {
       const rect = event.currentTarget.getBoundingClientRect();
       let x = event.clientX - rect.left - (logoData[draggedSide].size || 50) / 2;
       let y = event.clientY - rect.top - (logoData[draggedSide].size || 50) / 2;
-      // FRONT: Always restrict to currently selected box, but allow full movement inside the box
-      if (isLockedLogo && draggedSide === 0 && lockedLogoAreas[0].length > 0) {
-        const areaIdx = selectedLockedArea[0] ?? 0;
-        const area = lockedLogoAreas[0][areaIdx];
+      // Restrict to currently selected box, allow full movement inside the box
+      if (isLockedLogo && draggedSide === selectedLockedArea.side && lockedLogoAreas[selectedLockedArea.side].length > 0) {
+        const area = lockedLogoAreas[selectedLockedArea.side][selectedLockedArea.idx];
         // Clamp logo so its center stays inside the box
         x = Math.max(area.x, Math.min(x, area.x + area.w));
         y = Math.max(area.y, Math.min(y, area.y + area.h));
         setLogoData((prev) => ({
           ...prev,
-          0: {
-            ...prev[0],
+          [draggedSide]: {
+            ...prev[draggedSide],
             x,
             y,
             _noTransition: true,
@@ -394,7 +856,7 @@ const ThreeDProducts: React.FC = () => {
         }));
         return;
       }
-      // BACK: No snap/restrict for other categories
+      // Otherwise, free placement
       setLogoData((prev) => ({
         ...prev,
         [draggedSide]: {
@@ -408,13 +870,13 @@ const ThreeDProducts: React.FC = () => {
   };
 
   const stopDragging = () => {
-    // FRONT: Snap to nearest box center if close
-    if (isLockedLogo && draggedSide === 0 && lockedLogoAreas[0].length > 0) {
-      const logo = logoData[0];
-      let snapIdx = selectedLockedArea[0] ?? 0;
+    // Snap to nearest box center if close (for selected side only)
+    if (isLockedLogo && draggedSide !== null && draggedSide === selectedLockedArea.side && lockedLogoAreas[selectedLockedArea.side].length > 0) {
+      const logo = logoData[draggedSide];
+      let snapIdx = selectedLockedArea.idx;
       let minDist = Infinity;
       let snapX = logo.x, snapY = logo.y;
-      lockedLogoAreas[0].forEach((area, idx) => {
+      lockedLogoAreas[selectedLockedArea.side].forEach((area, idx) => {
         const centerX = area.x + area.w / 2;
         const centerY = area.y + area.h / 2;
         const dist = Math.sqrt(Math.pow((logo.x || 0) - centerX, 2) + Math.pow((logo.y || 0) - centerY, 2));
@@ -426,11 +888,11 @@ const ThreeDProducts: React.FC = () => {
         }
       });
       if (minDist < SNAP_THRESHOLD) {
-        setSelectedLockedArea(prev => ({ ...prev, 0: snapIdx }));
+        setSelectedLockedArea({ side: draggedSide, idx: snapIdx });
         setLogoData((prev) => ({
           ...prev,
-          0: {
-            ...prev[0],
+          [draggedSide]: {
+            ...prev[draggedSide],
             x: snapX,
             y: snapY,
             _noTransition: false,
@@ -439,14 +901,13 @@ const ThreeDProducts: React.FC = () => {
       } else {
         setLogoData((prev) => ({
           ...prev,
-          0: {
-            ...prev[0],
+          [draggedSide]: {
+            ...prev[draggedSide],
             _noTransition: false,
           },
         }));
       }
     }
-    // BACK: No snap
     setIsDragging(false);
     setDraggedSide(null);
     setDragOffset(null);
@@ -462,214 +923,449 @@ const ThreeDProducts: React.FC = () => {
     _noTransition?: boolean;
   };
 
+  // --- Helper to blend images for slider effect ---
+  const getBlendedImage = () => {
+    if (images.length < 2) return images[0];
+    // For now, just crossfade between front and back
+    // In a real 3D, you'd use canvas or WebGL, but here we use opacity blending
+    return (
+      <div className="relative w-full h-full">
+        <img
+          src={images[0]}
+          alt="Front"
+          className="absolute w-full h-full object-contain"
+          style={{ opacity: 1 - sliderValue / 100, transition: 'opacity 0.3s' }}
+        />
+        <img
+          src={images[1] || images[0]}
+          alt="Back"
+          className="absolute w-full h-full object-contain"
+          style={{ opacity: sliderValue / 100, transition: 'opacity 0.3s' }}
+        />
+        {/* Logo overlays (front/back) with crossfade */}
+        {logoData[0]?.image && (
+          <img
+            src={logoData[0].image}
+            alt="Logo Front"
+            className="absolute z-20"
+            style={{
+              top: logoData[0].y ? `${logoData[0].y}px` : '50%',
+              left: logoData[0].x ? `${logoData[0].x}px` : '50%',
+              width: `${logoData[0].size || 50}px`,
+              height: `${logoData[0].size || 50}px`,
+              transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
+              opacity: 1 - sliderValue / 100,
+              pointerEvents: 'none',
+              transition: 'opacity 0.3s',
+            }}
+          />
+        )}
+        {logoData[1]?.image && (
+          <img
+            src={logoData[1].image}
+            alt="Logo Back"
+            className="absolute z-20"
+            style={{
+              top: logoData[1].y ? `${logoData[1].y}px` : '50%',
+              left: logoData[1].x ? `${logoData[1].x}px` : '50%',
+              width: `${logoData[1].size || 50}px`,
+              height: `${logoData[1].size || 50}px`,
+              transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
+              opacity: sliderValue / 100,
+              pointerEvents: 'none',
+              transition: 'opacity 0.3s',
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
+  // --- Helper to render 3D card flip effect with two images ---
+  const get3DRotatingImage = () => {
+    if (!images[0]) {
+      return (
+        <div className="flex items-center justify-center w-full h-full bg-gray-900 rounded-xl">
+          <span className="text-xl text-gray-400">Product preview not available</span>
+        </div>
+      );
+    }
+    const angle = rotation360 % 360;
+    const showFront = angle < 90 || angle > 270;
+    const showBack = angle > 90 && angle < 270;
+    const isInteracting = isDragging || dragRef360.current !== null;
+    return (
+      <div
+        className="relative w-full h-full select-none"
+        style={{ perspective: '1200px', cursor: 'grab' }}
+        onMouseDown={handleMouseDown360}
+      >
+        <div
+          className="absolute w-full h-full"
+          style={{
+            transformStyle: 'preserve-3d',
+            transform: `rotateY(${angle}deg)`,
+            transition: 'transform 1s cubic-bezier(0.23, 1, 0.32, 1)',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          {/* Front outlines (on front face) */}
+          {isLockedLogo && lockedLogoAreas[0].map((area, idx) => (
+            <div
+              key={"front-outline-" + idx}
+              className={`absolute border-2 rounded-lg pointer-events-auto ${selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
+              style={{
+                left: `${area.x}px`,
+                top: `${area.y}px`,
+                width: `${area.w}px`,
+                height: `${area.h}px`,
+                zIndex: 12,
+                boxShadow: selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
+                background: 'rgba(0,0,0,0.05)',
+                borderStyle: 'solid',
+                borderColor: selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? '#22c55e' : '#ef4444',
+                borderWidth: '2px',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'rotateY(0deg)',
+              }}
+              onClick={e => {
+                e.stopPropagation();
+                if (selectedLockedArea.side === 0 && selectedLockedArea.idx === idx) return;
+                // If logo exists, move and resize it to fit this box
+                if (logoData[0]?.image) {
+                  const margin = 8;
+                  const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+                  setLogoData(prevLogo => ({
+                    ...prevLogo,
+                    0: {
+                      ...prevLogo[0],
+                      x: area.x + area.w / 2,
+                      y: area.y + area.h / 2,
+                      size: logoSize,
+                      _noTransition: false,
+                    },
+                  }));
+                }
+                setSelectedLockedArea({ side: 0, idx });
+              }}
+            />
+          ))}
+          {/* Back outlines (on back face) */}
+          {isLockedLogo && lockedLogoAreas[1].map((area, idx) => (
+            <div
+              key={"back-outline-" + idx}
+              className={`absolute border-2 rounded-lg pointer-events-auto ${selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
+              style={{
+                left: `${area.x}px`,
+                top: `${area.y}px`,
+                width: `${area.w}px`,
+                height: `${area.h}px`,
+                zIndex: 12,
+                boxShadow: selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
+                background: 'rgba(0,0,0,0.05)',
+                borderStyle: 'solid',
+                borderColor: selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? '#22c55e' : '#ef4444',
+                borderWidth: '2px',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg) scaleX(-1)',
+              }}
+              onClick={e => {
+                e.stopPropagation();
+                if (selectedLockedArea.side === 1 && selectedLockedArea.idx === idx) return;
+                if (logoData[1]?.image) {
+                  const margin = 8;
+                  const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+                  setLogoData(prevLogo => ({
+                    ...prevLogo,
+                    1: {
+                      ...prevLogo[1],
+                      x: area.x + area.w / 2,
+                      y: area.y + area.h / 2,
+                      size: logoSize,
+                      _noTransition: false,
+                    },
+                  }));
+                }
+                setSelectedLockedArea({ side: 1, idx });
+              }}
+            />
+          ))}
+          {/* Front image */}
+          <img
+            src={images[0]}
+            alt="Front"
+            className="absolute w-full h-full object-contain rounded-xl"
+            style={{
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(0deg)',
+              zIndex: 2,
+            }}
+            draggable={false}
+          />
+          {/* Back image */}
+          <img
+            src={images[1] || images[0]}
+            alt="Back"
+            className="absolute w-full h-full object-contain rounded-xl"
+            style={{
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg) scaleX(-1)',
+              zIndex: 1,
+            }}
+            draggable={false}
+          />
+          {/* Front logo */}
+          {showFront && logoData[0]?.image && (
+            <img
+              src={logoData[0].image}
+              alt="Logo Front"
+              className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg"
+              style={{
+                top: logoData[0].y ? `${logoData[0].y}px` : '50%',
+                left: logoData[0].x ? `${logoData[0].x}px` : '50%',
+                width: `${logoData[0].size || 50}px`,
+                height: `${logoData[0].size || 50}px`,
+                transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
+                opacity: 1,
+                mixBlendMode: 'normal',
+                zIndex: 20,
+                background: 'white',
+              }}
+            />
+          )}
+          {/* Back logo */}
+          {showBack && logoData[1]?.image && (
+            <img
+              src={logoData[1].image}
+              alt="Logo Back"
+              className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg"
+              style={{
+                top: logoData[1].y ? `${logoData[1].y}px` : '50%',
+                left: logoData[1].x ? `${logoData[1].x}px` : '50%',
+                width: `${logoData[1].size || 50}px`,
+                height: `${logoData[1].size || 50}px`,
+                transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
+                opacity: 1,
+                mixBlendMode: 'normal',
+                zIndex: 20,
+                background: 'white',
+              }}
+            />
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // --- Add preview modal component ---
+  const PreviewModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+    if (!open) return null;
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div className="relative bg-gray-900 rounded-xl shadow-2xl p-6 flex flex-col items-center">
+          <button onClick={onClose} className="absolute top-2 right-2 text-white text-2xl">×</button>
+          <div className="w-[350px] h-[450px] relative flex items-center justify-center mb-4">
+            {/* Front Preview with ref */}
+            {rotation360 < 90 && (
+              <div ref={reviewFrontRef} className="absolute w-full h-full">
+                <img
+                  src={images[0]}
+                  alt="Front Preview"
+                  className="absolute w-full h-full object-contain rounded-xl"
+                />
+                {logoData[0]?.image && (
+                  <img
+                    src={logoData[0].image}
+                    alt="Logo Front Preview"
+                    className="absolute z-20"
+                    style={{
+                      top: logoData[0].y ? `${logoData[0].y}px` : '50%',
+                      left: logoData[0].x ? `${logoData[0].x}px` : '50%',
+                      width: `${logoData[0].size || 50}px`,
+                      height: `${logoData[0].size || 50}px`,
+                      transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
+                      opacity: 1,
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+              </div>
+            )}
+            {/* Back Preview with ref */}
+            {rotation360 >= 90 && (
+              <div ref={reviewBackRef} className="absolute w-full h-full">
+                <img
+                  src={images[1] || images[0]}
+                  alt="Back Preview"
+                  className="absolute w-full h-full object-contain rounded-xl"
+                />
+                {logoData[1]?.image && (
+                  <img
+                    src={logoData[1].image}
+                    alt="Logo Back Preview"
+                    className="absolute z-20"
+                    style={{
+                      top: logoData[1].y ? `${logoData[1].y}px` : '50%',
+                      left: logoData[1].x ? `${logoData[1].x}px` : '50%',
+                      width: `${logoData[1].size || 50}px`,
+                      height: `${logoData[1].size || 50}px`,
+                      transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
+                      opacity: 1,
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+          {/* Navigation in preview */}
+          <div className="flex items-center gap-4 mt-2">
+            <button onClick={() => setRotation360(0)} className="p-2 bg-gray-700 rounded-full text-white">Front</button>
+            <input
+              type="range"
+              min={0}
+              max={180}
+              value={rotation360}
+              onChange={e => setRotation360(Number(e.target.value))}
+              className="w-40 mx-2"
+            />
+            <button onClick={() => setRotation360(180)} className="p-2 bg-gray-700 rounded-full text-white">Back</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // --- UI to select locked logo area for front and back ---
+  // Only show if locked and there are areas
+  const renderLockedAreaSelectors = () => {
+    if (!isLockedLogo) return null;
+    return (
+      <div className="flex flex-col gap-2 mb-4">
+        <div className="flex gap-2 items-center">
+          <span className="text-sm text-gray-400">Front Areas:</span>
+          {lockedLogoAreas[0].map((area, idx) => (
+            <button
+              key={idx}
+              className={`px-2 py-1 rounded text-xs font-bold border ${selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? 'bg-green-500 text-black border-green-600' : 'bg-gray-800 text-white border-gray-600'}`}
+              onClick={() => {
+                if (selectedLockedArea.side === 0 && selectedLockedArea.idx === idx) return;
+                if (logoData[0]?.image) {
+                  const margin = 8;
+                  const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+                  setLogoData(prevLogo => ({
+                    ...prevLogo,
+                    0: {
+                      ...prevLogo[0],
+                      x: area.x + area.w / 2,
+                      y: area.y + area.h / 2,
+                      size: logoSize,
+                      _noTransition: false,
+                    },
+                  }));
+                }
+                setSelectedLockedArea({ side: 0, idx });
+              }}
+            >
+              {area.label || `Area ${idx + 1}`}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2 items-center">
+          <span className="text-sm text-gray-400">Back Areas:</span>
+          {lockedLogoAreas[1].map((area, idx) => (
+            <button
+              key={idx}
+              className={`px-2 py-1 rounded text-xs font-bold border ${selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? 'bg-green-500 text-black border-green-600' : 'bg-gray-800 text-white border-gray-600'}`}
+              onClick={() => {
+                if (selectedLockedArea.side === 1 && selectedLockedArea.idx === idx) return;
+                if (logoData[1]?.image) {
+                  const margin = 8;
+                  const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
+                  setLogoData(prevLogo => ({
+                    ...prevLogo,
+                    1: {
+                      ...prevLogo[1],
+                      x: area.x + area.w / 2,
+                      y: area.y + area.h / 2,
+                      size: logoSize,
+                      _noTransition: false,
+                    },
+                  }));
+                }
+                setSelectedLockedArea({ side: 1, idx });
+              }}
+            >
+              {area.label || `Area ${idx + 1}`}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-black from-[#0d0d0d] to-black from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Section */}
           <div className="relative flex flex-col items-center">
-            {/* 3D Flip Card */}
-            <div
-              className="group w-[350px] h-[450px] mb-6 cursor-pointer flex items-center justify-center"
-              onClick={handleFlip}
-              style={{ perspective: '1200px' }}
-            >
-              <div
-                className={`relative w-full h-full transition-transform duration-[900ms] ease-[cubic-bezier(0.23,1,0.32,1)]`}
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-                  borderRadius: '1.5rem',
-                  background: 'none',
-                }}
+            {/* Locked area selectors for front/back */}
+            {renderLockedAreaSelectors()}
+            {/* 3D Flip Card with slider and arrows */}
+            <div className="relative w-[350px] h-[450px] mb-6 flex items-center justify-center">
+              {/* Left arrow */}
+              <button
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-gray-800 bg-opacity-60 rounded-full p-2 hover:bg-green-600"
+                onClick={handleArrowLeft}
+                aria-label="Front"
               >
-                {/* Front */}
-                <div
-                  className="absolute w-full h-full flex items-center justify-center"
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    borderRadius: '1.5rem',
-                    background: 'none',
-                    boxShadow: '0 4px 24px 0 rgba(0,0,0,0.18)',
-                    zIndex: !flipped ? 2 : 1,
-                    transform: 'rotateY(0deg)',
-                    transition: 'background 0.3s',
-                  }}
-                  onMouseMove={handleLogoDragMove}
-                  onMouseUp={stopDragging}
-                  onMouseLeave={stopDragging}
-                >
-                  <img
-                    src={images[0]}
-                    alt="Front"
-                    className="object-contain w-full h-full select-none"
-                    draggable={false}
-                    style={{ background: 'none', zIndex: 1 }}
-                  />
-                  {/* Locked logo areas (front) - always show for locked categories */}
-                  {isLockedLogo && lockedLogoAreas[0] && lockedLogoAreas[0].length > 0 && lockedLogoAreas[0].map((area, idx) => {
-                    const isSelected = selectedLockedArea[0] === idx;
-                    return (
-                      <div
-                        key={idx}
-                        className={`absolute border-2 rounded-lg pointer-events-auto ${isSelected ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
-                        style={{
-                          left: `${area.x}px`,
-                          top: `${area.y}px`,
-                          width: `${area.w}px`,
-                          height: `${area.h}px`,
-                          zIndex: 10,
-                          boxShadow: isSelected ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
-                          background: 'rgba(0,0,0,0.05)',
-                        }}
-                        onClick={e => {
-                          e.stopPropagation();
-                          setSelectedLockedArea(prev => ({ ...prev, 0: idx }));
-                          if (logoData[0]?.image) {
-                            const area = lockedLogoAreas[0][idx];
-                            const margin = 8;
-                            const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
-                            setLogoData(prev => ({
-                              ...prev,
-                              0: {
-                                ...prev[0],
-                                x: area.x + area.w / 2,
-                                y: area.y + area.h / 2,
-                                size: logoSize,
-                                _noTransition: false,
-                              },
-                            }));
-                          }
-                        }}
-                      >
-                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 px-2 py-0.5 rounded shadow" style={{ color: isSelected ? '#22c55e' : '#f87171', zIndex: 11 }}>{area.label}</span>
-                      </div>
-                    );
-                  })}
-                  {/* Logo overlay on front - moveable and snappable */}
-                  {logoData[0]?.image && (
-                    <img
-                      src={logoData[0].image}
-                      alt="Logo"
-                      className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg cursor-move"
-                      style={{
-                        top: logoData[0].y ? `${logoData[0].y}px` : '50%',
-                        left: logoData[0].x ? `${logoData[0].x}px` : '50%',
-                        width: `${logoData[0].size || 50}px`,
-                        height: `${logoData[0].size || 50}px`,
-                        transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
-                        opacity: 1,
-                        mixBlendMode: 'normal',
-                        zIndex: 20,
-                        background: 'white',
-                        transition: logoData[0]._noTransition ? 'none' : 'top 0.3s, left 0.3s',
-                      }}
-                      onMouseDown={e => startDragging(e, 0)}
-                    />
-                  )}
-                </div>
-                {/* Back */}
-                <div
-                  className="absolute w-full h-full flex items-center justify-center"
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    borderRadius: '1.5rem',
-                    background: 'none',
-                    boxShadow: '0 4px 24px 0 rgba(0,0,0,0.18)',
-                    zIndex: flipped ? 2 : 1,
-                    transform: 'rotateY(180deg)',
-                    transition: 'background 0.3s',
-                  }}
-                  onMouseMove={handleLogoDragMove}
-                  onMouseUp={stopDragging}
-                  onMouseLeave={stopDragging}
-                >
-                  <img
-                    src={images[1] || images[0]}
-                    alt="Back"
-                    className="object-contain w-full h-full select-none"
-                    draggable={false}
-                    style={{ background: 'none', zIndex: 1 }}
-                  />
-                  {/* Locked logo areas (back) - always show for locked categories */}
-                  {isLockedLogo && lockedLogoAreas[1] && lockedLogoAreas[1].length > 0 && lockedLogoAreas[1].map((area, idx) => {
-                    const isSelected = selectedLockedArea[1] === idx;
-                    return (
-                      <div
-                        key={idx}
-                        className={`absolute border-2 rounded-lg pointer-events-auto ${isSelected ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
-                        style={{
-                          left: `${area.x}px`,
-                          top: `${area.y}px`,
-                          width: `${area.w}px`,
-                          height: `${area.h}px`,
-                          zIndex: 10,
-                          boxShadow: isSelected ? '0 0 0 3px rgba(34,197,94,0.5)' : '0 0 0 2px rgba(255,0,0,0.3)',
-                          background: 'rgba(0,0,0,0.05)',
-                        }}
-                        onClick={e => {
-                          e.stopPropagation();
-                          setSelectedLockedArea(prev => ({ ...prev, 1: idx }));
-                          if (logoData[1]?.image) {
-                            const margin = 8;
-                            const logoSize = Math.max(20, Math.min(area.w, area.h) - margin);
-                            setLogoData(prev => ({
-                              ...prev,
-                              1: {
-                                ...prev[1],
-                                x: area.x + area.w / 2,
-                                y: area.y + area.h / 2,
-                                size: logoSize,
-                                _noTransition: false,
-                              },
-                            }));
-                          }
-                        }}
-                      >
-                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 px-2 py-0.5 rounded shadow" style={{ color: isSelected ? '#22c55e' : '#f87171', zIndex: 11 }}>{area.label}</span>
-                      </div>
-                    );
-                  })}
-                  {/* Logo overlay on back - moveable and snappable */}
-                  {logoData[1]?.image && (
-                    <img
-                      src={logoData[1].image}
-                      alt="Logo"
-                      className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg cursor-move"
-                      style={{
-                        top: logoData[1].y ? `${logoData[1].y}px` : '50%',
-                        left: logoData[1].x ? `${logoData[1].x}px` : '50%',
-                        width: `${logoData[1].size || 50}px`,
-                        height: `${logoData[1].size || 50}px`,
-                        transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
-                        opacity: 1,
-                        mixBlendMode: 'normal',
-                        zIndex: 20,
-                        background: 'white',
-                        transition: logoData[1]._noTransition ? 'none' : 'top 0.3s, left 0.3s',
-                      }}
-                      onMouseDown={e => startDragging(e, 1)}
-                    />
-                  )}
-                </div>
+                <span className="text-2xl">&#8592;</span>
+              </button>
+              {/* 3D rotating image area */}
+              <div className="w-full h-full cursor-pointer flex items-center justify-center" style={{ perspective: '1200px' }}>
+                {get3DRotatingImage()}
               </div>
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-                <span className={`w-3 h-3 rounded-full ${!flipped ? 'bg-green-400' : 'bg-gray-500'} transition-all`}></span>
-                <span className={`w-3 h-3 rounded-full ${flipped ? 'bg-green-400' : 'bg-gray-500'} transition-all`}></span>
-              </div>
-              <div className="absolute top-2 right-2 z-30 text-xs text-gray-300 bg-black/60 px-2 py-1 rounded shadow">Click to flip</div>
+              {/* Right arrow */}
+              <button
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-gray-800 bg-opacity-60 rounded-full p-2 hover:bg-green-600"
+                onClick={handleArrowRight}
+                aria-label="Back"
+              >
+                <span className="text-2xl">&#8594;</span>
+              </button>
+              {/* Preview Button */}
+              <button
+                className="absolute bottom-2 right-2 z-40 bg-green-500 text-black px-4 py-2 rounded-lg font-bold shadow-lg hover:bg-green-400"
+                onClick={() => setShowPreview(true)}
+              >
+                Preview Final Product
+              </button>
             </div>
-
-            {/* Thumbnail Slider */}
+            {/* Slider below image for 0–180 blending */}
+            <input
+              type="range"
+              min={0}
+              max={180}
+              value={sliderValue}
+              onChange={handleSliderChange}
+              className="w-60 my-2"
+            />
+            {/* Thumbnail Slider (clickable) */}
             <div className="mt-4 flex justify-center space-x-2">
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`cursor-pointer border-2 rounded-lg ${
-                    currentImageIndex === index ? 'border-green-500' : 'border-transparent'
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
+                  className={`cursor-pointer border-2 rounded-lg ${sliderValue === (index === 0 ? 0 : 180) ? 'border-green-500' : 'border-transparent'}`}
+                  onClick={() => {
+                    setSliderValue(index === 0 ? 0 : 180);
+                    setRotation360(index === 0 ? 0 : 180);
+                  }}
                 >
                   <img
                     src={image}
@@ -680,6 +1376,8 @@ const ThreeDProducts: React.FC = () => {
                 </div>
               ))}
             </div>
+            {/* Preview Modal */}
+            <PreviewModal open={showPreview} onClose={() => setShowPreview(false)} />
           </div>
 
           {/* Product Details Section */}
@@ -757,43 +1455,101 @@ const ThreeDProducts: React.FC = () => {
             </div>
 
             {/* Logo Size Slider (show only if logo is present for the current image) */}
-            {logoData[flipped ? 1 : 0]?.image && (
+            {isLockedLogo && (logoData[0]?.image || logoData[1]?.image) && (
               <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Logo Size</label>
-                <input
-                  type="range"
-                  min="20"
-                  max="200"
-                  value={logoData[flipped ? 1 : 0]?.size || 50}
-                  onChange={handleLogoSizeChange}
-                  className="w-full appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                <label className="block text-sm font-medium mb-2">Logo Size (Front/Back)</label>
+                {/* Front logo size */}
+                {logoData[0]?.image && (
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-gray-400">Front</span>
+                    <input
+                      type="range"
+                      min="20"
+                      max="200"
+                      value={logoData[0]?.size || 50}
+                      onChange={e => setLogoData(prev => ({ ...prev, 0: { ...prev[0], size: Number(e.target.value) } }))}
+                      className="w-40 appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                )}
+                {/* Back logo size */}
+                {logoData[1]?.image && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400">Back</span>
+                    <input
+                      type="range"
+                      min="20"
+                      max="200"
+                      value={logoData[1]?.size || 50}
+                      onChange={e => setLogoData(prev => ({ ...prev, 1: { ...prev[1], size: Number(e.target.value) } }))}
+                      className="w-40 appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                )}
               </div>
             )}
             {/* Logo controls (show only if logo is present for the current image) */}
-            {logoData[flipped ? 1 : 0]?.image && (
+            {isLockedLogo && (logoData[0]?.image || logoData[1]?.image) && (
               <div className="flex items-center justify-between mb-4">
-                <button
-                  onClick={handleRotateLogo}
-                  className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
-                >
-                  Rotate
-                </button>
-                <button
-                  onClick={handleDeleteLogo}
-                  className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
-                >
-                  Delete
-                </button>
+                {/* Front controls */}
+                {logoData[0]?.image && (
+                  <>
+                    <button
+                      onClick={() => setLogoData(prev => ({ ...prev, 0: { ...prev[0], rotation: (prev[0]?.rotation || 0) + 15 } }))}
+                      className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
+                    >
+                      Rotate Front
+                    </button>
+                    <button
+                      onClick={() => setLogoData(prev => ({ ...prev, 0: { ...prev[0], image: null } }))}
+                      className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
+                    >
+                      Delete Front
+                    </button>
+                  </>
+                )}
+                {/* Back controls */}
+                {logoData[1]?.image && (
+                  <>
+                    <button
+                      onClick={() => setLogoData(prev => ({ ...prev, 1: { ...prev[1], rotation: (prev[1]?.rotation || 0) + 15 } }))}
+                      className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
+                    >
+                      Rotate Back
+                    </button>
+                    <button
+                      onClick={() => setLogoData(prev => ({ ...prev, 1: { ...prev[1], image: null } }))}
+                      className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
+                    >
+                      Delete Back
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
             <button
-              onClick={handlePurchase}
+              onClick={() => setShowPurchaseModal(true)}
               className="w-full py-3 bg-green-500 text-black rounded-lg font-medium hover:bg-green-400 transition-transform transform hover:scale-105 shadow-lg"
             >
               Purchase
             </button>
+            <PurchaseModal
+              visible={showPurchaseModal}
+              onClose={() => { setShowPurchaseModal(false); setPurchaseStep('form'); }}
+              images={images}
+              logoData={logoData}
+              purchaseStep={purchaseStep}
+              setPurchaseStep={setPurchaseStep}
+              frontScreenshotRef={frontScreenshotRef}
+              backScreenshotRef={backScreenshotRef}
+              setCompositedFront={setCompositedFront}
+              setCompositedBack={setCompositedBack}
+              compositedFront={compositedFront}
+              compositedBack={compositedBack}
+              product={product}
+              quantity={quantity}
+            />
           </div>
         </div>
       </div>

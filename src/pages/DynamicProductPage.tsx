@@ -22,7 +22,7 @@ const DynamicProductPage: React.FC = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://31.97.41.27:5000/api/products/sku/${sku}`); // Fetch product by SKU
+        const response = await fetch(`http://localhost:3000/api/products/sku/${sku}`); // Fetch product by SKU
         if (!response.ok) {
           throw new Error(`Failed to fetch product: ${response.statusText}`);
         }
@@ -242,122 +242,131 @@ const DynamicProductPage: React.FC = () => {
           </div>
 
           {/* Product Details Section */}
-         <div>
-            <h1 className="text-5xl font-extrabold mb-4 text-green-400">
-              {product.brandName} {product.styleName}
-            </h1>
-            <p className="text-lg text-gray-400 mb-6 italic">{product.colorName}</p>
-            <p className="text-3xl font-bold mb-2 text-green-500">${product.salePrice.toFixed(2)}</p>
-            <p className="text-lg font-medium mb-6 text-gray-300">
-              Subtotal: <span className="text-green-400">${subtotal}</span>
-            </p>
-
-            <div className="mb-6">
-              <p className="text-sm text-gray-400">SKU: {product.sku}</p>
-              <p className="text-sm text-gray-400">GTIN: {product.gtin}</p>
-              <p className="text-sm text-gray-400">Country of Origin: {product.countryOfOrigin}</p>
-              <p className="text-sm text-gray-400">
-                Available Quantity: <span className="font-bold">{product.caseQty}</span>
-              </p>
-              <p className="text-sm text-gray-400">Case Quantity (Max): {product.caseQty}</p>
-              <p className="text-sm text-gray-400">Unit Weight: {product.unitWeight} lbs</p>
-            </div>
-
-            {/* Quantity Selector */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Select Quantity</label>
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-transform transform hover:scale-105"
-                  disabled={quantity <= 1}
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => handleQuantityChange(Number(e.target.value))}
-                  className="w-16 text-center px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  min="1"
-                  max={product.caseQty}
-                />
-                <button
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-transform transform hover:scale-105"
-                  disabled={quantity >= product.caseQty}
-                >
-                  +
-                </button>
-              </div>
-              <div className="mt-4">
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-green-500 h-2 rounded-full"
-                    style={{ width: `${(quantity / product.caseQty) * 100}%` }}
-                  ></div>
+          <div className="relative">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+              <div className="flex-1">
+                <h1 className="text-5xl font-extrabold mb-4 text-green-400">
+                  {product.brandName} {product.styleName}
+                </h1>
+                <p className="text-lg text-gray-400 mb-6 italic">{product.colorName}</p>
+                <div className="flex items-center mb-2">
+                  <p className="text-3xl font-bold text-green-500 mr-4">${product.salePrice.toFixed(2)}</p>
+                  {/* Generate 3D Button - right of price with dashed border */}
+                  <button
+                    onClick={() => navigate(`/3dproducts/${product.sku}`)}
+                    className="py-2 px-6 border-2 border-dashed border-blue-400 rounded-xl bg-blue-900/20 text-blue-300 font-bold text-base shadow-lg hover:bg-blue-800/30 hover:text-white transition-all duration-200 ml-2"
+                    style={{ minWidth: '140px' }}
+                  >
+                    Generate 3D
+                  </button>
                 </div>
-                <p className="text-sm text-gray-400 mt-2">
-                  Selected: <span className="font-bold">{quantity}</span> / {product.caseQty}
+                <p className="text-lg font-medium mb-6 text-gray-300">
+                  Subtotal: <span className="text-green-400">${subtotal}</span>
                 </p>
-              </div>
-              {quantity > product.caseQty && (
-                <p className="text-sm text-red-500 mt-2">Quantity exceeds the maximum case quantity!</p>
-              )}
-            </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Upload Your Logo</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-white hover:file:bg-green-400"
-              />
-            </div>
+                <div className="mb-6">
+                  <p className="text-sm text-gray-400">SKU: {product.sku}</p>
+                  <p className="text-sm text-gray-400">GTIN: {product.gtin}</p>
+                  <p className="text-sm text-gray-400">Country of Origin: {product.countryOfOrigin}</p>
+                  <p className="text-sm text-gray-400">
+                    Available Quantity: <span className="font-bold">{product.caseQty}</span>
+                  </p>
+                  <p className="text-sm text-gray-400">Case Quantity (Max): {product.caseQty}</p>
+                  <p className="text-sm text-gray-400">Unit Weight: {product.unitWeight} lbs</p>
+                </div>
 
-            {uploadedImage && (
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Logo Size</label>
-                <input
-                  type="range"
-                  min="20"
-                  max="200"
-                  value={logoSize}
-                  onChange={handleLogoSizeChange}
-                  className="w-full appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
-            )}
+                {/* Quantity Selector */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Select Quantity</label>
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => handleQuantityChange(quantity - 1)}
+                      className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-transform transform hover:scale-105"
+                      disabled={quantity <= 1}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      value={quantity}
+                      onChange={(e) => handleQuantityChange(Number(e.target.value))}
+                      className="w-16 text-center px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      min="1"
+                      max={product.caseQty}
+                    />
+                    <button
+                      onClick={() => handleQuantityChange(quantity + 1)}
+                      className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-transform transform hover:scale-105"
+                      disabled={quantity >= product.caseQty}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="mt-4">
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div
+                        className="bg-green-500 h-2 rounded-full"
+                        style={{ width: `${(quantity / product.caseQty) * 100}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-2">
+                      Selected: <span className="font-bold">{quantity}</span> / {product.caseQty}
+                    </p>
+                  </div>
+                  {quantity > product.caseQty && (
+                    <p className="text-sm text-red-500 mt-2">Quantity exceeds the maximum case quantity!</p>
+                  )}
+                </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Upload Your Logo</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-white hover:file:bg-green-400"
+                  />
+                </div>
 
-            {uploadedImage && (
-              <div className="flex items-center justify-between mb-4">
+                {uploadedImage && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium mb-2">Logo Size</label>
+                    <input
+                      type="range"
+                      min="20"
+                      max="200"
+                      value={logoSize}
+                      onChange={handleLogoSizeChange}
+                      className="w-full appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                )}
+
+                {uploadedImage && (
+                  <div className="flex items-center justify-between mb-4">
+                    <button
+                      onClick={handleRotateLogo}
+                      className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
+                    >
+                      Rotate
+                    </button>
+                    <button
+                      onClick={handleDeleteLogo}
+                      className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+
                 <button
-                  onClick={handleRotateLogo}
-                  className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
+                  onClick={handlePurchase}
+                  className="w-full py-3 bg-green-500 text-black rounded-lg font-medium hover:bg-green-400 transition-transform transform hover:scale-105 shadow-lg"
                 >
-                  Rotate
+                  Purchase
                 </button>
-                <button
-                  onClick={handleDeleteLogo}
-                  className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
-                >
-                  Delete
-                </button>
-              </div>)}
-
-            <button
-              onClick={handlePurchase}
-              className="w-full py-3 bg-green-500 text-black rounded-lg font-medium hover:bg-green-400 transition-transform transform hover:scale-105 shadow-lg"
-            >
-              Purchase
-            </button>
-            {/* 3D Generate Button */}
-            <button
-              onClick={() => navigate(`/3dproducts/${product.sku}`)}
-              className="w-full mt-4 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
-            >
-              Generate 3D
-            </button>
+              </div>
+              {/* Generate 3D Button - moved to the right with dashed border */}
+            
+            </div>
           </div>
         </div>
       </div>

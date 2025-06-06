@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/queryClient';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import ProductGrid from './components/Products/ProductGrid';
@@ -31,8 +33,16 @@ import { Product } from './components/Products/ProductCard';
 import TestProductPage from './pages/testProductPage';
 import ThreeDProducts from './pages/testProductPage';
 
+
+import Login from "./pages/admin/login";
+import Dashboard from "./pages/admin/dashboard";
+import SearchProducts from "./pages/admin/search-products";
+import UpdateProducts from "./pages/admin/update-products";
+import NotFound from "./pages/admin/not-found";
+
 import SecondTestProductPage from './pages/testProductPagesecond';
 import HomeBrandGrid from './components/Products/HomeBrandGrid';
+import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   const [accessories, setAccessories] = useState<Product[]>([]);
   const [loadingAccessories, setLoadingAccessories] = useState(true);
@@ -89,81 +99,90 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <div className="min-h-screen bg-[#121212] text-white">
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={
-              <>
-                <Hero />
-                
-                <HomeBrandGrid />
-                
-                {loadingOuterwear ? (
-                  <div className="text-gray-400 px-4 py-8">Loading outerwear...</div>
-                ) : !outerwear || outerwear.length === 0 ? (
-                  <div className="text-red-400 px-4 py-8">No outerwear found.</div>
-                ) : (
-                  <ProductGrid 
-                    title="Outerwear Products" 
-                    products={outerwear}
-                  />
-                )}
-                {loadingHeadwear ? (
-                  <div className="text-gray-400 px-4 py-8">Loading headwear...</div>
-                ) : !headwear || headwear.length === 0 ? (
-                  <div className="text-red-400 px-4 py-8">No headwear found.</div>
-                ) : (
-                  <ProductGrid 
-                    title="Headwear Products" 
-                    products={headwear}
-                  />
-                )}
-                {loadingAccessories ? (
-                  <div className="text-gray-400 px-4 py-8">Loading accessories...</div>
-                ) : !accessories || accessories.length === 0 ? (
-                  <div className="text-red-400 px-4 py-8">No accessories found.</div>
-                ) : (
-                  <ProductGrid 
-                    title="Accessories Products" 
-                    products={accessories}
-                  />
-                )}
-                
-              </>
-            } />
-            <Route path="/login" element={<LoginScreen />} />
-            <Route path="/signup" element={<SignupScreen />} />
-            <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/products/" element={<ProductPage />} />
-    
-            <Route path="/customaccessories" element={<CustomAccessories />} />
-            <Route path="/custombags" element={<CustomBags />} />
-            <Route path="/wishlist" element={<WishlistPage />} />
-            <Route path="/customheadwear" element={<CustomHeadwear />} />
-            <Route path="/customoutwear" element={<CustomOutwear />} />
-            <Route path="/embsroidery" element={<EmbroideryPage />} />
-            <Route path="/customembroideredshirts" element={<CustomEmbroideredShirts />} />
-            <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
-            <Route path="/customshirts" element={<CustomShirts />} />
-            <Route path="/testproduct" element={<TestProductPage/>} />
-            <Route path="/sectestproduct" element={<SecondTestProductPage/>} />
-            <Route path="/pantsandshorts" element={<PantsAndShorts />} />
-            <Route path="/category/:category" element={<DynamicCategoryPage />} />
-            <Route path="/:category" element={<CategoryPage />} />
-            <Route path="/product/:sku" element={<DynamicProductPage />} />
-            <Route path='/brands/:category' element={<DynamicBrands/>} />
-            <Route path="/3dproducts/:sku" element={<ThreeDProducts />} />
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <div className="min-h-screen bg-[#121212] text-white">
+          <Header />
+          <main>
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Hero />
+                  
+                  <HomeBrandGrid />
+                  
+                  {loadingOuterwear ? (
+                    <div className="text-gray-400 px-4 py-8">Loading outerwear...</div>
+                  ) : !outerwear || outerwear.length === 0 ? (
+                    <div className="text-red-400 px-4 py-8">No outerwear found.</div>
+                  ) : (
+                    <ProductGrid 
+                      title="Outerwear Products" 
+                      products={outerwear}
+                    />
+                  )}
+                  {loadingHeadwear ? (
+                    <div className="text-gray-400 px-4 py-8">Loading headwear...</div>
+                  ) : !headwear || headwear.length === 0 ? (
+                    <div className="text-red-400 px-4 py-8">No headwear found.</div>
+                  ) : (
+                    <ProductGrid 
+                      title="Headwear Products" 
+                      products={headwear}
+                    />
+                  )}
+                  {loadingAccessories ? (
+                    <div className="text-gray-400 px-4 py-8">Loading accessories...</div>
+                  ) : !accessories || accessories.length === 0 ? (
+                    <div className="text-red-400 px-4 py-8">No accessories found.</div>
+                  ) : (
+                    <ProductGrid 
+                      title="Accessories Products" 
+                      products={accessories}
+                    />
+                  )}
+                  
+                </>
+              } />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/signup" element={<SignupScreen />} />
+              <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/products/" element={<ProductPage />} />
+      
+              <Route path="/customaccessories" element={<CustomAccessories />} />
+              <Route path="/custombags" element={<CustomBags />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/customheadwear" element={<CustomHeadwear />} />
+              <Route path="/customoutwear" element={<CustomOutwear />} />
+              <Route path="/embsroidery" element={<EmbroideryPage />} />
+              <Route path="/customembroideredshirts" element={<CustomEmbroideredShirts />} />
+              <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
+              <Route path="/customshirts" element={<CustomShirts />} />
+              <Route path="/testproduct" element={<TestProductPage/>} />
+              <Route path="/sectestproduct" element={<SecondTestProductPage/>} />
+              <Route path="/pantsandshorts" element={<PantsAndShorts />} />
+              <Route path="/category/:category" element={<DynamicCategoryPage />} />
+              <Route path="/:category" element={<CategoryPage />} />
+              <Route path="/product/:sku" element={<DynamicProductPage />} />
+              <Route path='/brands/:category' element={<DynamicBrands/>} />
+              <Route path="/dashboard" element={
+  <ProtectedRoute>
+    <Dashboard/>
+  </ProtectedRoute>
+} />
+<Route path="/search" element={<SearchProducts/>} />
+<Route path="/update" element={<UpdateProducts/>} />
+              <Route path="/3dproducts/:sku" element={<ThreeDProducts />} />
 
-             <Route path='/all-brands' element={<AllBrandPage/>} />
-             <Route path='/all-categories' element={<AllCategoriesPage/>} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+               <Route path='/all-brands' element={<AllBrandPage/>} />
+               <Route path='/all-categories' element={<AllCategoriesPage/>} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </QueryClientProvider>
   );
 }
 
