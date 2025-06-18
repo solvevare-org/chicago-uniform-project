@@ -10,7 +10,7 @@ const SearchBar: React.FC = () => {
       <input
         type="text"
         placeholder="Search for brand, color, etc."
-        className="w-full py-2 pl-10 pr-4 rounded-full bg-[#333333] text-white border border-[#444444] focus:outline-none focus:border-green-500 placeholder-gray-400"
+        className="w-full py-2 pl-10 pr-4 rounded-full bg-[#333333] text-[#2563eb] border border-[#444444] focus:outline-none focus:border-green-500 placeholder-gray-400"
       />
     </div>
   );

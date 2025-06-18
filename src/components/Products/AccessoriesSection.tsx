@@ -29,7 +29,7 @@ const AccessoriesSection: React.FC = () => {
         <h2 className="text-2xl font-bold text-black">Accessories</h2>
         <a
           href="/category/Accessories"
-          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold shadow transition"
+          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-[#2563eb] rounded-full font-semibold shadow transition"
         >
           Show More Products
         </a>
@@ -44,7 +44,7 @@ const AccessoriesSection: React.FC = () => {
             {products.map((product) => (
               <div
                 key={product.id || product.sku}
-                className="min-w-[220px] max-w-[220px] bg-white rounded-xl shadow border border-gray-200 flex-shrink-0 flex flex-col items-center p-4"
+                className="min-w-[220px] max-w-[220px] bg-[#2563eb] rounded-xl shadow border border-gray-200 flex-shrink-0 flex flex-col items-center p-4"
               >
                 <img
                   src={product.image || `https://www.ssactivewear.com/${product.colorFrontImage}`}

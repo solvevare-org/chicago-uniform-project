@@ -80,9 +80,9 @@ export default function SearchProducts() {
             </Select>
           </div>
           {loading ? (
-            <div className="text-center py-8 text-muted-foreground">Loading products...</div>
+            <div className="text-center py-8 text-[#2563eb]">Loading products...</div>
           ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">No products found.</div>
+            <div className="text-center py-8 text-[#2563eb]">No products found.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-border">

@@ -2,7 +2,7 @@ import React from 'react';
 
 const ForgotPasswordScreen: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#121212] text-white">
+    <div className="min-h-screen flex items-center justify-center bg-[#121212] text-[#2563eb]">
       <div className="w-full max-w-md p-8 bg-[#1A1A1A] rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6">Forgot Password</h2>
         <form>
@@ -11,7 +11,7 @@ const ForgotPasswordScreen: React.FC = () => {
             <input
               type="email"
               id="email"
-              className="w-full px-4 py-2 rounded bg-[#333333] text-white border border-[#444444] focus:outline-none focus:border-green-500"
+              className="w-full px-4 py-2 rounded bg-[#333333] text-[#2563eb] border border-[#444444] focus:outline-none focus:border-green-500"
               required
             />
           </div>

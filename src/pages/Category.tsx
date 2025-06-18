@@ -88,18 +88,18 @@ const CategoryPage: React.FC = () => {
   const paginatedProducts = filteredProducts.slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0d0d0d] to-black text-white py-12 px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
       <div className="max-w-screen-2xl mx-auto">
         {/* Breadcrumb */}
-        <div className="text-gray-400 text-sm mb-6">
+        <div className="text-[#b3ddf3] text-sm mb-6">
           <span className="hover:underline cursor-pointer">Home</span> /Category/
-          <span className="text-white font-semibold">{category}</span>
+          <span className="text-[#b3ddf3] font-semibold">{category}</span>
         </div>
         <div className="flex flex-col md:flex-row gap-8">
           {/* Filters Section */}
-          <aside className="w-full md:w-64 md:sticky md:top-28 md:self-start z-10 bg-[#1a1a1a] p-6 rounded-xl shadow-lg border border-gray-700">
+          <aside className="w-full md:w-64 md:sticky md:top-28 md:self-start z-10 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">
             {/* CATEGORY */}
-            <div className="mb-6 border-b border-gray-700 pb-4">
+            <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
                 className="text-xl font-semibold flex justify-between items-center cursor-pointer"
                 onClick={() => toggleTab('CATEGORY')}
@@ -108,13 +108,13 @@ const CategoryPage: React.FC = () => {
                 <FaChevronDown className={`transition-transform ${activeTab === 'CATEGORY' ? 'rotate-180' : ''}`} />
               </h2>
               {activeTab === 'CATEGORY' && (
-                <ul className="mt-4 space-y-2 text-sm text-gray-300">
+                <ul className="mt-4 space-y-2 text-sm text-gray-700">
                   {categories.length > 0 &&
                     categories.map((cat: any) => (
                       <li key={cat.title} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          className="accent-green-500"
+                          className="accent-[#b3ddf3]"
                           checked={selectedFilters.CATEGORY.has(cat.title)}
                           onChange={() => handleFilterChange('CATEGORY', cat.title)}
                         />
@@ -125,7 +125,7 @@ const CategoryPage: React.FC = () => {
               )}
             </div>
             {/* BRANDS */}
-            <div className="mb-6 border-b border-gray-700 pb-4">
+            <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
                 className="text-xl font-semibold flex justify-between items-center cursor-pointer"
                 onClick={() => toggleTab('BRANDS')}
@@ -134,12 +134,12 @@ const CategoryPage: React.FC = () => {
                 <FaChevronDown className={`transition-transform ${activeTab === 'BRANDS' ? 'rotate-180' : ''}`} />
               </h2>
               {activeTab === 'BRANDS' && (
-                <ul className="mt-4 space-y-2 text-sm text-gray-300">
+                <ul className="mt-4 space-y-2 text-sm text-gray-700">
                   {brands.map((brand) => (
                     <li key={brand} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
-                        className="accent-green-500"
+                        className="accent-[#b3ddf3]"
                         checked={selectedFilters.BRANDS.has(brand)}
                         onChange={() => handleFilterChange('BRANDS', brand)}
                       />
@@ -150,7 +150,7 @@ const CategoryPage: React.FC = () => {
               )}
             </div>
             {/* COLOR */}
-            <div className="mb-6 border-b border-gray-700 pb-4">
+            <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
                 className="text-xl font-semibold flex justify-between items-center cursor-pointer"
                 onClick={() => toggleTab('COLOR')}
@@ -159,12 +159,12 @@ const CategoryPage: React.FC = () => {
                 <FaChevronDown className={`transition-transform ${activeTab === 'COLOR' ? 'rotate-180' : ''}`} />
               </h2>
               {activeTab === 'COLOR' && (
-                <ul className="mt-4 space-y-2 text-sm text-gray-300">
+                <ul className="mt-4 space-y-2 text-sm text-gray-700">
                   {colors.map((color) => (
                     <li key={color} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
-                        className="accent-green-500"
+                        className="accent-[#b3ddf3]"
                         checked={selectedFilters.COLOR.has(color)}
                         onChange={() => handleFilterChange('COLOR', color)}
                       />
@@ -191,7 +191,7 @@ const CategoryPage: React.FC = () => {
                     max="500"
                     value={priceRange}
                     onChange={(e) => setPriceRange(Number(e.target.value))}
-                    className="w-full cursor-pointer"
+                    className="w-full cursor-pointer accent-[#b3ddf3]"
                   />
                   <div className="flex justify-between text-gray-400 text-sm mt-2">
                     <span>$0</span>
@@ -213,7 +213,7 @@ const CategoryPage: React.FC = () => {
                   <Link
                     to={`/product/${product.sku}`}
                     key={index}
-                    className="bg-[#1a1a1a] p-4 rounded-xl border border-gray-700 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
+                    className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
                   >
                     <img
                       src={`https://www.ssactivewear.com/${product.colorFrontImage}`}
@@ -230,7 +230,7 @@ const CategoryPage: React.FC = () => {
                       ></div>
                       <span className="text-sm text-gray-400">{product.colorName}</span>
                     </div>
-                    <p className="text-green-400 font-semibold text-md">${product.salePrice.toFixed(2)}</p>
+                    <p className="text-[#b3ddf3] font-semibold text-md">${product.salePrice.toFixed(2)}</p>
                     <p className="text-sm text-gray-500">In Stock: {product.qty}</p>
                   </Link>
                 ))

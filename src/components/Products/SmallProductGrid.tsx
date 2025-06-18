@@ -10,7 +10,7 @@ const SmallProductGrid: React.FC<SmallProductGridProps> = ({ title, products }) 
     <div className="my-6 px-2 md:px-4 lg:px-6">
       <div className="max-w-screen-lg mx-auto">
         <div className="flex items-center mb-3">
-          <h2 className="text-lg md:text-xl font-bold text-white">{title}</h2>
+          <h2 className="text-lg md:text-xl font-bold text-[#2563eb]">{title}</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {products.slice(0, 6).map((product) => (

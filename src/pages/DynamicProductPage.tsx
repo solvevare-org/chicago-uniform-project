@@ -174,7 +174,7 @@ const DynamicProductPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black from-[#0d0d0d] to-black from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
+    <div className="min-h-screen bg-white text-[#222] min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Section */}
@@ -225,9 +225,7 @@ const DynamicProductPage: React.FC = () => {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`cursor-pointer border-2 rounded-lg ${
-                    currentImageIndex === index ? 'border-green-500' : 'border-transparent'
-                  }`}
+                  className={`cursor-pointer border-2 rounded-lg ${currentImageIndex === index ? 'border-[#b3ddf3]' : 'border-transparent'}`}
                   onClick={() => handleThumbnailClick(index)}
                 >
                   <img
@@ -245,12 +243,12 @@ const DynamicProductPage: React.FC = () => {
           <div className="relative">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between">
               <div className="flex-1">
-                <h1 className="text-5xl font-extrabold mb-4 text-green-400">
+                <h1 className="text-5xl font-extrabold mb-4 text-[#b3ddf3]">
                   {product.brandName} {product.styleName}
                 </h1>
-                <p className="text-lg text-gray-400 mb-6 italic">{product.colorName}</p>
+                <p className="text-lg text-[#b3ddf3] mb-6 italic">{product.colorName}</p>
+                <p className="text-3xl font-bold mb-2 text-[#b3ddf3]">${product.salePrice.toFixed(2)}</p>
                 <div className="flex items-center mb-2">
-                  <p className="text-3xl font-bold text-green-500 mr-4">${product.salePrice.toFixed(2)}</p>
                   {/* Generate 3D Button - right of price with dashed border */}
                   <button
                     onClick={() => navigate(`/3dproducts/${product.sku}`)}
@@ -261,7 +259,7 @@ const DynamicProductPage: React.FC = () => {
                   </button>
                 </div>
                 <p className="text-lg font-medium mb-6 text-gray-300">
-                  Subtotal: <span className="text-green-400">${subtotal}</span>
+                  Subtotal: <span className="text-[#b3ddf3]">${subtotal}</span>
                 </p>
                 <div className="mb-6">
                   <p className="text-sm text-gray-400">SKU: {product.sku}</p>
@@ -289,7 +287,7 @@ const DynamicProductPage: React.FC = () => {
                       type="number"
                       value={quantity}
                       onChange={(e) => handleQuantityChange(Number(e.target.value))}
-                      className="w-16 text-center px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-16 text-center px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                       min="1"
                       max={product.caseQty}
                     />
@@ -304,7 +302,7 @@ const DynamicProductPage: React.FC = () => {
                   <div className="mt-4">
                     <div className="w-full bg-gray-700 rounded-full h-2">
                       <div
-                        className="bg-green-500 h-2 rounded-full"
+                        className="bg-[#b3ddf3] h-2 rounded-full"
                         style={{ width: `${(quantity / product.caseQty) * 100}%` }}
                       ></div>
                     </div>
@@ -322,7 +320,7 @@ const DynamicProductPage: React.FC = () => {
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-white hover:file:bg-green-400"
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#b3ddf3] file:text-[#222] hover:file:bg-[#a0cbe8]"
                   />
                 </div>
 
@@ -335,7 +333,7 @@ const DynamicProductPage: React.FC = () => {
                       max="200"
                       value={logoSize}
                       onChange={handleLogoSizeChange}
-                      className="w-full appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                     />
                   </div>
                 )}
@@ -359,7 +357,7 @@ const DynamicProductPage: React.FC = () => {
 
                 <button
                   onClick={handlePurchase}
-                  className="w-full py-3 bg-green-500 text-black rounded-lg font-medium hover:bg-green-400 transition-transform transform hover:scale-105 shadow-lg"
+                  className="w-full py-3 bg-[#b3ddf3] text-black rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
                 >
                   Purchase
                 </button>

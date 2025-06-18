@@ -99,6 +99,7 @@ export default function OrdersManagement() {
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
+                    {/* Change update-products status color to blue for ordered, yellow for pending, green for verified */}
                     <span className={`text-xs font-bold ${order.status === "pending" ? "text-yellow-500" : order.status === "verified" ? "text-green-500" : "text-blue-500"}`}>
                       {order.status.toUpperCase()}
                     </span>

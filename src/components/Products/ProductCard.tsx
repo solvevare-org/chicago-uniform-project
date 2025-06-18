@@ -30,7 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-gray-100 via-white to-gray-100 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105">
+    <div className="bg-[#2563eb] rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105 border border-[#2563eb]">
       <a href={`/product/${product.id}`} className="block">
         <div className="relative">
           <img
@@ -40,16 +40,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
           <button
             onClick={toggleFavorite}
-            className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition"
+            className="absolute top-3 right-3 p-2 rounded-full bg-[#2563eb]/90 hover:bg-white shadow-md transition"
             aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           >
             <Heart
-              className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`}
+              className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-[#2563eb]'}`}
             />
           </button>
         </div>
         <div className="p-5">
-          <h3 className="font-semibold text-gray-800 text-lg line-clamp-2">{product.name}</h3>
+          <h3 className="font-semibold text-[#222] text-lg line-clamp-2">{product.name}</h3>
           {product.subname && (
             <p className="text-sm text-gray-500 mt-1">{product.subname}</p>
           )}
@@ -59,7 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {product.askText || "Lowest Ask"}
               </div>
             )}
-            <div className="font-bold text-xl text-green-600">{formatPrice(product.price)}</div>
+            <div className="font-bold text-xl text-[#2563eb]">{formatPrice(product.price)}</div>
             {product.lastSalePrice && (
               <div className="text-xs text-gray-400 mt-1">
                 Last Sale: {formatPrice(product.lastSalePrice)}

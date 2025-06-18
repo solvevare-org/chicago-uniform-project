@@ -47,6 +47,31 @@ export default function Header({ title, description }: HeaderProps) {
           </div>
         </div>
       </div>
+
+      {/* Categories Dropdown - Assuming this is part of the Header */}
+      <div className="absolute top-full left-0 right-0 bg-card border-t border-border mt-2">
+        <div className="flex flex-col p-4">
+          {/* Category Links - Update these links as per your routing */}
+          <a href="/category1" className="text-[#222] hover:text-[#2563eb] py-2">
+            Category 1
+          </a>
+          <a href="/category2" className="text-[#222] hover:text-[#2563eb] py-2">
+            Category 2
+          </a>
+          <a href="/category3" className="text-[#222] hover:text-[#2563eb] py-2">
+            Category 3
+          </a>
+          
+          {/* Show All Categories Button */}
+          <Button 
+            variant="outline" 
+            className="mt-2 bg-white text-[#222] border-[#2563eb] hover:bg-white"
+            onClick={() => {/* Your logic to show all categories */}}
+          >
+            Show All Categories
+          </Button>
+        </div>
+      </div>
     </header>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
+
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import ProductGrid from './components/Products/ProductGrid';
@@ -52,6 +53,7 @@ function App() {
   const [brand, setBrand] = useState<Product[]>([]);
   const [headwear, setHeadwear] = useState<Product[]>([]);
   const [loadingHeadwear, setLoadingHeadwear] = useState(true);
+  
 
   useEffect(() => {
     async function fetchAccessories() {
@@ -101,7 +103,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-[#121212] text-white">
+       
+        <div className="min-h-screen bg-[#2563eb text-[#222]">
           <Header />
           <main>
             <Routes>

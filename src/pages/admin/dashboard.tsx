@@ -32,7 +32,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white text-[#222]">
       <Sidebar />
       <div className="ml-64 min-h-screen">
         <Header 

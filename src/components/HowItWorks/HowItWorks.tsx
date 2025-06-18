@@ -2,8 +2,8 @@ import React from 'react';
 
 const HowItWorks: React.FC = () => {
   return (
-    <div className="bg-white text-black min-h-screen">
-      <header className="bg-[#121212] text-white py-8">
+    <div className="bg-[#2563eb] text-black min-h-screen">
+      <header className="bg-[#121212] text-[#2563eb] py-8">
         <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">The Current Culture Marketplace</h1>
           <p className="text-lg md:text-xl">
@@ -93,7 +93,7 @@ const HowItWorks: React.FC = () => {
         </section>
       </main>
 
-      <footer className="bg-[#121212] text-white py-8">
+      <footer className="bg-[#121212] text-[#2563eb] py-8">
         <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
           <p className="text-center">©2025 StockX. All Rights Reserved.</p>
         </div>

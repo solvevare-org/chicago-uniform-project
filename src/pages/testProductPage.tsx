@@ -4,6 +4,49 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import html2canvas from 'html2canvas';
 
+// 1. Update Tailwind theme colors in tailwind.config.js
+// 2. Update main background and text color in index.css
+// 3. Update all green/black/gray classes in testProductPage.tsx to use new theme
+
+// 1. Add custom colors to Tailwind config
+// tailwind.config.js
+// theme: {
+//   extend: {
+//     colors: {
+//       primary: '#b3ddf3',
+//       secondary: '#fff',
+//       accent: '#222',
+//     },
+//   },
+// },
+
+// 2. Update index.css for white background and accent text
+// :root {
+//   color-scheme: light;
+// }
+// body {
+//   background-color: #fff;
+//   color: #222;
+// }
+
+// 3. Update all green/black/gray classes in testProductPage.tsx
+// Replace:
+//   bg-black, bg-gray-900, bg-gray-800, bg-green-400, bg-green-500, bg-green-600, text-green-400, text-green-500, text-black
+// With:
+//   bg-primary, bg-secondary, bg-accent, text-primary, text-accent, text-secondary
+// (or use direct hex if needed)
+
+// Example for a section:
+// <div className="min-h-screen bg-white text-accent">
+// ...existing code...
+// <span className="text-5xl font-mono font-extrabold text-[#b3ddf3] drop-shadow-lg animate-pulse">
+// ...existing code...
+// <button className="bg-[#b3ddf3] text-accent ...">
+// ...existing code...
+//
+// Repeat for all green/black/gray color classes in this file.
+
+
 // Typewriter-style loading component with enhanced animation and style
 const TypewriterLoading: React.FC = () => {
   const [text, setText] = useState('');
@@ -18,17 +61,17 @@ const TypewriterLoading: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-black via-gray-900 to-green-950">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-white via-[#f3f8fa] to-primary">
       <div className="relative">
-        <span className="text-5xl md:text-7xl font-mono font-extrabold text-green-400 drop-shadow-lg animate-pulse">
+        <span className="text-5xl md:text-7xl font-mono font-extrabold text-primary drop-shadow-lg animate-pulse">
           {text}
         </span>
-        <span className="absolute -right-8 top-0 text-5xl md:text-7xl text-green-300 animate-blink">|</span>
+        <span className="absolute -right-8 top-0 text-5xl md:text-7xl text-primary animate-blink">|</span>
       </div>
       <div className="mt-8 flex gap-2">
-        <span className="w-4 h-4 rounded-full bg-green-400 animate-bounce" style={{ animationDelay: '0s' }}></span>
-        <span className="w-4 h-4 rounded-full bg-green-500 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-        <span className="w-4 h-4 rounded-full bg-green-600 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+        <span className="w-4 h-4 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0s' }}></span>
+        <span className="w-4 h-4 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+        <span className="w-4 h-4 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.4s' }}></span>
       </div>
       <style>{`
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -45,7 +88,7 @@ const PurchasePreview = React.memo(({ images, logoData }: { images: string[]; lo
     {/* Front Preview (same as main preview, but smaller) */}
     <div className="flex flex-col items-center">
       <span className="text-sm text-gray-400 mb-1">Front Preview</span>
-      <div className="w-[120px] h-[150px] bg-gray-800 rounded-lg relative flex items-center justify-center">
+      <div className="w-[120px] h-[150px] bg-[#f3f8fa] rounded-lg relative flex items-center justify-center">
         <img src={images[0]} alt="Front Preview" className="absolute w-full h-full object-contain rounded-lg" />
         {logoData[0]?.image && (
           <img
@@ -68,7 +111,7 @@ const PurchasePreview = React.memo(({ images, logoData }: { images: string[]; lo
     {/* Back Preview (same as main preview, but smaller) */}
     <div className="flex flex-col items-center">
       <span className="text-sm text-gray-400 mb-1">Back Preview</span>
-      <div className="w-[120px] h-[150px] bg-gray-800 rounded-lg relative flex items-center justify-center">
+      <div className="w-[120px] h-[150px] bg-[#f3f8fa] rounded-lg relative flex items-center justify-center">
         <img src={images[1] || images[0]} alt="Back Preview" className="absolute w-full h-full object-contain rounded-lg" />
         {logoData[1]?.image && (
           <img
@@ -102,7 +145,7 @@ const ThreeDProducts: React.FC = () => {
   });
   const [isDragging, setIsDragging] = useState(false);
   const [draggedSide, setDraggedSide] = useState<number | null>(null);
-  const [flipped, setFlipped] = useState(false);
+  const [flipped] = useState(false);
   // --- FIX: Add selectedLockedArea state and update logic ---
   const [selectedLockedArea, setSelectedLockedArea] = useState<{ side: number, idx: number }>({ side: 0, idx: 0 });
   // --- Add state for preview modal and slider position ---
@@ -391,65 +434,74 @@ const ThreeDProducts: React.FC = () => {
 
     if (!visible) return null;
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-        <div className="relative bg-gray-900 rounded-xl shadow-2xl p-6 flex flex-col items-center min-w-[370px] max-w-[95vw]">
-          <button onClick={onClose} className="absolute top-2 right-2 text-white text-2xl">×</button>
+      <div className="fixed inset-0 bg-[#b3ddf3] bg-opacity-80 flex items-center justify-center z-50">
+        <div className="relative bg-white rounded-xl shadow-2xl p-6 flex flex-col items-center">
+          <button onClick={onClose} className="absolute top-2 right-2 text-accent text-2xl">×</button>
           {purchaseStep === 'form' ? (
             <>
-              <h2 className="text-2xl font-bold text-green-400 mb-2">Review & Send Custom Order</h2>
+              <h2 className="text-2xl font-bold text-[#b3ddf3] mb-2">Review & Send Custom Order</h2>
               <PurchasePreview images={images} logoData={logoData} />
               <textarea
-                className="w-full min-h-[60px] max-h-[120px] mb-3 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full min-h-[60px] max-h-[120px] mb-3 p-2 rounded bg-[#f3f8fa] text-accent border border-[#b3ddf3] focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                 placeholder="Add custom description (optional)"
                 value={localDescription}
                 onChange={e => setLocalDescription(e.target.value)}
               />
               <input
-                className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full mb-2 p-2 rounded bg-[#f3f8fa] text-accent border border-[#b3ddf3] focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                 placeholder="Full Name"
                 type="text"
                 value={localName}
                 onChange={e => setLocalName(e.target.value)}
               />
               <input
-                className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full mb-2 p-2 rounded bg-[#f3f8fa] text-accent border border-[#b3ddf3] focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                 placeholder="Address"
                 type="text"
                 value={localAddress}
                 onChange={e => setLocalAddress(e.target.value)}
               />
               <input
-                className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full mb-2 p-2 rounded bg-[#f3f8fa] text-accent border border-[#b3ddf3] focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                 placeholder="Email address"
                 type="email"
                 value={localEmail}
                 onChange={e => setLocalEmail(e.target.value)}
               />
               <input
-                className="w-full mb-4 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full mb-4 p-2 rounded bg-[#f3f8fa] text-accent border border-[#b3ddf3] focus:outline-none focus:ring-2 focus:ring-[#b3ddf3]"
                 placeholder="Phone number"
                 type="tel"
                 value={localPhone}
                 onChange={e => setLocalPhone(e.target.value)}
               />
               <button
-                className="w-full py-2 bg-green-500 text-black rounded-lg font-bold hover:bg-green-400 mb-2"
+                className="w-full py-2 bg-[#b3ddf3] text-accent rounded-lg font-bold hover:bg-[#a0cbe8] mb-2"
                 onClick={async () => {
-                  // Take screenshot of front preview
+                  // Generate merged images first
                   let frontScreenshot = null;
+                  let backScreenshot = null;
                   if (frontScreenshotRef.current) {
                     const canvas = await html2canvas(frontScreenshotRef.current, { backgroundColor: null });
                     frontScreenshot = canvas.toDataURL();
-                    setCompositedFront(frontScreenshot);
-                    localStorage.setItem('lastOrderMergedFront', frontScreenshot);
                   }
-                  // Take screenshot of back preview
-                  let backScreenshot = null;
                   if (backScreenshotRef.current) {
                     const canvas = await html2canvas(backScreenshotRef.current, { backgroundColor: null });
                     backScreenshot = canvas.toDataURL();
-                    setCompositedBack(backScreenshot);
-                    localStorage.setItem('lastOrderMergedBack', backScreenshot);
+                  }
+                  // Save merged images to state and localStorage
+                  setCompositedFront(frontScreenshot);
+                  setCompositedBack(backScreenshot);
+                  localStorage.setItem('lastOrderMergedFront', frontScreenshot || '');
+                  localStorage.setItem('lastOrderMergedBack', backScreenshot || '');
+                  // Ensure finalMergedFront and finalMergedBack are set
+                  let finalMergedFront = frontScreenshot;
+                  let finalMergedBack = backScreenshot;
+                  if (!finalMergedFront) finalMergedFront = localStorage.getItem('lastOrderMergedFront') || '';
+                  if (!finalMergedBack) finalMergedBack = localStorage.getItem('lastOrderMergedBack') || '';
+                  if (!finalMergedFront || !finalMergedBack) {
+                    alert('Final merged images are missing. Please try again.');
+                    return;
                   }
                   // POST order data to backend, using requested structure
                   try {
@@ -474,6 +526,8 @@ const ThreeDProducts: React.FC = () => {
                           back: backScreenshot,
                           providedFront: images[0] || null,
                           providedBack: images[1] || null,
+                          finalMergedFront,
+                          finalMergedBack,
                         }
                       })
                     });
@@ -492,11 +546,11 @@ const ThreeDProducts: React.FC = () => {
           ) : (
             <div className="flex flex-col items-center justify-center min-h-[300px]">
               <div className="flex flex-col items-center mb-4">
-                <svg className="w-16 h-16 text-green-400 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4"/></svg>
-                <h3 className="text-xl font-bold text-green-400 mb-1">Request Sent!</h3>
-                <p className="text-gray-300 text-center mb-2">Your product information has been sent for review.<br/>We will contact you soon.</p>
+                <svg className="w-16 h-16 text-[#b3ddf3] mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4"/></svg>
+                <h3 className="text-xl font-bold text-[#b3ddf3] mb-1">Request Sent!</h3>
+                <p className="text-accent text-center mb-2">Your product information has been sent for review.<br/>We will contact you soon.</p>
               </div>
-              {/* Only show the merged front image after purchase */}
+              {/* Only show the merged front/back image after purchase, not compositedFront/compositedBack */}
               {mergedFront && (
                 <div className="w-full flex flex-col items-center mt-4">
                   <span className="text-xs text-gray-400 mb-1">Final Merged Front Image</span>
@@ -509,20 +563,8 @@ const ThreeDProducts: React.FC = () => {
                   <img src={mergedBack} alt="Merged Back Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
                 </div>
               )}
-              {compositedFront && (
-                <div className="w-full flex flex-col items-center mt-4">
-                  <span className="text-xs text-gray-400 mb-1">Final Merged Front Image</span>
-                  <img src={compositedFront} alt="Merged Front Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
-                </div>
-              )}
-              {compositedBack && (
-                <div className="w-full flex flex-col items-center mt-4">
-                  <span className="text-xs text-gray-400 mb-1">Final Merged Back Image</span>
-                  <img src={compositedBack} alt="Merged Back Preview" className="object-contain border border-gray-700 rounded bg-white" style={{ width: '120px', height: '150px' }} />
-                </div>
-              )}
               <button
-                className="mt-6 w-full py-2 bg-green-500 text-black rounded-lg font-bold hover:bg-green-400"
+                className="mt-6 w-full py-2 bg-[#b3ddf3] text-accent rounded-lg font-bold hover:bg-[#a0cbe8]"
                 onClick={() => { setShowPurchaseModal(false); setPurchaseStep('form'); }}
               >
                 Close
@@ -535,7 +577,13 @@ const ThreeDProducts: React.FC = () => {
   };
 
   // Utility to scale logo coordinates from preview to canvas
-  function scaleLogoToCanvas(logo, previewWidth, previewHeight, canvasWidth, canvasHeight) {
+  function scaleLogoToCanvas(
+    logo: LogoData,
+    previewWidth: number,
+    previewHeight: number,
+    canvasWidth: number,
+    canvasHeight: number
+  ) {
     if (!logo) return logo;
     const scaleX = canvasWidth / previewWidth;
     const scaleY = canvasHeight / previewHeight;
@@ -789,48 +837,6 @@ const ThreeDProducts: React.FC = () => {
     }
   };
 
-  const handleLogoSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const size = Number(event.target.value);
-    setLogoData((prev) => ({
-      ...prev,
-      [flipped ? 1 : 0]: {
-        ...prev[flipped ? 1 : 0],
-        size,
-      },
-    }));
-  };
-
-  const handleRotateLogo = () => {
-    setLogoData((prev) => ({
-      ...prev,
-      [flipped ? 1 : 0]: {
-        ...prev[flipped ? 1 : 0],
-        rotation: (prev[flipped ? 1 : 0]?.rotation || 0) + 15,
-      },
-    }));
-  };
-
-  const handleDeleteLogo = () => {
-    setLogoData((prev) => ({
-      ...prev,
-      [flipped ? 1 : 0]: {
-        ...prev[flipped ? 1 : 0],
-        image: null,
-      },
-    }));
-  };
-
-  const startDragging = (e: React.MouseEvent, sideIdx: number) => {
-    if (!logoData[sideIdx]?.image) return;
-    e.stopPropagation();
-    const rect = (e.target as HTMLElement).getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - (logoData[sideIdx].size || 50) / 2;
-    const offsetY = e.clientY - rect.top - (logoData[sideIdx].size || 50) / 2;
-    setIsDragging(true);
-    setDraggedSide(sideIdx);
-    setDragOffset({x: offsetX, y: offsetY});
-  };
-
   const SNAP_THRESHOLD = 30; // px, distance from center to trigger snap
 
   // --- Update logo drag logic to use selectedLockedArea ---
@@ -910,7 +916,6 @@ const ThreeDProducts: React.FC = () => {
     }
     setIsDragging(false);
     setDraggedSide(null);
-    setDragOffset(null);
   };
 
   // Extend logoData type
@@ -921,64 +926,6 @@ const ThreeDProducts: React.FC = () => {
     size: number;
     rotation: number;
     _noTransition?: boolean;
-  };
-
-  // --- Helper to blend images for slider effect ---
-  const getBlendedImage = () => {
-    if (images.length < 2) return images[0];
-    // For now, just crossfade between front and back
-    // In a real 3D, you'd use canvas or WebGL, but here we use opacity blending
-    return (
-      <div className="relative w-full h-full">
-        <img
-          src={images[0]}
-          alt="Front"
-          className="absolute w-full h-full object-contain"
-          style={{ opacity: 1 - sliderValue / 100, transition: 'opacity 0.3s' }}
-        />
-        <img
-          src={images[1] || images[0]}
-          alt="Back"
-          className="absolute w-full h-full object-contain"
-          style={{ opacity: sliderValue / 100, transition: 'opacity 0.3s' }}
-        />
-        {/* Logo overlays (front/back) with crossfade */}
-        {logoData[0]?.image && (
-          <img
-            src={logoData[0].image}
-            alt="Logo Front"
-            className="absolute z-20"
-            style={{
-              top: logoData[0].y ? `${logoData[0].y}px` : '50%',
-              left: logoData[0].x ? `${logoData[0].x}px` : '50%',
-              width: `${logoData[0].size || 50}px`,
-              height: `${logoData[0].size || 50}px`,
-              transform: `translate(-50%, -50%) rotate(${logoData[0].rotation || 0}deg)` ,
-              opacity: 1 - sliderValue / 100,
-              pointerEvents: 'none',
-              transition: 'opacity 0.3s',
-            }}
-          />
-        )}
-        {logoData[1]?.image && (
-          <img
-            src={logoData[1].image}
-            alt="Logo Back"
-            className="absolute z-20"
-            style={{
-              top: logoData[1].y ? `${logoData[1].y}px` : '50%',
-              left: logoData[1].x ? `${logoData[1].x}px` : '50%',
-              width: `${logoData[1].size || 50}px`,
-              height: `${logoData[1].size || 50}px`,
-              transform: `translate(-50%, -50%) rotate(${logoData[1].rotation || 0}deg)` ,
-              opacity: sliderValue / 100,
-              pointerEvents: 'none',
-              transition: 'opacity 0.3s',
-            }}
-          />
-        )}
-      </div>
-    );
   };
 
   // --- Helper to render 3D card flip effect with two images ---
@@ -993,7 +940,6 @@ const ThreeDProducts: React.FC = () => {
     const angle = rotation360 % 360;
     const showFront = angle < 90 || angle > 270;
     const showBack = angle > 90 && angle < 270;
-    const isInteracting = isDragging || dragRef360.current !== null;
     return (
       <div
         className="relative w-full h-full select-none"
@@ -1014,7 +960,7 @@ const ThreeDProducts: React.FC = () => {
           {isLockedLogo && lockedLogoAreas[0].map((area, idx) => (
             <div
               key={"front-outline-" + idx}
-              className={`absolute border-2 rounded-lg pointer-events-auto ${selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
+              className={`absolute border-2 rounded-lg pointer-events-auto ${selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? 'border-primary' : 'border-red-500'} cursor-pointer`}
               style={{
                 left: `${area.x}px`,
                 top: `${area.y}px`,
@@ -1056,7 +1002,7 @@ const ThreeDProducts: React.FC = () => {
           {isLockedLogo && lockedLogoAreas[1].map((area, idx) => (
             <div
               key={"back-outline-" + idx}
-              className={`absolute border-2 rounded-lg pointer-events-auto ${selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? 'border-green-400' : 'border-red-500'} cursor-pointer`}
+              className={`absolute border-2 rounded-lg pointer-events-auto ${selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? 'border-primary' : 'border-red-500'} cursor-pointer`}
               style={{
                 left: `${area.x}px`,
                 top: `${area.y}px`,
@@ -1124,7 +1070,7 @@ const ThreeDProducts: React.FC = () => {
             <img
               src={logoData[0].image}
               alt="Logo Front"
-              className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg"
+              className="absolute z-20 shadow-xl border-2 border-primary rounded-lg"
               style={{
                 top: logoData[0].y ? `${logoData[0].y}px` : '50%',
                 left: logoData[0].x ? `${logoData[0].x}px` : '50%',
@@ -1143,7 +1089,7 @@ const ThreeDProducts: React.FC = () => {
             <img
               src={logoData[1].image}
               alt="Logo Back"
-              className="absolute z-20 shadow-xl border-2 border-green-400 rounded-lg"
+              className="absolute z-20 shadow-xl border-2 border-primary rounded-lg"
               style={{
                 top: logoData[1].y ? `${logoData[1].y}px` : '50%',
                 left: logoData[1].x ? `${logoData[1].x}px` : '50%',
@@ -1167,7 +1113,7 @@ const ThreeDProducts: React.FC = () => {
     if (!open) return null;
     return (
       <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-        <div className="relative bg-gray-900 rounded-xl shadow-2xl p-6 flex flex-col items-center">
+        <div className="relative bg-[#b3ddf3] rounded-xl shadow-2xl p-6 flex flex-col items-center">
           <button onClick={onClose} className="absolute top-2 right-2 text-white text-2xl">×</button>
           <div className="w-[350px] h-[450px] relative flex items-center justify-center mb-4">
             {/* Front Preview with ref */}
@@ -1223,9 +1169,8 @@ const ThreeDProducts: React.FC = () => {
               </div>
             )}
           </div>
-          {/* Navigation in preview */}
           <div className="flex items-center gap-4 mt-2">
-            <button onClick={() => setRotation360(0)} className="p-2 bg-gray-700 rounded-full text-white">Front</button>
+            <button onClick={() => setRotation360(0)} className="p-2 bg-[#b3ddf3] rounded-full text-accent">Front</button>
             <input
               type="range"
               min={0}
@@ -1234,7 +1179,7 @@ const ThreeDProducts: React.FC = () => {
               onChange={e => setRotation360(Number(e.target.value))}
               className="w-40 mx-2"
             />
-            <button onClick={() => setRotation360(180)} className="p-2 bg-gray-700 rounded-full text-white">Back</button>
+            <button onClick={() => setRotation360(180)} className="p-2 bg-[#b3ddf3] rounded-full text-accent">Back</button>
           </div>
         </div>
       </div>
@@ -1252,7 +1197,7 @@ const ThreeDProducts: React.FC = () => {
           {lockedLogoAreas[0].map((area, idx) => (
             <button
               key={idx}
-              className={`px-2 py-1 rounded text-xs font-bold border ${selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? 'bg-green-500 text-black border-green-600' : 'bg-gray-800 text-white border-gray-600'}`}
+              className={`px-2 py-1 rounded text-xs font-bold border ${selectedLockedArea.side === 0 && selectedLockedArea.idx === idx ? 'bg-primary text-black border-primary' : 'bg-gray-800 text-white border-gray-600'}`}
               onClick={() => {
                 if (selectedLockedArea.side === 0 && selectedLockedArea.idx === idx) return;
                 if (logoData[0]?.image) {
@@ -1281,7 +1226,7 @@ const ThreeDProducts: React.FC = () => {
           {lockedLogoAreas[1].map((area, idx) => (
             <button
               key={idx}
-              className={`px-2 py-1 rounded text-xs font-bold border ${selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? 'bg-green-500 text-black border-green-600' : 'bg-gray-800 text-white border-gray-600'}`}
+              className={`px-2 py-1 rounded text-xs font-bold border ${selectedLockedArea.side === 1 && selectedLockedArea.idx === idx ? 'bg-primary text-black border-primary' : 'bg-gray-800 text-white border-gray-600'}`}
               onClick={() => {
                 if (selectedLockedArea.side === 1 && selectedLockedArea.idx === idx) return;
                 if (logoData[1]?.image) {
@@ -1310,7 +1255,7 @@ const ThreeDProducts: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black from-[#0d0d0d] to-black from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
+    <div className="min-h-screen bg-white text-[#222]">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Section */}
@@ -1321,7 +1266,7 @@ const ThreeDProducts: React.FC = () => {
             <div className="relative w-[350px] h-[450px] mb-6 flex items-center justify-center">
               {/* Left arrow */}
               <button
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-gray-800 bg-opacity-60 rounded-full p-2 hover:bg-green-600"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-gray-800 bg-opacity-60 rounded-full p-2 hover:bg-primary"
                 onClick={handleArrowLeft}
                 aria-label="Front"
               >
@@ -1333,7 +1278,7 @@ const ThreeDProducts: React.FC = () => {
               </div>
               {/* Right arrow */}
               <button
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-gray-800 bg-opacity-60 rounded-full p-2 hover:bg-green-600"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-gray-800 bg-opacity-60 rounded-full p-2 hover:bg-primary"
                 onClick={handleArrowRight}
                 aria-label="Back"
               >
@@ -1341,7 +1286,7 @@ const ThreeDProducts: React.FC = () => {
               </button>
               {/* Preview Button */}
               <button
-                className="absolute bottom-2 right-2 z-40 bg-green-500 text-black px-4 py-2 rounded-lg font-bold shadow-lg hover:bg-green-400"
+                className="absolute bottom-2 right-2 z-40 bg-[#b3ddf3] text-accent px-4 py-2 rounded-lg font-bold shadow-lg hover:bg-[#a0cbe8]"
                 onClick={() => setShowPreview(true)}
               >
                 Preview Final Product
@@ -1361,7 +1306,7 @@ const ThreeDProducts: React.FC = () => {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`cursor-pointer border-2 rounded-lg ${sliderValue === (index === 0 ? 0 : 180) ? 'border-green-500' : 'border-transparent'}`}
+                  className={`cursor-pointer border-2 rounded-lg ${sliderValue === (index === 0 ? 0 : 180) ? 'border-primary' : 'border-transparent'}`}
                   onClick={() => {
                     setSliderValue(index === 0 ? 0 : 180);
                     setRotation360(index === 0 ? 0 : 180);
@@ -1382,13 +1327,13 @@ const ThreeDProducts: React.FC = () => {
 
           {/* Product Details Section */}
          <div>
-            <h1 className="text-5xl font-extrabold mb-4 text-green-400">
+            <h1 className="text-5xl font-extrabold mb-4 text-[#b3ddf3]">
               {product.brandName} {product.styleName}
             </h1>
-            <p className="text-lg text-gray-400 mb-6 italic">{product.colorName}</p>
-            <p className="text-3xl font-bold mb-2 text-green-500">${product.salePrice.toFixed(2)}</p>
-            <p className="text-lg font-medium mb-6 text-gray-300">
-              Subtotal: <span className="text-green-400">${subtotal}</span>
+            <p className="text-lg text-[#b3ddf3] mb-6 italic">{product.colorName}</p>
+            <p className="text-3xl font-bold mb-2 text-[#b3ddf3]">${product.salePrice.toFixed(2)}</p>
+            <p className="text-lg font-medium mb-6 text-accent">
+              Subtotal: <span className="text-[#b3ddf3]">${subtotal}</span>
             </p>
 
             <div className="mb-6">
@@ -1417,7 +1362,7 @@ const ThreeDProducts: React.FC = () => {
                   type="number"
                   value={quantity}
                   onChange={(e) => handleQuantityChange(Number(e.target.value))}
-                  className="w-16 text-center px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-16 text-center px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   min="1"
                   max={product.caseQty}
                 />
@@ -1454,40 +1399,6 @@ const ThreeDProducts: React.FC = () => {
               />
             </div>
 
-            {/* Logo Size Slider (show only if logo is present for the current image) */}
-            {isLockedLogo && (logoData[0]?.image || logoData[1]?.image) && (
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Logo Size (Front/Back)</label>
-                {/* Front logo size */}
-                {logoData[0]?.image && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs text-gray-400">Front</span>
-                    <input
-                      type="range"
-                      min="20"
-                      max="200"
-                      value={logoData[0]?.size || 50}
-                      onChange={e => setLogoData(prev => ({ ...prev, 0: { ...prev[0], size: Number(e.target.value) } }))}
-                      className="w-40 appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                )}
-                {/* Back logo size */}
-                {logoData[1]?.image && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">Back</span>
-                    <input
-                      type="range"
-                      min="20"
-                      max="200"
-                      value={logoData[1]?.size || 50}
-                      onChange={e => setLogoData(prev => ({ ...prev, 1: { ...prev[1], size: Number(e.target.value) } }))}
-                      className="w-40 appearance-none bg-gray-700 rounded-full h-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
             {/* Logo controls (show only if logo is present for the current image) */}
             {isLockedLogo && (logoData[0]?.image || logoData[1]?.image) && (
               <div className="flex items-center justify-between mb-4">
@@ -1530,7 +1441,7 @@ const ThreeDProducts: React.FC = () => {
 
             <button
               onClick={() => setShowPurchaseModal(true)}
-              className="w-full py-3 bg-green-500 text-black rounded-lg font-medium hover:bg-green-400 transition-transform transform hover:scale-105 shadow-lg"
+              className="w-full py-3 bg-[#b3ddf3] text-accent rounded-lg font-medium hover:bg-[#a0cbe8] transition-transform transform hover:scale-105 shadow-lg"
             >
               Purchase
             </button>

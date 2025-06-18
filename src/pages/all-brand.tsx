@@ -34,29 +34,29 @@ const AllBrandPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0d0d0d] to-black text-white py-12 px-4 md:px-6 lg:px-8">
-      <div className="max-w-screen-lg mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">All Brands</h1>
+    <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-[#b3ddf3]">All Brands</h1>
         {loading ? (
           <p className="text-center text-gray-400">Loading brands...</p>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
               {brands.slice(0, visibleCount).map((brand) => (
                 <a
                   key={brand._id}
                   href={`/brands/${encodeURIComponent(brand.name)}`}
-                  className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-4 flex flex-col items-center justify-center text-lg font-semibold shadow hover:shadow-lg transition-all text-center w-full cursor-pointer hover:text-green-400"
+                  className="bg-white border border-[#b3ddf3] rounded-xl p-6 flex flex-col items-center justify-center text-lg font-semibold shadow hover:shadow-lg transition-all text-center w-full cursor-pointer hover:text-[#b3ddf3] hover:border-[#b3ddf3]"
                 >
                   <img
                     src={`https://www.ssactivewear.com/${brand.image}`}
                     alt={brand.name}
-                    className="w-16 h-16 object-contain mb-2 rounded bg-white"
+                    className="w-20 h-20 object-contain mb-3 rounded bg-white border border-[#b3ddf3]"
                     onError={(e) => (e.currentTarget.style.display = 'none')}
                   />
-                  {brand.name}
+                  <span className="mt-2 text-[#222] font-bold">{brand.name}</span>
                 </a>
               ))}
             </div>
@@ -64,7 +64,7 @@ const AllBrandPage: React.FC = () => {
               <div className="flex justify-center mt-8">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 30)}
-                  className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full shadow-md transition-all"
+                  className="px-6 py-2 bg-[#b3ddf3] hover:bg-[#b3ddf3] text-white font-semibold rounded-full shadow-md transition-all"
                 >
                   Show More Brands
                 </button>

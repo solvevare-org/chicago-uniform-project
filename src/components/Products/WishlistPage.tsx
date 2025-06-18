@@ -25,11 +25,11 @@ const WishlistPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-12 px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-[#2563eb] py-12 px-4 md:px-6 lg:px-8">
       <div className="max-w-screen-2xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center text-green-400">WISHLIST</h1>
         <div className="text-sm text-gray-400 mb-6">
-          <span className="hover:underline cursor-pointer">Home</span> / <span className="text-white font-semibold">Wishlist</span>
+          <span className="hover:underline cursor-pointer">Home</span> / <span className="text-[#2563eb] font-semibold">Wishlist</span>
         </div>
         {wishlistItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

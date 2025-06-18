@@ -197,7 +197,7 @@ const Header: React.FC = () => {
               <Link
                 key={brand}
                 to={`/brands/${brand.toLowerCase().replace(/\s+/g, "%20")}`}
-                className="block px-3 py-2 rounded hover:bg-gray-700 text-white"
+                className="block px-3 py-2 rounded hover:bg-gray-700 text-[#222]"
                 onClick={() => setMenuOpen(false)}
               >
                 {brand}
@@ -207,7 +207,7 @@ const Header: React.FC = () => {
           <div className="mt-4 text-center">
             <Link
               to="/all-brands"
-              className="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
+              className="inline-block px-4 py-2 bg-[#b3ddf3] text-[#222] rounded-md hover:bg-[#a0cbe8] transition-colors duration-200"
               onClick={() => setMenuOpen(false)}
             >
               Show all Brands
@@ -223,13 +223,13 @@ const Header: React.FC = () => {
 
         {/* Top Brands */}
         <div>
-          <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Top Brands</h3>
+          <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">Top Brands</h3>
           <div className="space-y-3">
             {topBrands.map((brand) => (
               <Link
                 key={brand}
                 to={`/brands/${brand.toLowerCase().replace(/\s+/g, "%20")}`}
-                className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                className="block px-2 py-2 rounded hover:bg-[#e6f3fa] text-[#222] transition-colors duration-200"
                 onClick={() => setOpenDropdown(null)}
               >
                 {brand}
@@ -240,13 +240,13 @@ const Header: React.FC = () => {
 
         {/* Trending Brands */}
         <div>
-          <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Trending Brands</h3>
+          <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">Trending Brands</h3>
           <div className="space-y-3">
             {trendingBrands.map((brand) => (
               <Link
                 key={brand}
                 to={`/brands/${brand.toLowerCase().replace(/\s+/g, "%20")}`}
-                className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                className="block px-2 py-2 rounded hover:bg-[#e6f3fa] text-[#222] transition-colors duration-200"
                 onClick={() => setOpenDropdown(null)}
               >
                 {brand}
@@ -272,7 +272,7 @@ const Header: React.FC = () => {
               <Link
                 key={cat}
                 to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                className="block px-3 py-2 rounded hover:bg-gray-700 text-white"
+                className="block px-3 py-2 rounded hover:bg-gray-700 text-[#222]"
                 onClick={() => setMenuOpen(false)}
               >
                 {cat}
@@ -282,7 +282,7 @@ const Header: React.FC = () => {
           <div className="mt-4 text-center">
             <Link
               to="/all-categories"
-              className="inline-block px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors duration-200"
+              className="inline-block px-4 py-2 bg-[#b3ddf3] text-[#222] rounded-md hover:bg-[#a0cbe8] transition-colors duration-200"
               onClick={() => setMenuOpen(false)}
             >
               Show all Categories
@@ -297,13 +297,13 @@ const Header: React.FC = () => {
         <div className="grid grid-cols-3 gap-12 mb-8">
           {/* Categories Column 1 */}
           <div>
-            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Popular Categories</h3>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">Popular Categories</h3>
             <div className="space-y-3">
               {categoriesColumn1.map((cat) => (
                 <Link
                   key={cat}
                   to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
                   onClick={() => setOpenDropdown(null)}
                 >
                   {cat}
@@ -314,13 +314,13 @@ const Header: React.FC = () => {
 
           {/* Categories Column 2 */}
           <div>
-            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Trending Categories</h3>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">Trending Categories</h3>
             <div className="space-y-3">
               {categoriesColumn2.map((cat) => (
                 <Link
                   key={cat}
                   to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
                   onClick={() => setOpenDropdown(null)}
                 >
                   {cat}
@@ -331,13 +331,13 @@ const Header: React.FC = () => {
 
           {/* Categories Column 3 */}
           <div>
-            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">All Categories</h3>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">All Categories</h3>
             <div className="space-y-3">
               {categoriesColumn3.map((cat) => (
                 <Link
                   key={cat}
                   to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
                   onClick={() => setOpenDropdown(null)}
                 >
                   {cat}
@@ -351,7 +351,7 @@ const Header: React.FC = () => {
         <div className="text-center border-t border-gray-600 pt-6">
           <Link
             to="/all-categories"
-            className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium"
+            className="inline-flex items-center px-6 py-3 bg-[#b3ddf3] text-[#222] rounded-lg hover:bg-[#a0cbe8] transition-colors duration-200 font-medium"
             onClick={() => setOpenDropdown(null)}
           >
             Show All Categories
@@ -372,7 +372,7 @@ const Header: React.FC = () => {
               <Link
                 key={item}
                 to={`/${type}/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="block px-3 py-2 rounded hover:bg-gray-700 text-white"
+                className="block px-3 py-2 rounded hover:bg-gray-700 text-[#222]"
                 onClick={() => setMenuOpen(false)}
               >
                 {item}
@@ -387,13 +387,13 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto py-8 px-8">
         <div className="grid grid-cols-2 gap-12">
           <div>
-            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">{type}</h3>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">{type}</h3>
             <div className="space-y-3">
               {items.map((item) => (
                 <Link
                   key={item}
                   to={`/${type}/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-white transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
                 >
                   {item}
                 </Link>
@@ -401,7 +401,7 @@ const Header: React.FC = () => {
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-green-500 rounded-t-md px-3 py-2">Coming Soon</h3>
+            <h3 className="text-lg font-bold text-black mb-6 border-b border-gray-600 pb-2 bg-[#b3ddf3] rounded-t-md px-3 py-2">Coming Soon</h3>
             <p className="text-gray-400">More options will be available soon!</p>
           </div>
         </div>
@@ -411,27 +411,66 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="w-full font-sans bg-[#f1f0e7] relative z-50 sticky top-0 left-0 right-0 shadow-lg">
+      <header className="w-full font-sans bg-white relative z-50 sticky top-0 left-0 right-0 shadow-lg">
         <div className="relative z-10">
           {/* Top Header */}
           {/* Top Header - Dark Theme */}
-          <div className="bg-gray-900 text-white py-3 px-4 shadow-lg shadow-black/30 border-b border-gray-700">
+          <div className="bg-[#f3f8fa] text-[#222] py-3 px-4 shadow-lg shadow-black/30 border-b border-[#b3ddf3]">
             <div className="max-w-screen-2xl mx-auto flex items-center justify-between gap-4">
-              <Link to="/" className="text-xl md:text-2xl font-bold text-white hover:text-gray-300 transition-colors">
-                South Loop Prints
-              </Link>
+              <div className="flex flex-col items-center">
+                <Link to="/" className="text-xl md:text-2xl font-bold text-[#b3ddf3] hover:text-[#a0cbe8] transition-colors">
+                  South Loop Prints
+                </Link>
+                <div className="flex mt-1 justify-center w-full">
+                  {/* Chicago flag 6-pointed stars, smaller and perfectly proportioned */}
+                  {[...Array(4)].map((_, i) => (
+                    <svg
+                      key={i}
+                      width="22" height="22" viewBox="0 0 22 22"
+                      style={{ margin: '0 8px' }}
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      {/* True Chicago flag 6-pointed star, perfect aspect ratio */}
+                      <polygon
+                        points="11,2 12.3,7.5 18,4.5 13.5,9 18,13.5 12.3,10.5 11,16 9.7,10.5 4,13.5 8.5,9 4,4.5 9.7,7.5"
+                        fill="#ff3333"
+                      />
+                    </svg>
+                  ))}
+                </div>
+              </div>
 
               {/* Desktop Search and Auth */}
               <div className="hidden md:flex items-center gap-6">
                 <div className="w-96">
-                  <SearchBar />
+                  <div className="relative group">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#b3ddf3] transition-colors duration-300 group-focus-within:text-blue-500">
+                      <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-search"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search products, brands, categories..."
+                      className="w-full pl-10 pr-4 py-2 rounded-xl bg-white text-[#222] border-2 border-transparent focus:border-[#b3ddf3] shadow-md focus:shadow-[0_0_12px_0_#b3ddf3] transition-all duration-300 outline-none ring-0 placeholder-gray-400 font-medium text-base animate-searchbar-glow"
+                      style={{ boxShadow: '0 2px 16px 0 rgba(179,221,243,0.10)' }}
+                    />
+                    <style>{`
+                      @keyframes searchbar-glow {
+                        0% { box-shadow: 0 0 0 0 #b3ddf3; }
+                        50% { box-shadow: 0 0 16px 2px #b3ddf3; }
+                        100% { box-shadow: 0 0 0 0 #b3ddf3; }
+                      }
+                      .animate-searchbar-glow {
+                        animation: searchbar-glow 2.5s infinite;
+                      }
+                    `}</style>
+                  </div>
                 </div>
                 
               </div>
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden text-white hover:text-gray-300 transition-transform transform hover:scale-110"
+                className="md:hidden text-[#222] hover:text-gray-300 transition-transform transform hover:scale-110"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle Menu"
               >
@@ -443,22 +482,22 @@ const Header: React.FC = () => {
           {/* Mobile Search and Auth - Dark Theme */}
           <div className="md:hidden">
             {/* Search Bar */}
-            <div className="bg-gray-800 border-t border-gray-700 px-4 py-3">
+            <div className="bg-[#f3f8fa] border-t border-gray-700 px-4 py-3">
               <SearchBar />
             </div>
 
             {/* Auth Buttons */}
-            <div className="bg-gray-800 border-t border-gray-700 px-4 py-3">
+            <div className="bg-[#f3f8fa] border-t border-gray-700 px-4 py-3">
               <div className="flex gap-2 justify-center">
                 <Link
                   to="/login"
-                  className="flex-1 text-center text-white bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-gray-600 border border-gray-600 transition-all duration-300"
+                  className="flex-1 text-center text-[#222] bg-[#b3ddf3] px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-[#a0cbe8] border border-[#b3ddf3] transition-all duration-300"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="flex-1 text-center text-white bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-gray-600 border border-gray-600 transition-all duration-300"
+                  className="flex-1 text-center text-[#222] bg-[#b3ddf3] px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-[#a0cbe8] border border-[#b3ddf3] transition-all duration-300"
                 >
                   Sign Up
                 </Link>
@@ -469,7 +508,7 @@ const Header: React.FC = () => {
 
           {/* Mobile Menu */}
           {menuOpen && (
-            <div className="bg-[#1A1A1A] text-white py-4 px-4 md:px-10 relative">
+            <div className="bg-white text-[#222] py-4 px-4 md:px-10 relative">
               <nav className="flex flex-col gap-4 text-sm px-2">
                 {/* Brands Dropdown */}
                 <div>
@@ -545,7 +584,7 @@ const Header: React.FC = () => {
           )}
 
           {/* Navigation Bar */}
-          <div className="bg-green-500 text-black py-4 px-4 md:px-10 relative">
+          <div className="bg-[#b3ddf3] text-[#222] py-4 px-4 md:px-10 relative">
             <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-center gap-6 md:gap-10">
               {/* Desktop Nav */}
               <nav className="hidden md:flex items-center gap-10">
@@ -643,7 +682,7 @@ const Header: React.FC = () => {
           {/* Dropdown Content */}
           <div
             ref={(el) => (dropdownRefs.current[openDropdown] = el)}
-            className={`absolute top-[120px] left-0 right-0 bg-[#1a1a1a] border-t border-gray-700 shadow-2xl ${
+            className={`absolute top-[120px] left-0 right-0 bg-[#f3f8fa] border-t border-gray-700 shadow-2xl ${
               isClosing ? "animate-slideUp" : "animate-slideDown"
             }`}
             onMouseEnter={handleDropdownMouseEnter}

@@ -62,7 +62,7 @@ const ProductPage: React.FC = () => {
   const stopDragging = () => setIsDragging(false);
 
   return (
-    <div className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
+    <div className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-[#2563eb] min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="relative">
@@ -118,7 +118,7 @@ const ProductPage: React.FC = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-white hover:file:bg-green-400"
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-[#2563eb] hover:file:bg-green-400"
               />
             </div>
 
@@ -150,13 +150,13 @@ const ProductPage: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={handleRotateLogo}
-                    className="py-1 px-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
+                    className="py-1 px-3 bg-blue-500 text-[#2563eb] rounded-lg font-medium hover:bg-blue-400 transition-transform transform hover:scale-105 shadow-lg"
                   >
                     Rotate
                   </button>
                   <button
                     onClick={handleDeleteLogo}
-                    className="py-1 px-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
+                    className="py-1 px-3 bg-red-500 text-[#2563eb] rounded-lg font-medium hover:bg-red-400 transition-transform transform hover:scale-105 shadow-lg"
                   >
                     Delete
                   </button>
