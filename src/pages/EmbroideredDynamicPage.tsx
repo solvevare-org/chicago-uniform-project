@@ -62,7 +62,7 @@ const EmbroideredDynamicPage: React.FC = () => {
 
   // Improved return logic for loading and empty state
   return (
-    <>
+    <div className="pt-8 md:pt-12 lg:pt-16">
       {/* SEO Meta Tags and H1 for Polo */}
       {embroideredType === 'polo' && (
         <>
@@ -72,7 +72,7 @@ const EmbroideredDynamicPage: React.FC = () => {
             <meta name="keywords" content="custom embroidered polo shirts, high-quality custom embroidered polos, embroidered custom polos, personalised embroidered polos" />
             <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
           </Helmet>
-          <h1 className="text-3xl font-bold mb-4">Custom Embroidered Polo Shirts</h1>
+          <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered Polo Shirts</h1>
         </>
       )}
       {/* SEO Meta Tags and H1 for Hoodie */}
@@ -84,7 +84,7 @@ const EmbroideredDynamicPage: React.FC = () => {
             <meta name="keywords" content="custom embroidered hoodies, high-quality custom embroidered hoodies, embroidered custom hoodies, personalised embroidered hoodies" />
             <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
           </Helmet>
-          <h1 className="text-3xl font-bold mb-4">Custom Embroidered Hoodies</h1>
+          <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered Hoodies</h1>
         </>
       )}
       {/* SEO Meta Tags and H1 for T-Shirt */}
@@ -96,7 +96,7 @@ const EmbroideredDynamicPage: React.FC = () => {
             <meta name="keywords" content="custom embroidered t-shirts, t shirts embroidered, custom t shirts embroidered logo, personalised t shirts embroidered" />
             <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
           </Helmet>
-          <h1 className="text-3xl font-bold mb-4">Custom Embroidered T-Shirts</h1>
+          <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered T-Shirts</h1>
         </>
       )}
       {/* SEO Meta Tags and H1 for Sweatshirt */}
@@ -109,16 +109,20 @@ const EmbroideredDynamicPage: React.FC = () => {
         </Helmet>
       )}
       {embroideredType === 'sweatshirt' && (
-        <h1 className="text-3xl font-bold mb-4">Custom Embroidered Sweatshirts</h1>
+        <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered Sweatshirts</h1>
       )}
-      {/* Breadcrumb */}
-      <div className="text-[#b3ddf3] text-sm mb-6">
-        <span className="hover:underline cursor-pointer">Home</span> /Category/
-        <span className="text-[#b3ddf3] font-semibold">{embroideredType}</span>
+      {/* Header and Breadcrumb aligned */}
+      <div className="pl-6 md:pl-16 lg:pl-24">
+        {/* Breadcrumb */}
+        <div className="text-[#b3ddf3] text-sm mb-6">
+          <span className="hover:underline cursor-pointer ">Home</span> /Category/
+          <span className="text-[#b3ddf3] font-semibold">{embroideredType}</span>
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      {/* Main Content Area: Sidebar + Product Grid */}
+      <div className="flex flex-col md:flex-row gap-12 md:gap-16 py-10 md:py-16">
         {/* Filters Section */}
-        <div className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">
+        <div className="bg-[#f3f8fa] p-8 md:p-10 pt-10 rounded-xl shadow-lg border border-[#b3ddf3] w-full md:w-72 min-w-[260px] max-w-xs mb-8 md:mb-0 ml-6 md:ml-16 lg:ml-24">
           {/* CATEGORY (filtered by embroideredCategory) */}
           <div className="mb-6 border-b border-[#b3ddf3] pb-4">
             <h2
@@ -129,7 +133,7 @@ const EmbroideredDynamicPage: React.FC = () => {
               <FaChevronDown className={`transition-transform ${activeTab === 'CATEGORY' ? 'rotate-180' : ''}`} />
             </h2>
             {activeTab === 'CATEGORY' && embroideredType && (
-              <ul className="mt-4 space-y-2 text-sm text-gray-300">
+              <ul className="mt-4 space-y-2 text-sm text-black">
                 <li className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -159,7 +163,7 @@ const EmbroideredDynamicPage: React.FC = () => {
               <FaChevronDown className={`transition-transform ${activeTab === 'BRANDS' ? 'rotate-180' : ''}`} />
             </h2>
             {activeTab === 'BRANDS' && (
-              <ul className="mt-4 space-y-2 text-sm text-gray-300">
+              <ul className="mt-4 space-y-2 text-sm text-black">
                 {brands.map((brand) => (
                   <li key={brand} className="flex items-center space-x-2">
                     <input
@@ -191,7 +195,7 @@ const EmbroideredDynamicPage: React.FC = () => {
               <FaChevronDown className={`transition-transform ${activeTab === 'COLOR' ? 'rotate-180' : ''}`} />
             </h2>
             {activeTab === 'COLOR' && (
-              <ul className="mt-4 space-y-2 text-sm text-gray-300">
+              <ul className="mt-4 space-y-2 text-sm text-black">
                 {colors.map((color) => (
                   <li key={color} className="flex items-center space-x-2">
                     <input
@@ -241,7 +245,7 @@ const EmbroideredDynamicPage: React.FC = () => {
           </div>
         </div>
         {/* Product Grid Section */}
-        <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 p-4 md:p-6">
           {loading ? (
             <p className="text-center text-gray-400 col-span-full">Loading products...</p>
           ) : error ? (
@@ -285,7 +289,7 @@ const EmbroideredDynamicPage: React.FC = () => {
             <p className="text-gray-400 text-center col-span-full">No products found for this category.</p>
           )}
           {/* Show More button */}
-          {products.filter((product) => {
+          {!loading && products.filter((product) => {
             if (selectedFilters.CATEGORY.size > 0 && !selectedFilters.CATEGORY.has(embroideredType)) return false;
             if (selectedFilters.BRANDS.size > 0 && !selectedFilters.BRANDS.has(product.brandName)) return false;
             if (selectedFilters.COLOR.size > 0 && !selectedFilters.COLOR.has(product.colorName)) return false;
@@ -304,22 +308,24 @@ const EmbroideredDynamicPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Remove all duplicate/extra headers below the products for all types */}
+      {/* Main top header for all embroidered types with left padding and Chicago flag blue color */}
+      {embroideredType === 'polo' && (
+        <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered Polo Shirts</h1>
+      )}
+      {embroideredType === 'hoodie' && (
+        <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered Hoodies</h1>
+      )}
+      {embroideredType === 't-shirt' && (
+        <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered T-Shirts</h1>
+      )}
+      {embroideredType === 'sweatshirt' && (
+        <h1 className="text-3xl font-bold mb-4 pl-6 md:pl-16 lg:pl-24 text-[#3ab7ea]">Custom Embroidered Sweatshirts</h1>
+      )}
+
       {/* Polo-specific content at the end with improved spacing and heading color */}
       {embroideredType === 'polo' && (
         <div className="mt-16 px-4 md:px-16 lg:px-32 py-10 bg-white rounded-2xl shadow-xl border border-[#b3ddf3]">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-[#3ab7ea]">Custom Embroidered Polo Shirts</h2>
-          {/* SEO Meta Tags and H1 for Polo */}
-          {embroideredType === 'polo' && (
-            <>
-              <Helmet>
-                <title>Custom Embroidered Polo Shirts | Brand Name</title>
-                <meta name="description" content="Design custom embroidered polo shirts with your logo! Perfect for teams, businesses, or personal use. Create unique styles and high-quality stitching—order now!" />
-                <meta name="keywords" content="custom embroidered polo shirts, high-quality custom embroidered polos, embroidered custom polos, personalised embroidered polos" />
-                <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
-              </Helmet>
-              <h1 className="text-3xl font-bold mb-4">Custom Embroidered Polo Shirts</h1>
-            </>
-          )}
           {/* Polo-specific rich content and FAQs */}
           {embroideredType === 'polo' && (
             <section className="mt-12 space-y-10">
@@ -384,19 +390,6 @@ const EmbroideredDynamicPage: React.FC = () => {
       {/* Hoodie-specific content at the end */}
       {embroideredType === 'hoodie' && (
         <div className="mt-16 px-4 md:px-16 lg:px-32 py-10 bg-white rounded-2xl shadow-xl border border-[#b3ddf3]">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-[#3ab7ea]">Custom Embroidered Hoodies</h2>
-          {/* SEO Meta Tags and H1 for Hoodie */}
-          {embroideredType === 'hoodie' && (
-            <>
-              <Helmet>
-                <title>Custom Embroidered Hoodies 🧥 | South Loop Prints</title>
-                <meta name="description" content="Show off your brand in style with premium custom embroidered hoodies 🧵🔥 from South Loop Prints! Ideal for teams, staff uniforms, or giveaways. Fast delivery & bulk order pricing! 🚀" />
-                <meta name="keywords" content="custom embroidered hoodies, high-quality custom embroidered hoodies, embroidered custom hoodies, personalised embroidered hoodies" />
-                <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
-              </Helmet>
-              <h1 className="text-3xl font-bold mb-4">Custom Embroidered Hoodies</h1>
-            </>
-          )}
           {/* Hoodie-specific rich content and FAQs */}
           {embroideredType === 'hoodie' && (
             <section className="mt-12 space-y-10">
@@ -449,19 +442,6 @@ const EmbroideredDynamicPage: React.FC = () => {
       {/* T-shirt-specific content at the end */}
       {embroideredType === 't-shirt' && (
         <div className="mt-16 px-4 md:px-16 lg:px-32 py-10 bg-white rounded-2xl shadow-xl border border-[#b3ddf3]">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-[#3ab7ea]">Custom Embroidered T-Shirts</h2>
-          {/* SEO Meta Tags and H1 for T-Shirt */}
-          {embroideredType === 't-shirt' && (
-            <>
-              <Helmet>
-                <title>Custom Embroidered T-Shirts 👕 | South Loop Prints</title>
-                <meta name="description" content="Create your best look with custom embroidered T-shirts from South Loop Prints 🧵✨ Great for branding, staff uniforms, and events. Quick turnaround & volume pricing! 🚀" />
-                <meta name="keywords" content="custom embroidered t-shirts, t shirts embroidered, custom t shirts embroidered logo, personalised t shirts embroidered" />
-                <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
-              </Helmet>
-              <h1 className="text-3xl font-bold mb-4">Custom Embroidered T-Shirts</h1>
-            </>
-          )}
           {/* T-shirt-specific rich content and FAQs */}
           {embroideredType === 't-shirt' && (
             <section className="mt-12 space-y-10">
@@ -530,19 +510,6 @@ const EmbroideredDynamicPage: React.FC = () => {
       {/* Sweatshirt-specific content at the end */}
       {embroideredType === 'sweatshirt' && (
         <div className="mt-16 px-4 md:px-16 lg:px-32 py-10 bg-white rounded-2xl shadow-xl border border-[#b3ddf3]">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-[#3ab7ea]">Custom Embroidered Sweatshirts</h2>
-          {/* SEO Meta Tags and H1 for Sweatshirt */}
-          {embroideredType === 'sweatshirt' && (
-            <Helmet>
-              <title>Custom Embroidered Sweatshirts | South Loop Prints</title>
-              <meta name="description" content="Stay warm and professional with custom embroidered sweatshirts from South Loop Prints🧵🔥 Ideal for teams, events, and branded apparel. Fast service & bulk discounts! 🚚" />
-              <meta name="keywords" content="custom embroidered sweatshirts, custom embroidery sweatshirts, custom logo sweatshirts, personalized embroidered sweatshirts" />
-              <link rel="canonical" href="https://www.chicagouniformcompany.com/" />
-            </Helmet>
-          )}
-          {embroideredType === 'sweatshirt' && (
-            <h1 className="text-3xl font-bold mb-4">Custom Embroidered Sweatshirts</h1>
-          )}
           {/* Sweatshirt-specific rich content and FAQs */}
           {embroideredType === 'sweatshirt' && (
             <section className="mt-12 space-y-10">
@@ -599,7 +566,7 @@ const EmbroideredDynamicPage: React.FC = () => {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

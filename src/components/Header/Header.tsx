@@ -302,7 +302,7 @@ const Header: React.FC = () => {
                 <Link
                   key={cat}
                   to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-[#e6f3fa] text-[#222] transition-colors duration-200"
                   onClick={() => setOpenDropdown(null)}
                 >
                   {cat}
@@ -319,7 +319,7 @@ const Header: React.FC = () => {
                 <Link
                   key={cat}
                   to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-[#e6f3fa] text-[#222] transition-colors duration-200"
                   onClick={() => setOpenDropdown(null)}
                 >
                   {cat}
@@ -336,7 +336,7 @@ const Header: React.FC = () => {
                 <Link
                   key={cat}
                   to={`/${cat.toLowerCase().replace(/\s+/g, "%20")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
+                  className="block px-2 py-2 rounded hover:bg-[#e6f3fa] text-[#222] transition-colors duration-200"
                   onClick={() => setOpenDropdown(null)}
                 >
                   {cat}
@@ -362,7 +362,13 @@ const Header: React.FC = () => {
 
   const renderCustomApparel = (type: string, isMobile = false) => {
     const items = dropdownMenuNames[type as keyof typeof dropdownMenuNames] || []
-
+    // Map display names to correct static routes
+    const routeMap: Record<string, string> = {
+      "Custom Embroidered Polo": "/custom-embroidered-polo",
+      "Custom Embroidered Hoodie": "/custom-embroidered-hoodie",
+      "Custom Embroidered T-Shirt": "/custom-embroidered-t-shirt",
+      "Custom Embroidered Sweatshirt": "/custom-embroidered-sweatshirt",
+    }
     if (isMobile) {
       return (
         <div className="w-full py-4 px-2">
@@ -370,8 +376,8 @@ const Header: React.FC = () => {
             {items.map((item) => (
               <Link
                 key={item}
-                to={`/${type}/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="block px-3 py-2 rounded hover:bg-gray-700 text-[#222]"
+                to={routeMap[item] || "/"}
+                className="block px-3 py-2 rounded hover:bg-[#e6f3fa] text-[#222]"
                 onClick={() => setMenuOpen(false)}
               >
                 {item}
@@ -391,8 +397,9 @@ const Header: React.FC = () => {
               {items.map((item) => (
                 <Link
                   key={item}
-                  to={`/${type}/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="block px-2 py-2 rounded hover:bg-gray-700 text-[#222] transition-colors duration-200"
+                  to={routeMap[item] || "/"}
+                  className="block px-2 py-2 rounded hover:bg-[#e6f3fa] text-[#222] transition-colors duration-200"
+                  onClick={() => setOpenDropdown(null)}
                 >
                   {item}
                 </Link>
