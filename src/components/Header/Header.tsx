@@ -9,11 +9,10 @@ import SearchBar from "./SearchBar"
 // Use the existing dropdown menu names from your code
 const dropdownMenuNames = {
   "Custom Embroidered Apparel": [
-    "Embroidered Polo Shirts",
-    "Custom Hoodies",
-    "Embroidered Caps",
-    "Corporate Uniforms",
-    "Team Jerseys",
+    "Custom Embroidered Polo",
+    "Custom Embroidered Hoodie",
+    "Custom Embroidered T-Shirt",
+    "Custom Embroidered Sweatshirt",
   ],
   "Custom Printed Apparel": [
     "Screen Printed T-Shirts",
