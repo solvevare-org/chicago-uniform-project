@@ -52,12 +52,12 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     // Fetch brand names dynamically
-    fetch("http://31.97.41.27:5000/api/styles/brand-names")
+    fetch("http://localhost:3000/api/styles/brand-names")
       .then((res) => res.json())
       .then((data) => setBrandNames(data.brandNames || []))
       .catch(() => setBrandNames([]))
 
-    fetch("http://31.97.41.27:5000/api/styles/base-categories")
+    fetch("http://localhost:3000/api/styles/base-categories")
       .then((res) => res.json())
       .then((data) => setCategories(data.baseCategories || []))
       .catch(() => setCategories([]))
@@ -418,26 +418,11 @@ const Header: React.FC = () => {
           <div className="bg-[#f3f8fa] text-[#222] py-3 px-4 shadow-lg shadow-black/30 border-b border-[#b3ddf3]">
             <div className="max-w-screen-2xl mx-auto flex items-center justify-between gap-4">
               <div className="flex flex-col items-center">
+                {/* Replace South Loop Prints and stars with logo */}
                 <Link to="/" className="text-xl md:text-2xl font-bold text-[#b3ddf3] hover:text-[#a0cbe8] transition-colors">
-                  South Loop Prints
+                  {/* Logo in header, full width fit */}
+                  <img src="/logo.png" alt="Brand Logo" className="w-full max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg h-auto object-contain mx-auto" style={{maxHeight: '60px'}} />
                 </Link>
-                <div className="flex mt-1 justify-center w-full">
-                  {/* Chicago flag 6-pointed stars, smaller and perfectly proportioned */}
-                  {[...Array(4)].map((_, i) => (
-                    <svg
-                      key={i}
-                      width="22" height="22" viewBox="0 0 22 22"
-                      style={{ margin: '0 8px' }}
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      {/* True Chicago flag 6-pointed star, perfect aspect ratio */}
-                      <polygon
-                        points="11,2 12.3,7.5 18,4.5 13.5,9 18,13.5 12.3,10.5 11,16 9.7,10.5 4,13.5 8.5,9 4,4.5 9.7,7.5"
-                        fill="#ff3333"
-                      />
-                    </svg>
-                  ))}
-                </div>
               </div>
 
               {/* Desktop Search and Auth */}

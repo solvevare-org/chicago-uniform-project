@@ -22,7 +22,7 @@ export default function SearchProducts() {
         let data;
         if (search.trim() !== "") {
           // Use the new search endpoint
-          const res = await fetch(`http://31.97.41.27:5000/api/products/search?q=${encodeURIComponent(search)}`);
+          const res = await fetch(`http://localhost:3000/api/products/search?q=${encodeURIComponent(search)}`);
           data = await res.json();
         } else {
           const res = await authenticatedApiRequest("GET", "/api/products");

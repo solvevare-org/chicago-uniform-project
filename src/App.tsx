@@ -44,6 +44,8 @@ import NotFound from "./pages/admin/not-found";
 import SecondTestProductPage from './pages/testProductPagesecond';
 import HomeBrandGrid from './components/Products/HomeBrandGrid';
 import ProtectedRoute from './components/ProtectedRoute';
+import EmbroideredDynamicPage from './pages/EmbroideredDynamicPage';
+
 function App() {
   const [accessories, setAccessories] = useState<Product[]>([]);
   const [loadingAccessories, setLoadingAccessories] = useState(true);
@@ -53,7 +55,7 @@ function App() {
   const [brand, setBrand] = useState<Product[]>([]);
   const [headwear, setHeadwear] = useState<Product[]>([]);
   const [loadingHeadwear, setLoadingHeadwear] = useState(true);
-  
+ 
 
   useEffect(() => {
     async function fetchAccessories() {
@@ -103,11 +105,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-       
-        <div className="min-h-screen bg-[#2563eb text-[#222]">
+      
+        <div className="min-h-screen bg-white text-[#222]">
           <Header />
           <main>
             <Routes>
+              {/* Add static embroidered routes first */}
+              <Route path="/custom-embroidered-polo" element={<EmbroideredDynamicPage />} />
+              <Route path="/custom-embroidered-hoodie" element={<EmbroideredDynamicPage />} />
+              <Route path="/custom-embroidered-t-shirt" element={<EmbroideredDynamicPage />} />
+              <Route path="/custom-embroidered-sweatshirt" element={<EmbroideredDynamicPage />} />
               <Route path="/" element={
                 <>
                   <Hero />
@@ -149,6 +156,8 @@ function App() {
               } />
               <Route path="/login" element={<LoginScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
+              <Route path="/custom-embroidered-:type" element={<EmbroideredDynamicPage />} />
+              <Route path="/custom/custom-embroidered-:type" element={<EmbroideredDynamicPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/products/" element={<ProductPage />} />
@@ -180,6 +189,7 @@ function App() {
 
                <Route path='/all-brands' element={<AllBrandPage/>} />
                <Route path='/all-categories' element={<AllCategoriesPage/>} />
+              
             </Routes>
           </main>
           <Footer />

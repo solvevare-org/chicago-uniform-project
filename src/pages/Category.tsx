@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
+import { Helmet } from "react-helmet";
 
 const CategoryPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -22,7 +23,7 @@ const CategoryPage: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/categories');
+        const res = await fetch('http://localhost:3000/api/categories');
         const data = await res.json();
         setCategories(data.categories || []);
       } catch {
@@ -39,7 +40,7 @@ const CategoryPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://31.97.41.27:5000/api/products/by-base-category/${category}?limit=100`);
+        const response = await fetch(`http://localhost:3000/api/products/by-base-category/${category}?limit=100`);
         if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
         const data = await response.json();
         setProducts(data.products || []);
@@ -89,6 +90,33 @@ const CategoryPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
+      <Helmet>
+        {category && category.toLowerCase() === 'headwear' && (
+          <meta name="keywords" content="custom hats, custom baseball hats, embroidered baseball caps, custom embroidered baseball hats, embroidered baseball hats, custom embroidered baseball hat, custom embroidered hats, custom trucker hats, trucker hats custom, embroidered trucker hats, custom patch trucker hats, flat bill trucker hats, custom made trucker hats, custom embroidered trucker hats, embroidered trucker hat, custom bucket hats, custom embroidered bucket hats, embroidered bucket hat, embroidered richardson 112 hats, embroidered richardson hats, custom richardson 112 hats, richardson custom hats, custom fitted hats, embroidered fitted hats, custom embroidered fitted hats, custom flexfit hats, custom embroidered flexfit hats, embroidered flexfit hats, custom beanies, custom beanie, embroidered beanie, custom winter hats, custom beanie hats, customized beanies, custom beanies with logo, custom embroidered beanies, embroidered beanies, customizable beanies, personalized beanie, beanie embroidery, custom embroidered beanie, custom 47 brand hats, custom snapback hats, custom dad hats, custom embroidered dad hats, custom golf hats, custom cammo hats, custom visors, custom visor, custom sun visor, custom sun visors, custom headbands, custom headband, customized headbands, custom headbands with logo, custom sports headbands, customizable headbands, custom embroidered hats" />
+        )}
+        {category && [
+          't-shirts - long sleeve',
+          't-shirts - premium',
+          't-shirts - core',
+        ].includes(category.toLowerCase()) && (
+          <meta name="keywords" content="custom t shirts, custom print t-shirt, custom printed t-shirt, custom long sleeve shirt, embroidered t shirts, bulk custom t shirts, cheap custom t shirts, custom embroidered t-shirts, t shirts embroidered, custom embroidered t shirts" />
+        )}
+        {category && (category.toLowerCase().includes('shirt') || category.toLowerCase().includes('shirts')) && (
+          <meta name="keywords" content="custom polo shirts, custom polo shirts with logo, embroidered polo shirts, custom embroidered polo shirts, custom logo polo shirts, custom printed polo shirts, polo shirts embroidered, embroidered polo shirts no minimum order, embroidered polo shirts custom, mens embroidered polo shirts, embroidered logo polo shirts, custom t shirts, custom print t-shirt, custom printed t-shirt, custom long sleeve shirt, embroidered t shirts, bulk custom t shirts, cheap custom t shirts, custom embroidered t-shirts, t shirts embroidered, custom embroidered t shirts, custom work shirts, work shirts with logo, embroidered work shirts, custom embroidered work shirts, work shirts embroidered, embroidered dickies work shirts, embroidered shirts for work, custom golf shirts, embroidered golf shirts, embroidered dress shirts, custom logo dress shirts, embroidered business shirts, embroidered button up shirts, custom embroidered golf shirts, custom embroidered golf shirts no minimum, custom embroidered dress shirts, business embroidered shirts, custom embroidered button down shirts, dress shirts embroidered, business polo shirts embroidered, custom tank tops" />
+        )}
+        {category && category.toLowerCase().includes('outerwear') && (
+          <meta name="keywords" content="custom hoodies, custom embroidered hoodies, custom zip up  hoodies, custom hoodies for men, custom nike hoodies, custom printed hoodies, embroidered hoodies, custom print hoodies, custom sweaters, custom embroidered sweaters, custom christmas sweaters, embroidered sweaters, custom knit sweaters, custom sweatshirts, custom embroidered sweatshirts, custom printed sweatshirts, custom college sweatshirts, custom crewneck sweatshirts, custom embroidered sweatshirts, custom embroidery sweatshirts, custom logo sweatshirts, custom sweatshirts embroidered, custom sweatshirts no minimum, cute embroidered sweatshirts, embroidered college sweatshirts, embroidered sweatshirts, embroidered sweatshirts custom, custom quarter zip, embroidered quarter zip, custom quarter zip pullover, custom quarter zip sweatshirt, personalized embroidered sweatshirts, custom jackets, custom jackets with logo, custom logo jackets, custom windbreakers, custom bomber jackets, custom denim jackets, custom embroidered jackets, custom fleece jackets, custom hi vis jackets, custom jackets with logo, custom leather jackets, custom letterman jackets, custom logo jackets, custom nike jackets, custom rain jackets, custom sports jackets, custom starter jackets, custom team jackets, custom track jackets, custom windbreaker jackets, custom work jackets, custom zip up jackets, embroidered fleece jackets, embroidered jackets, varsity jackets custom, women's embroidered jackets, custom vests, embroidered vests" />
+        )}
+        {category && category.toLowerCase().includes('bags') && (
+          <meta name="keywords" content="custom bags, custom backpacks nike, embroidered tote bag, embroidered backpack, custom nike backpack, custom nike elite backpack, custom kids backpack, custom toddler backpack, custom drawstring backpack, embroidered tote bags, backpack custom, embroidered tote, custom tote bags, custom drawstring bags, custom bags with logo, custom paper bags, custom duffle bags, custom tote bags with logo, custom printed bags, custom printed tote bags, custom printed canvas tote bags, custom gym bags, custom duffle bags" />
+        )}
+        {category && category.toLowerCase().includes('bottoms') && (
+          <meta name="keywords" content="custom pants, custom shorts, custom sweatpants, embroidered sweatpants, custom pants design, custom sweat pants, embroidered jean shorts, embroidered denim shorts, mens embroidered pants, custom cargo pants, embroidered linen pants, custom embroidered sweatpants, custom scrubs, custom scrubs with logo, custom nurse scrubs, custom embroidered scrubs" />
+        )}
+        {category && category.toLowerCase().includes('accessories') && (
+          <meta name="keywords" content="embroidered blankets, custom blankets, custom embroidered blankets, embroidered hand towels, custom hand towels, embroidered towel, custom scarves, custom scarves with logo, custom aprons, custom printed aprons, custom aprons with logo, custom embroidered aprons, custom bandanas" />
+        )}
+      </Helmet>
       <div className="max-w-screen-2xl mx-auto">
         {/* Breadcrumb */}
         <div className="text-[#b3ddf3] text-sm mb-6">

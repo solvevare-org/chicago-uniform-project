@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Helmet } from "react-helmet";
 
 interface Slide {
   id: number;
@@ -81,70 +82,77 @@ const Hero: React.FC = () => {
   }, [animating]);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl my-4 mx-4 md:mx-6 lg:mx-8 z-0">
-      <div className="max-w-screen-2xl mx-auto">
-        <div className="relative h-[540px] w-full overflow-hidden">
-          {slides.map((slide, index) => {
-            let position = 'translate-x-full';
-            if (index === currentSlide) position = 'translate-x-0';
-            else if (
-              (index === currentSlide - 1) ||
-              (currentSlide === 0 && index === slides.length - 1)
-            ) position = '-translate-x-full';
-            return (
-              <div
-                key={slide.id}
-                className={`absolute top-0 left-0 w-[98%] h-[92%] transition-transform duration-[1500ms] ease-in-out ${position} ${index === currentSlide ? 'z-10' : 'z-0'} ${animating ? '' : ''}`}
-                style={{ pointerEvents: index === currentSlide ? 'auto' : 'none', margin: '1% 1%' }}
-              >
-                <div className={`${slide.bgColor} rounded-2xl overflow-hidden h-full w-full flex flex-col md:flex-row items-center justify-between p-0`}>
-                  <div className="md:w-1/2 w-full h-full flex items-center justify-center">
-                    {slide.image ? (
-                      <img 
-                        src={slide.image} 
-                        alt={slide.title} 
-                        className="w-full h-full object-cover"
-                        style={{ minHeight: '540px', height: '100%', maxHeight: '100%', minWidth: '100%', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-2xl">No Image</div>
-                    )}
-                  </div>
-                  <div className="md:w-1/2 w-full p-4 md:p-8 flex flex-col items-center md:items-end text-center md:text-right">
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black">
-                      {slide.title}
-                    </h2>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mt-2">
-                      {slide.subtitle}
-                    </h3>
-                    <a
-                      href={slide.buttonLink}
-                      className="mt-6 px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-opacity-80 transition"
-                    >
-                      {slide.buttonText}
-                    </a>
+    <>
+      <Helmet>
+        <title>Custom Embroidered and Printed Apparel | Brand Name</title>
+        <meta name="description" content="Get high-quality custom apparel embroidered or printed with your logo or design. Perfect for businesses, teams & events. Create your design now." />
+        <meta name="keywords" content="custom apparel, custom apparel printing, custom embroidered apparel" />
+      </Helmet>
+      <div className="relative overflow-hidden rounded-2xl my-4 mx-4 md:mx-6 lg:mx-8 z-0">
+        <div className="max-w-screen-2xl mx-auto">
+          <div className="relative h-[540px] w-full overflow-hidden">
+            {slides.map((slide, index) => {
+              let position = 'translate-x-full';
+              if (index === currentSlide) position = 'translate-x-0';
+              else if (
+                (index === currentSlide - 1) ||
+                (currentSlide === 0 && index === slides.length - 1)
+              ) position = '-translate-x-full';
+              return (
+                <div
+                  key={slide.id}
+                  className={`absolute top-0 left-0 w-[98%] h-[92%] transition-transform duration-[1500ms] ease-in-out ${position} ${index === currentSlide ? 'z-10' : 'z-0'} ${animating ? '' : ''}`}
+                  style={{ pointerEvents: index === currentSlide ? 'auto' : 'none', margin: '1% 1%' }}
+                >
+                  <div className={`${slide.bgColor} rounded-2xl overflow-hidden h-full w-full flex flex-col md:flex-row items-center justify-between p-0`}>
+                    <div className="md:w-1/2 w-full h-full flex items-center justify-center">
+                      {slide.image ? (
+                        <img 
+                          src={slide.image} 
+                          alt={slide.title} 
+                          className="w-full h-full object-cover"
+                          style={{ minHeight: '540px', height: '100%', maxHeight: '100%', minWidth: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-2xl">No Image</div>
+                      )}
+                    </div>
+                    <div className="md:w-1/2 w-full p-4 md:p-8 flex flex-col items-center md:items-end text-center md:text-right">
+                      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black">
+                        {slide.title}
+                      </h2>
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mt-2">
+                        {slide.subtitle}
+                      </h3>
+                      <a
+                        href={slide.buttonLink}
+                        className="mt-6 px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-opacity-80 transition"
+                      >
+                        {slide.buttonText}
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
+        <button
+          onClick={goToPrevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow-md hover:bg-white transition z-10"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button
+          onClick={goToNextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow-md hover:bg-white transition z-10"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
       </div>
-      <button
-        onClick={goToPrevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow-md hover:bg-white transition z-10"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-      <button
-        onClick={goToNextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow-md hover:bg-white transition z-10"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
-    </div>
+    </>
   );
 };
 

@@ -22,7 +22,7 @@ const DynamicProductPage: React.FC = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://31.97.41.27:5000/api/products/sku/${sku}`); // Fetch product by SKU
+        const response = await fetch(`http://localhost:3000/api/products/sku/${sku}`); // Fetch product by SKU
         if (!response.ok) {
           throw new Error(`Failed to fetch product: ${response.statusText}`);
         }
