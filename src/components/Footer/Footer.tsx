@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
                 try {
-                  const response = await fetch(`http://localhost:3000/api/styles/titles`);
+                  const response = await fetch(`http://31.97.41.27:5000/api/styles/titles`);
                   const data = await response.json();
                   setCategories(data.titles.slice(0, 15) || []);
                 } catch (error) {

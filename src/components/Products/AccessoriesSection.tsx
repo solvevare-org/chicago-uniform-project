@@ -11,7 +11,7 @@ const AccessoriesSection: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('http://localhost:3000/api/products/by-base-category/Accessories?limit=10');
+        const res = await fetch('http://31.97.41.27:5000/api/products/by-base-category/Accessories?limit=10');
         const data = await res.json();
         setProducts(data.products ? data.products.slice(0, 10) : []);
       } catch (err: any) {
