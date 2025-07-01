@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 import { Helmet } from "react-helmet";
-import Breadcrumbs from '../components/ui/Breadcrumbs';
 
 const CategoryPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -119,7 +118,6 @@ const CategoryPage: React.FC = () => {
         )}
       </Helmet>
       <div className="max-w-screen-2xl mx-auto">
-        <Breadcrumbs />
         <div className="flex flex-col md:flex-row gap-8">
           {/* Filters Section */}
           <aside className="w-full md:w-64 md:sticky md:top-28 md:self-start z-10 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">

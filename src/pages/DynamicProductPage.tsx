@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Breadcrumbs from '../components/ui/Breadcrumbs';
 
 const DynamicProductPage: React.FC = () => {
   const { sku } = useParams<{ sku: string }>(); // Get the SKU from the route parameters
@@ -276,7 +275,6 @@ const DynamicProductPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-[#222] min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12">
-        <Breadcrumbs />
         {/* Breadcrumbs */}
         
         {/* HQ Visuals */}

@@ -6,7 +6,6 @@ import { useLocation, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '../components/ui/accordion';
-import Breadcrumbs from '../components/ui/Breadcrumbs';
 
 const EmbroideredDynamicPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -65,7 +64,6 @@ const EmbroideredDynamicPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
       <div className="max-w-screen-2xl mx-auto">
-        <Breadcrumbs />
         {/* Header and Breadcrumb aligned */}
         {embroideredType === 'polo' && (
           <h1 className="text-3xl font-bold mb-4 text-[#3ab7ea]">Custom Embroidered Polo Shirts</h1>

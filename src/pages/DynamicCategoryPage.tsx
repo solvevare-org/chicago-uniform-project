@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
-import Breadcrumbs from '../components/ui/Breadcrumbs';
 
 const DynamicCategoryPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -158,7 +157,6 @@ const DynamicCategoryPage: React.FC = () => {
       </Helmet>
       <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
         <div className="max-w-screen-2xl mx-auto">
-          <Breadcrumbs />
           {/* Header tags */}
           <h1 className="text-4xl font-extrabold mb-2 text-[#b3ddf3]">{category}</h1>
           <h2 className="text-2xl font-bold mb-4 text-blue-900">{products.length} Products</h2>
