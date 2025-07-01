@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { AiFillStar } from 'react-icons/ai';
+import Breadcrumbs from '../../components/ui/Breadcrumbs';
 
 const categories = [
 	{
@@ -85,11 +86,7 @@ const CustomOutwear: React.FC = () => {
 	return (
 		<div className="min-h-screen bg-[#2563eb] text-[#222] py-12 px-4 md:px-6 lg:px-8">
 			<div className="max-w-screen-2xl mx-auto">
-				{/* Breadcrumb */}
-				<div className="text-[#2563eb] text-sm mb-6">
-					<span className="hover:underline cursor-pointer">Home</span> /{' '}
-					<span className="text-[#2563eb] font-semibold">Collectibles</span>
-				</div>
+				<Breadcrumbs />
 
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 					{/* Filters Section */}

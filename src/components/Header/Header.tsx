@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { Link } from "react-router-dom"
 import SearchBar from "./SearchBar"
+import { API_ENDPOINTS, apiRequest } from "../../config/api"
 
 // Use the existing dropdown menu names from your code
 const dropdownMenuNames = {
@@ -19,6 +20,14 @@ const dropdownMenuNames = {
     "Digital Print Hoodies",
     "Vinyl Graphics",
     "Heat Transfer Designs",
+  ],
+  "Custom Apparel": [
+    "Embroidered Apparel",
+    "Printed Apparel",
+    "Custom Headwear",
+    "Custom Bags",
+    "Accessories",
+    "Brands",
   ],
 }
 
@@ -38,6 +47,7 @@ const Header: React.FC = () => {
     categories: null,
     "Custom Embroidered Apparel": null,
     "Custom Printed Apparel": null,
+    "Custom Apparel": null,
   })
 
   const navRefs = useRef<{ [key: string]: HTMLDivElement | null }>({
@@ -45,19 +55,18 @@ const Header: React.FC = () => {
     categories: null,
     "Custom Embroidered Apparel": null,
     "Custom Printed Apparel": null,
+    "Custom Apparel": null,
   })
 
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     // Fetch brand names dynamically
-    fetch("http://31.97.41.27:5000/api/styles/brand-names")
-      .then((res) => res.json())
+    apiRequest(API_ENDPOINTS.BRANDS.BRAND_NAMES)
       .then((data) => setBrandNames(data.brandNames || []))
       .catch(() => setBrandNames([]))
 
-    fetch("http://31.97.41.27:5000/api/styles/base-categories")
-      .then((res) => res.json())
+    apiRequest(API_ENDPOINTS.CATEGORIES.BASE_CATEGORIES)
       .then((data) => setCategories(data.baseCategories || []))
       .catch(() => setCategories([]))
   }, [])
@@ -368,6 +377,16 @@ const Header: React.FC = () => {
       "Custom Embroidered Hoodie": "/custom-embroidered-hoodie",
       "Custom Embroidered T-Shirt": "/custom-embroidered-t-shirt",
       "Custom Embroidered Sweatshirt": "/custom-embroidered-sweatshirt",
+      "Screen Printed T-Shirts": "/screen-printed-t-shirts",
+      "Digital Print Hoodies": "/digital-print-hoodies",
+      "Vinyl Graphics": "/vinyl-graphics",
+      "Heat Transfer Designs": "/heat-transfer-designs",
+      "Embroidered Apparel": "/custom-apparel/embroidered-apparel",
+      "Printed Apparel": "/custom-apparel/printed-apparel",
+      "Custom Headwear": "/custom-apparel/custom-headwear",
+      "Custom Bags": "/custom-apparel/custom-bags",
+      "Accessories": "/custom-apparel/accessories",
+      "Brands": "/custom-apparel/brands",
     }
     if (isMobile) {
       return (
@@ -529,6 +548,27 @@ const Header: React.FC = () => {
                   {openDropdown === "categories" && <div className="mt-2">{renderCategoriesDropdown(true)}</div>}
                 </div>
 
+                {/* Custom Apparel Dropdown */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="font-semibold cursor-pointer"
+                      onClick={() => toggleDropdown("Custom Apparel")}
+                    >
+                      Custom Apparel
+                    </span>
+                    <ChevronDown
+                      className={`cursor-pointer transition-transform ${
+                        openDropdown === "Custom Apparel" ? "rotate-180" : ""
+                      }`}
+                      onClick={() => toggleDropdown("Custom Apparel")}
+                    />
+                  </div>
+                  {openDropdown === "Custom Apparel" && (
+                    <div className="mt-2">{renderCustomApparel("Custom Apparel", true)}</div>
+                  )}
+                </div>
+
                 {/* Custom Embroidered Apparel Dropdown */}
                 <div>
                   <div className="flex items-center justify-between">
@@ -658,6 +698,26 @@ const Header: React.FC = () => {
                   {/* Invisible buffer to prevent dropdown from closing */}
                   <div className="absolute h-8 w-full bottom-0 left-0 translate-y-full opacity-0" />
                 </div>
+
+                {/* Custom Apparel Dropdown */}
+                <div
+                  ref={(el) => (navRefs.current["Custom Apparel"] = el)}
+                  className="relative group"
+                  onMouseEnter={() => handleNavMouseEnter("Custom Apparel")}
+                  onMouseLeave={handleNavMouseLeave}
+                >
+                  <Link
+                    to="/custom-apparel"
+                    className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
+                      openDropdown === "Custom Apparel" ? "text-[#f2f1e6]" : ""
+                    }`}
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    Custom Apparel
+                  </Link>
+                  {/* Invisible buffer to prevent dropdown from closing */}
+                  <div className="absolute h-8 w-full bottom-0 left-0 translate-y-full opacity-0" />
+                </div>
               </nav>
             </div>
           </div>
@@ -683,6 +743,7 @@ const Header: React.FC = () => {
             {openDropdown === "categories" && renderCategoriesDropdown()}
             {openDropdown === "Custom Embroidered Apparel" && renderCustomApparel("Custom Embroidered Apparel")}
             {openDropdown === "Custom Printed Apparel" && renderCustomApparel("Custom Printed Apparel")}
+            {openDropdown === "Custom Apparel" && renderCustomApparel("Custom Apparel")}
           </div>
         </div>
       )}

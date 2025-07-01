@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
 
@@ -45,8 +45,19 @@ import SecondTestProductPage from './pages/testProductPagesecond';
 import HomeBrandGrid from './components/Products/HomeBrandGrid';
 import ProtectedRoute from './components/ProtectedRoute';
 import EmbroideredDynamicPage from './pages/EmbroideredDynamicPage';
+import SiteMap from './pages/SiteMap';
+import FAQSection from './components/FAQSection';
+import Breadcrumbs from './components/ui/Breadcrumbs';
 
-function App() {
+// Custom Apparel Category Pages
+import EmbroideredApparelPage from './pages/CustomApparel/EmbroideredApparelPage';
+import PrintedApparelPage from './pages/CustomApparel/PrintedApparelPage';
+import CustomHeadwearPage from './pages/CustomApparel/CustomHeadwearPage';
+import CustomBagsPage from './pages/CustomApparel/CustomBagsPage';
+import AccessoriesPage from './pages/CustomApparel/AccessoriesPage';
+import BrandsPage from './pages/CustomApparel/BrandsPage';
+
+function AppContent() {
   const [accessories, setAccessories] = useState<Product[]>([]);
   const [loadingAccessories, setLoadingAccessories] = useState(true);
   const [outerwear, setOuterwear] = useState<Product[]>([]);
@@ -55,7 +66,8 @@ function App() {
   const [brand, setBrand] = useState<Product[]>([]);
   const [headwear, setHeadwear] = useState<Product[]>([]);
   const [loadingHeadwear, setLoadingHeadwear] = useState(true);
- 
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     async function fetchAccessories() {
@@ -103,100 +115,269 @@ function App() {
   }, []);
 
   return (
+    <div className="min-h-screen bg-white text-[#222]">
+      <Header />
+      {!isHome && <Breadcrumbs />}
+      <main>
+        <Routes>
+          <Route path="/" element={
+            <>
+              {/* SEO-Optimized Static Hero Section - First for Search Engines */}
+              <Hero />
+              
+              {/* SEO Content Above The Fold */}
+              <SEOContentSection />
+              
+              {/* Interactive Content & Sliders Below The Fold */}
+              <div className="space-y-12">
+                {/* Brand Grid (Previously at top, now moved below hero) */}
+                <HomeBrandGrid />
+                
+                {/* Top Categories Mesh - Figma requirement */}
+                <TopCategoriesMeshBelowFold />
+                
+                {/* Trust Signals Section */}
+                <TrustSignalsSection />
+                
+                {/* Product Sections (moved below static content for SEO) */}
+                {loadingOuterwear ? (
+                  <div className="text-gray-400 px-4 py-8">Loading outerwear...</div>
+                ) : !outerwear || outerwear.length === 0 ? (
+                  <div className="text-red-400 px-4 py-8">No outerwear found.</div>
+                ) : (
+                  <ProductGrid 
+                    title="Outerwear Products" 
+                    products={outerwear}
+                  />
+                )}
+                {loadingHeadwear ? (
+                  <div className="text-gray-400 px-4 py-8">Loading headwear...</div>
+                ) : !headwear || headwear.length === 0 ? (
+                  <div className="text-red-400 px-4 py-8">No headwear found.</div>
+                ) : (
+                  <ProductGrid 
+                    title="Headwear Products" 
+                    products={headwear}
+                  />
+                )}
+                {loadingAccessories ? (
+                  <div className="text-gray-400 px-4 py-8">Loading accessories...</div>
+                ) : !accessories || accessories.length === 0 ? (
+                  <div className="text-red-400 px-4 py-8">No accessories found.</div>
+                ) : (
+                  <ProductGrid 
+                    title="Accessories Products" 
+                    products={accessories}
+                  />
+                )}
+                
+                {/* FAQ Section added to home page */}
+                <FAQSection />
+              </div>
+            </>
+          } />
+          {/* Add static embroidered routes first */}
+          <Route path="/custom-embroidered-polo" element={<EmbroideredDynamicPage />} />
+          <Route path="/custom-embroidered-hoodie" element={<EmbroideredDynamicPage />} />
+          <Route path="/custom-embroidered-t-shirt" element={<EmbroideredDynamicPage />} />
+          <Route path="/custom-embroidered-sweatshirt" element={<EmbroideredDynamicPage />} />
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/signup" element={<SignupScreen />} />
+          <Route path="/custom-embroidered-:type" element={<EmbroideredDynamicPage />} />
+          <Route path="/custom/custom-embroidered-:type" element={<EmbroideredDynamicPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/products/" element={<ProductPage />} />
+          <Route path="/customaccessories" element={<CustomAccessories />} />
+          <Route path="/custombags" element={<CustomBags />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/customheadwear" element={<CustomHeadwear />} />
+          <Route path="/customoutwear" element={<CustomOutwear />} />
+          <Route path="/embsroidery" element={<EmbroideryPage />} />
+          <Route path="/customembroideredshirts" element={<CustomEmbroideredShirts />} />
+          <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
+          <Route path="/customshirts" element={<CustomShirts />} />
+          <Route path="/testproduct" element={<TestProductPage/>} />
+          <Route path="/sectestproduct" element={<SecondTestProductPage/>} />
+          <Route path="/pantsandshorts" element={<PantsAndShorts />} />
+          <Route path="/category/:category" element={
+            <>
+              <DynamicCategoryPage />
+              <FAQSection />
+            </>
+          } />
+          <Route path="/:category" element={<CategoryPage />} />
+          <Route path="/product/:sku" element={<DynamicProductPage />} />
+          <Route path='/brands/:category' element={<DynamicBrands/>} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard/>
+            </ProtectedRoute>
+          } />
+          <Route path="/search" element={<SearchProducts/>} />
+          <Route path="/update" element={<UpdateProducts/>} />
+          <Route path="/3dproducts/:sku" element={<ThreeDProducts />} />
+          <Route path='/all-brands' element={<AllBrandPage/>} />
+          <Route path='/all-categories' element={<AllCategoriesPage/>} />
+          <Route path="/sitemap" element={<SiteMap />} />
+          {/* Custom Apparel Category Pages */}
+          <Route path="/custom-apparel/embroidered-apparel" element={<EmbroideredApparelPage />} />
+          <Route path="/custom-apparel/printed-apparel" element={<PrintedApparelPage />} />
+          <Route path="/custom-apparel/custom-headwear" element={<CustomHeadwearPage />} />
+          <Route path="/custom-apparel/custom-bags" element={<CustomBagsPage />} />
+          <Route path="/custom-apparel/accessories" element={<AccessoriesPage />} />
+          <Route path="/custom-apparel/brands" element={<BrandsPage />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
       <Router>
-      
-        <div className="min-h-screen bg-white text-[#222]">
-          <Header />
-          <main>
-            <Routes>
-              {/* Add static embroidered routes first */}
-              <Route path="/custom-embroidered-polo" element={<EmbroideredDynamicPage />} />
-              <Route path="/custom-embroidered-hoodie" element={<EmbroideredDynamicPage />} />
-              <Route path="/custom-embroidered-t-shirt" element={<EmbroideredDynamicPage />} />
-              <Route path="/custom-embroidered-sweatshirt" element={<EmbroideredDynamicPage />} />
-              <Route path="/" element={
-                <>
-                  <Hero />
-                  
-                  <HomeBrandGrid />
-                  
-                  {loadingOuterwear ? (
-                    <div className="text-gray-400 px-4 py-8">Loading outerwear...</div>
-                  ) : !outerwear || outerwear.length === 0 ? (
-                    <div className="text-red-400 px-4 py-8">No outerwear found.</div>
-                  ) : (
-                    <ProductGrid 
-                      title="Outerwear Products" 
-                      products={outerwear}
-                    />
-                  )}
-                  {loadingHeadwear ? (
-                    <div className="text-gray-400 px-4 py-8">Loading headwear...</div>
-                  ) : !headwear || headwear.length === 0 ? (
-                    <div className="text-red-400 px-4 py-8">No headwear found.</div>
-                  ) : (
-                    <ProductGrid 
-                      title="Headwear Products" 
-                      products={headwear}
-                    />
-                  )}
-                  {loadingAccessories ? (
-                    <div className="text-gray-400 px-4 py-8">Loading accessories...</div>
-                  ) : !accessories || accessories.length === 0 ? (
-                    <div className="text-red-400 px-4 py-8">No accessories found.</div>
-                  ) : (
-                    <ProductGrid 
-                      title="Accessories Products" 
-                      products={accessories}
-                    />
-                  )}
-                  
-                </>
-              } />
-              <Route path="/login" element={<LoginScreen />} />
-              <Route path="/signup" element={<SignupScreen />} />
-              <Route path="/custom-embroidered-:type" element={<EmbroideredDynamicPage />} />
-              <Route path="/custom/custom-embroidered-:type" element={<EmbroideredDynamicPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
-              <Route path="/how-it-works" element={<HowItWorks />} />
-              <Route path="/products/" element={<ProductPage />} />
-      
-              <Route path="/customaccessories" element={<CustomAccessories />} />
-              <Route path="/custombags" element={<CustomBags />} />
-              <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/customheadwear" element={<CustomHeadwear />} />
-              <Route path="/customoutwear" element={<CustomOutwear />} />
-              <Route path="/embsroidery" element={<EmbroideryPage />} />
-              <Route path="/customembroideredshirts" element={<CustomEmbroideredShirts />} />
-              <Route path="/customembroideredoutwear" element={<CustomEmbroideredOutwear />} />
-              <Route path="/customshirts" element={<CustomShirts />} />
-              <Route path="/testproduct" element={<TestProductPage/>} />
-              <Route path="/sectestproduct" element={<SecondTestProductPage/>} />
-              <Route path="/pantsandshorts" element={<PantsAndShorts />} />
-              <Route path="/category/:category" element={<DynamicCategoryPage />} />
-              <Route path="/:category" element={<CategoryPage />} />
-              <Route path="/product/:sku" element={<DynamicProductPage />} />
-              <Route path='/brands/:category' element={<DynamicBrands/>} />
-              <Route path="/dashboard" element={
-  <ProtectedRoute>
-    <Dashboard/>
-  </ProtectedRoute>
-} />
-<Route path="/search" element={<SearchProducts/>} />
-<Route path="/update" element={<UpdateProducts/>} />
-              <Route path="/3dproducts/:sku" element={<ThreeDProducts />} />
-
-               <Route path='/all-brands' element={<AllBrandPage/>} />
-               <Route path='/all-categories' element={<AllCategoriesPage/>} />
-              
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AppContent />
       </Router>
     </QueryClientProvider>
   );
 }
 
 export default App;
+
+// ---
+// TopCategoriesMeshBelowFold component (add this above App or in a separate file and import it)
+function TopCategoriesMeshBelowFold() {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch('http://31.97.41.27:5000/api/styles/base-categories');
+        const data = await res.json();
+        setCategories(data.baseCategories || []);
+      } catch {
+        setCategories([]);
+      }
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  if (loading) return <div className="p-8 text-blue-700">Loading top categories...</div>;
+
+  return (
+    <div className="my-8 px-4 md:px-12 lg:px-24">
+      <div className="text-xl font-bold text-blue-900 mb-4">Top Categories</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {categories.map((cat) => (
+          <div
+            key={cat}
+            className="flex items-center justify-center h-14 rounded-lg border border-blue-100 bg-white text-base font-semibold text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer outline-none focus:ring-2 focus:ring-[#4DB8E7] hover:border-[#4DB8E7] px-2"
+            style={{ boxShadow: '0 2px 8px 0 rgba(77,184,231,0.04)' }}
+            tabIndex={0}
+          >
+            {cat}
+          </div>
+        ))}
+      </div>
+      <style>{`
+        .hover\\:border-\\[\\#4DB8E7\\]:hover {
+          border-color: #4DB8E7 !important;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ---
+// SEOContentSection component - Static content for better SEO
+function SEOContentSection() {
+  return (
+    <section className="w-full max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-16 bg-gradient-to-r from-blue-50 to-white">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="space-y-6">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+            Why Choose Our Custom Embroidered Apparel?
+          </h2>
+          <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+            <p>
+              We specialize in high-quality custom embroidered apparel perfect for businesses, teams, 
+              and organizations. Our state-of-the-art embroidery equipment ensures crisp, professional 
+              results on every garment.
+            </p>
+            <ul className="space-y-2 ml-4">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">✓</span>
+                <span>No minimum order requirements - order as few as one piece</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">✓</span>
+                <span>Free setup on all embroidery orders</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">✓</span>
+                <span>Fast turnaround - most orders completed within 7-10 business days</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">✓</span>
+                <span>Professional digitizing service for complex logos</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">50,000+</div>
+            <div className="text-gray-600">Happy Customers</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-3xl font-bold text-green-600 mb-2">24hr</div>
+            <div className="text-gray-600">Logo Review</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-3xl font-bold text-purple-600 mb-2">100%</div>
+            <div className="text-gray-600">Quality Guarantee</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-3xl font-bold text-orange-600 mb-2">Free</div>
+            <div className="text-gray-600">Shipping $200+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---
+// TrustSignalsSection component (add above App or in a separate file and import it)
+function TrustSignalsSection() {
+  return (
+    <section className="w-full max-w-6xl mx-auto my-8 px-4">
+      <div className="bg-white border border-gray-200 rounded-xl shadow flex flex-col md:flex-row items-center justify-between py-6 px-4 md:px-12 gap-6">
+        <div className="flex-1 flex flex-col items-center text-center">
+          <img src="/trust/76ers.png" alt="76ers Partner" className="h-12 mb-2 object-contain" />
+          <span className="text-xs text-gray-600">Official Partner of the Philadelphia 76ers</span>
+        </div>
+        <div className="flex-1 flex flex-col items-center text-center">
+          <img src="/trust/inc5000.png" alt="Inc 5000" className="h-12 mb-2 object-contain" />
+          <span className="text-xs text-gray-600">One of the Fastest Growing Private Companies in America</span>
+        </div>
+        <div className="flex-1 flex flex-col items-center text-center">
+          <img src="/trust/nyt.png" alt="NY Times" className="h-12 mb-2 object-contain" />
+          <span className="text-xs text-gray-600">Featured in the New York Times Business Section</span>
+        </div>
+        <div className="flex-1 flex flex-col items-center text-center">
+          <div className="flex items-center gap-2 mb-2">
+            <img src="/trust/bbb.png" alt="BBB Accredited" className="h-8 object-contain" />
+            <img src="/trust/a-plus.png" alt="A+ Rating" className="h-8 object-contain" />
+          </div>
+          <span className="text-xs text-gray-600">BBB Accredited Business</span>
+        </div>
+      </div>
+    </section>
+  );
+}

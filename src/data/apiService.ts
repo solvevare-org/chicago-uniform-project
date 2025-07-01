@@ -46,3 +46,43 @@ export const fetchProductDetails = async (productId: string): Promise<any> => {
     throw axiosError;
   }
 };
+
+export const fetchProductsByBaseCategory = async (subcategory: string, limit: number = 40, offset: number = 0): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/products/by-base-category/${subcategory}`, {
+      params: { limit, offset },
+      timeout: 5000,
+    });
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      console.error('Error fetching products by base category:', axiosError.response.data);
+    } else if (axiosError.request) {
+      console.error('Error fetching products by base category: No response received', axiosError.request);
+    } else {
+      console.error('Error fetching products by base category:', axiosError.message);
+    }
+    throw axiosError;
+  }
+};
+
+export const fetchStylesByBaseCategory = async (subcategory: string, limit: number = 1000, offset: number = 0): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/styles/base-categories/${subcategory}`, {
+      params: { limit, offset },
+      timeout: 10000,
+    });
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      console.error('Error fetching styles by base category:', axiosError.response.data);
+    } else if (axiosError.request) {
+      console.error('Error fetching styles by base category: No response received', axiosError.request);
+    } else {
+      console.error('Error fetching styles by base category:', axiosError.message);
+    }
+    throw axiosError;
+  }
+};

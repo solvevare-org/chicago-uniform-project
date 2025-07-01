@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
+import Breadcrumbs from '../components/ui/Breadcrumbs';
 
 const DynamicCategoryPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -15,6 +16,12 @@ const DynamicCategoryPage: React.FC = () => {
     COLOR: new Set(),
   });
   const [priceRange, setPriceRange] = useState<number>(500);
+
+  // --- New state for subcategories, reviews, related categories, and SEO content ---
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [categoryReviews, setCategoryReviews] = useState<any[]>([]);
+  const [relatedCategories, setRelatedCategories] = useState<any[]>([]);
+  const [seoContent, setSeoContent] = useState<string | null>(null);
 
   const { category } = useParams();
 
@@ -50,6 +57,42 @@ const DynamicCategoryPage: React.FC = () => {
       }
     };
     fetchProducts();
+  }, [category]);
+
+  // Fetch subcategories (if any)
+  useEffect(() => {
+    if (!category) return;
+    fetch(`http://31.97.41.27:5000/api/categories/subcategories/${category}`)
+      .then((res) => res.json())
+      .then((data) => setSubcategories(data.subcategories || []))
+      .catch(() => setSubcategories([]));
+  }, [category]);
+
+  // Fetch reviews for this category (if any)
+  useEffect(() => {
+    if (!category) return;
+    fetch(`http://31.97.41.27:5000/api/reviews/category/${category}`)
+      .then((res) => res.json())
+      .then((data) => setCategoryReviews(data.reviews || []))
+      .catch(() => setCategoryReviews([]));
+  }, [category]);
+
+  // Fetch related categories (if any)
+  useEffect(() => {
+    if (!category) return;
+    fetch(`http://31.97.41.27:5000/api/categories/related/${category}`)
+      .then((res) => res.json())
+      .then((data) => setRelatedCategories(data.relatedCategories || []))
+      .catch(() => setRelatedCategories([]));
+  }, [category]);
+
+  // Fetch SEO content (if any)
+  useEffect(() => {
+    if (!category) return;
+    fetch(`http://31.97.41.27:5000/api/categories/seo/${category}`)
+      .then((res) => res.json())
+      .then((data) => setSeoContent(data.seoContent || null))
+      .catch(() => setSeoContent(null));
   }, [category]);
 
   // Toggle filter tab
@@ -115,11 +158,26 @@ const DynamicCategoryPage: React.FC = () => {
       </Helmet>
       <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
         <div className="max-w-screen-2xl mx-auto">
-          {/* Breadcrumb */}
-          <div className="text-[#b3ddf3] text-sm mb-6">
-            <span className="hover:underline cursor-pointer">Home</span> /Category/
-            <span className="text-[#b3ddf3] font-semibold">{category}</span>
-          </div>
+          <Breadcrumbs />
+          {/* Header tags */}
+          <h1 className="text-4xl font-extrabold mb-2 text-[#b3ddf3]">{category}</h1>
+          <h2 className="text-2xl font-bold mb-4 text-blue-900">{products.length} Products</h2>
+          {/* Subcategory Internal Mesh */}
+          {subcategories.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-2 text-blue-900">Subcategories</h2>
+              <div className="flex flex-wrap gap-4">
+                {subcategories.map((sub: any) => (
+                  <button
+                    key={sub._id || sub.name}
+                    className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
+                  >
+                    {sub.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Filters Section */}
             <div className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">
@@ -263,6 +321,44 @@ const DynamicCategoryPage: React.FC = () => {
               )}
             </div>
           </div>
+          {/* Customer reviews relevant for that category */}
+          {categoryReviews.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-2 text-blue-900">Customer Reviews</h2>
+              <ul className="space-y-4">
+                {categoryReviews.map((review: any, idx: number) => (
+                  <li key={idx} className="bg-gray-50 p-4 rounded-xl shadow">
+                    <div className="font-semibold text-blue-900 mb-1">{review.user}</div>
+                    <div className="text-yellow-400 mb-1">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
+                    <div className="text-gray-700">{review.comment}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Related Categories Internal Mesh */}
+          {relatedCategories.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-2 text-blue-900">Related Categories</h2>
+              <div className="flex flex-wrap gap-4">
+                {relatedCategories.map((cat: any) => (
+                  <button
+                    key={cat._id || cat.name}
+                    className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Place for SEO Content */}
+          {seoContent && (
+            <div className="mb-8 bg-blue-50 rounded-xl p-4 shadow text-gray-700">
+              <h2 className="text-xl font-bold mb-2 text-blue-900">About {category}</h2>
+              <div dangerouslySetInnerHTML={{ __html: seoContent }} />
+            </div>
+          )}
         </div>
       </div>
     </>

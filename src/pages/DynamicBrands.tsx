@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
+import Breadcrumbs from '../components/ui/Breadcrumbs';
 
 const DynamicBrands: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -114,11 +115,7 @@ const DynamicBrands: React.FC = () => {
       </Helmet>
       <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
         <div className="max-w-screen-2xl mx-auto">
-          {/* Breadcrumb */}
-          <div className="text-[#b3ddf3] text-sm mb-6">
-            <span className="hover:underline cursor-pointer">Home</span> /Brands/
-            <span className="text-[#b3ddf3] font-semibold">{category}</span>
-          </div>
+          <Breadcrumbs />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Filters Section */}
             <div className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">
