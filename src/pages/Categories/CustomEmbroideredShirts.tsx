@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { AiFillStar } from 'react-icons/ai';
-import Breadcrumbs from '../../components/ui/Breadcrumbs';
 
 const categories = [
 	{

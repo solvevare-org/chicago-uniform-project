@@ -533,35 +533,7 @@ const DynamicProductPage: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Trust Signals Section */}
-      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6">
-        <section className="bg-gray-50 rounded-xl shadow-lg p-6 mt-8 border border-blue-100">
-          <h2 className="text-2xl font-bold text-blue-900 mb-4">Trust Signals</h2>
-          <div className="flex flex-wrap gap-6 items-center justify-start">
-            <div className="flex flex-col items-center">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/ISO_9001-2015.svg" alt="ISO 9001" className="w-16 h-16 object-contain mb-2" />
-              <span className="text-sm font-semibold text-gray-700">ISO 9001 Certified</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/CE_mark.svg" alt="CE Mark" className="w-16 h-16 object-contain mb-2" />
-              <span className="text-sm font-semibold text-gray-700">CE Marked</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/UL_Mark.svg" alt="UL Listed" className="w-16 h-16 object-contain mb-2" />
-              <span className="text-sm font-semibold text-gray-700">UL Listed</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Good_Design_Award_logo.svg" alt="Good Design Award" className="w-16 h-16 object-contain mb-2" />
-              <span className="text-sm font-semibold text-gray-700">Good Design Award</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Energy_Star_logo.svg" alt="Energy Star" className="w-16 h-16 object-contain mb-2" />
-              <span className="text-sm font-semibold text-gray-700">Energy Star</span>
-            </div>
-            {/* Add more trust signals as needed */}
-          </div>
-        </section>
-      </div>
+     
       {/* Category Internal Mesh */}
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6">
         <section className="bg-white rounded-xl shadow p-6 mb-8 border border-blue-100">

@@ -278,8 +278,14 @@ const EmbroideredDynamicPage: React.FC = () => {
             {/* Polo-specific rich content and FAQs */}
             {embroideredType === 'polo' && (
               <section className="mt-12 space-y-10">
-                <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Shop High-Quality Embroidered Polo Shirts Custom Made for You</h2>
-                <p className="mb-4">Discover premium custom embroidered polo shirts designed to your exact specifications. Our polos are crafted for comfort, durability, and a polished look—perfect for businesses, teams, clubs, and events. Every shirt is embroidered with precision, ensuring your logo stands out with clarity and style.</p>
+                <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">High-Quality Custom Embroidered Polo Shirts to Your Specification</h2>
+                <p className="mb-4">South Loop Prints is committed to providing you with the best quality custom embroidered polo shirts, tailored to your exact branding specifications. Our specialized range of shirts is ideal for outfitting corporate crews, sports teams, or hospitality staff. We can tailor our designs to meet your specific needs, offering polo shirts that deliver comfort, durability, and a professional appearance. Our shirts fit comfortably and turn heads with their stylish and well-designed features.</p>
+                
+                <p className="mb-4">Our extensive range of custom polo shirts features top brands, guaranteeing that all our shirts are of superior quality and style. Our polos feature moisture-wicking capabilities, along with classic cotton blends, to keep you dry and comfortable day after day, all in the best style.</p>
+                
+                <p className="mb-4">One of the things that sets us apart is our in-house embroidery department, which can create same-day, individual personalizations. Your logos, names, or designs are carefully stitched with precision, making your brand look visible and professional. With remarkable speed and exceptional attention to detail, we can help you leave a bold and lasting impression.</p>
+                
+                <p className="mb-4">Whether you need one shirt or wholesale orders, South Loop Prints promises to supply high-quality embroidered polo shirts that accurately reflect your company's image. Browse today and experience the finest combination of style, comfort, and personalization.</p>
 
                 <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Customize Your Polo Shirts with No Minimum Order Required</h2>
                 <p className="mb-4">Order as few or as many polos as you need—there’s no minimum! Choose your preferred style, color, and size, then upload your logo for professional embroidery. Our easy online process and expert team make it simple to create unique, branded apparel for any group or occasion.</p>
@@ -287,27 +293,46 @@ const EmbroideredDynamicPage: React.FC = () => {
                 <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Embroidered Logo Polo Shirts That Elevate Your Brand Identity</h2>
                 <p className="mb-4">Your logo is more than just a design—it’s the face of your brand. We use advanced embroidery techniques to ensure every detail is crisp and long-lasting. Whether you’re outfitting staff, students, or event teams, our polos help you present a unified, professional image.</p>
 
-                <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Polo Brands for You to Customize</h2>
-                <ul className="list-disc ml-6 mb-6">
-                  <li><strong>Carhartt:</strong> Rugged and reliable, Carhartt polos are built for performance and comfort in demanding environments.</li>
-                  <li><strong>Patagonia:</strong> Sustainable and stylish, Patagonia polos are perfect for eco-conscious brands seeking quality and responsibility.</li>
-                  <li><strong>Gildan:</strong> Affordable and versatile, Gildan polos are a favorite for bulk orders and everyday wear.</li>
-                  <li><strong>Champion:</strong> Athletic-inspired and comfortable, Champion polos are ideal for teams and active organizations.</li>
-                  <li><strong>Comfort Colors:</strong> Garment-dyed for a soft, vintage feel, Comfort Colors polos offer relaxed style and unique color options.</li>
-                  <li><strong>Under Armour:</strong> Engineered for performance, Under Armour polos feature moisture-wicking fabrics and a modern fit.</li>
-                </ul>
+                <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Brands You Can Choose from</h2>
+                <p className="mb-4">We offer our clients a carefully curated selection of premium brands to choose from, ensuring that your custom embroidered polo shirts are of the highest fabric quality and style. All these brands offer something unique, so you can select the perfect polo that aligns with your brand identity as well as functional needs.</p>
+                
+                <h3 className="text-xl font-semibold mb-2 text-[#3ab7ea]">Carhartt</h3>
+                <p className="mb-4">Reputed for rugged durability, Carhartt polos are built to endure harsh environments. Ideal for hard-wearing industries such as construction, manufacturing, and logistics, these polos offer both functionality and long-lasting quality, making them a go-to for teams that need dependable workwear.</p>
+                
+                <h3 className="text-xl font-semibold mb-2 text-[#3ab7ea]">Patagonia</h3>
+                <p className="mb-4">A leader in sustainability, Patagonia polos are crafted from environmentally responsible materials like recycled polyester and organic cotton. Perfect for eco-conscious businesses, these shirts align with green brand values while delivering comfort and performance in every stitch.</p>
+                
+                <h3 className="text-xl font-semibold mb-2 text-[#3ab7ea]">Gildan</h3>
+                <p className="mb-4">As a well-known name in everyday activewear, Gildan offers polos that strike a balance between comfort, affordability, and practicality. Their polos are especially suited for large-scale orders, making them an excellent choice for schools, events, and businesses seeking value without sacrificing quality.</p>
+                
+                <h3 className="text-xl font-semibold mb-2 text-[#3ab7ea]">Champion</h3>
+                <p className="mb-4">With deep roots in athletic apparel, Champion polos fuse style and performance. Known for their breathable fabrics and modern cuts, these shirts are ideal for sports teams, fitness staff, or anyone seeking a sporty edge in their everyday attire.</p>
+                
+                <h3 className="text-xl font-semibold mb-2 text-[#3ab7ea]">Comfort Colors</h3>
+                <p className="mb-4">Comfort Colors polos stand out with their soft, garment-dyed fabric, which delivers a vintage, lived-in look from the moment you put them on. These polos are ideal for lifestyle brands, creative teams, or casual work environments that seek a relaxed, timeless aesthetic.</p>
+                
+                <h3 className="text-xl font-semibold mb-2 text-[#3ab7ea]">Under Armour</h3>
+                <p className="mb-4">Engineered for performance, Under Armour polos feature moisture-wicking technology and breathable materials, making them a top pick for professionals on the move. Whether in the office, on the golf course, or in the field, these polos keep wearers cool, dry, and comfortable throughout the day.</p>
 
                 <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Why Choose Us for Your Custom Polo Shirt Needs?</h2>
-                <p className="mb-4">We focus exclusively on embroidery for our polo shirts—no printing or print-on-demand. Our in-house embroidery experts ensure every shirt meets the highest standards for quality and consistency. Enjoy fast turnaround, personalized service, and a wide range of customization options to make your polos truly unique.</p>
+                <p className="mb-4">By choosing South Loop Prints for your Polo shirt and personal embroidery needs, you are choosing high quality and reliability. You will be partnering with a conscientious team of specialists who can fulfill your exact vision and deliver high-quality custom embroidered polo shirts that perfectly suit your requirements. Our in-house embroidery plant ensures that your designs and logos are executed with accuracy and attention, providing you with a professional finish that improves the image of your firm. With same-day services, we meet your emergency needs without compromising quality.</p>
+                
+                <p className="mb-4">We recognize that each client has unique needs. That's why we offer personalized consultations to help you select the right products and designs. With a diverse portfolio of premium brands, you can choose shirts, shoes, or other apparel that reflects your brand image while serving practical, everyday purposes. At South Loop Prints, we are committed to providing exceptional customer service, prompt delivery, and high-quality products. Whether you need to dress a small group or an entire corporation, we are here to guide you through the process.</p>
+                
+                <p className="mb-4">Shop now and experience the difference with South Loop Prints—your trusted ally for custom embroidered logo polo shirts that are super stylish and make a lasting impression.</p>
 
                 {/* Example: Polo-specific FAQ using Accordion with Chicago flag blue */}
                 {embroideredType === "polo" && (
                   <div className="bg-white rounded-2xl shadow-xl p-8 mt-12 mb-8 border border-gray-100">
                     <h2 className="text-2xl font-extrabold mb-6 text-[#113f7c]">Frequently Asked Questions</h2>
                     <Accordion type="single" collapsible className="w-full mb-8">
-                      <AccordionItem value="faq1" className="rounded-lg border mb-4 overflow-hidden bg-gray-50">
-                        <AccordionTrigger className="px-6 py-4 text-lg font-semibold text-[#3ab7ea] bg-gray-100 hover:bg-blue-50 transition-all">Fabric Options for Custom Embroidered Polo Shirts</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-6 text-gray-700 bg-white">We offer polos in a variety of premium fabrics, including cotton, cotton blends, and moisture-wicking performance materials. Each is selected for comfort, durability, and embroidery quality.</AccordionContent>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger className="text-lg font-semibold text-[#113f7c]">
+                          Fabric Options for Custom Embroidered Polo Shirts
+                        </AccordionTrigger>
+                        <AccordionContent className="text-[#52525b] leading-relaxed">
+                          South Loop Prints offers a variety of fabric options for custom embroidered polo shirts, including 100% cotton for comfort, polyester for durability, and poly-cotton blends that strike a balance between comfort and durability. These fabrics strike a balance between comfort, longevity, and suitability for embroidery, allowing you to choose the most suitable option for your needs.
+                        </AccordionContent>
                       </AccordionItem>
                       <AccordionItem value="faq2" className="rounded-lg border mb-4 overflow-hidden bg-gray-50">
                         <AccordionTrigger className="px-6 py-4 text-lg font-semibold text-[#3ab7ea] bg-gray-100 hover:bg-blue-50 transition-all">Can I Mix and Match Polo Shirt Styles and Sizes?</AccordionTrigger>
@@ -342,8 +367,14 @@ const EmbroideredDynamicPage: React.FC = () => {
             {/* Hoodie-specific rich content and FAQs */}
             {embroideredType === 'hoodie' && (
               <section className="mt-12 space-y-10">
-                <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Shop High-Quality Custom Embroidered Hoodies with Your Logo</h2>
-                <p className="mb-4">South Loop Prints offers premium custom embroidered hoodies, crafted to your exact logo and branding specifications. Our hoodies are made from the finest materials for comfort, warmth, and a professional look that stands out. Every hoodie is embroidered with precision—no printing or print-on-demand—ensuring your logo is sharp and long-lasting.</p>
+                <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">High Quality Custom Embroidered Hoodies To Your Specification</h2>
+                <p className="mb-4">South Loop Prints offers superior-quality custom embroidered hoodies, designed and manufactured to your precise logo and branding specifications. Are you considering equipping your company, corporate team, sports club, or children's sports team? Our hoodies are the choice to go for. They are crafted from the finest materials and designed to offer style, comfort, warmth, and a professional appearance that stands out from the crowd, making a lasting impression.</p>
+                
+                <p className="mb-4">Our line of customized hoodies includes premium brands for excellent fabric and style. From dense fleece to a superior blend of moisture-wicking, our hoodies guarantee durability and comfort all day. For your sports team, club members, or everyday promotional apparel uniforms, they are the ideal blend of function and style.</p>
+                
+                <p className="mb-4">What sets South Loop Prints apart from other clothing manufacturers is our in-house embroidery factory, which allows us to provide same-day service on most orders. Logos, names, and artwork are carefully crafted with precision by skilled operators, leaving no room for error and resulting in sharp detail and a strong brand image. With a superfast turnaround and careful attention to detail, we help you create stylish, eye-catching, custom apparel that stands out.</p>
+                
+                <p className="mb-4">Regardless of whether you order in bulk or individually, South Loop Prints is your one-stop shop for custom embroidered hoodies that reflect your company's values and image. Explore our collection today and experience the perfect blend of business style, comfort, and personalization.</p>
 
                 <h2 className="text-2xl font-semibold mb-4 text-[#3ab7ea]">Create Personalised Embroidered Hoodies with No Minimums</h2>
                 <p className="mb-4">Order as few or as many as you need—there’s no minimum! Choose your style, color, and size, then upload your logo for expert embroidery. Our easy online process and in-house team make it simple to create unique, branded hoodies for any group or event.</p>

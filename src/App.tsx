@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
@@ -7,13 +7,12 @@ import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import ProductGrid from './components/Products/ProductGrid';
 import Footer from './components/Footer/Footer';
-import { getAccessoriesProducts, getHeadwearProducts, getOuterwearProducts,  getBrandsProducts } from './data/products';
+import { getAccessoriesProducts, getHeadwearProducts, getOuterwearProducts } from './data/products';
 import LoginScreen from './components/Auth/LoginScreen';
 import SignupScreen from './components/Auth/SignupScreen';
 import ForgotPasswordScreen from './components/Auth/ForgotPasswordScreen';
 import HowItWorks from './components/HowItWorks/HowItWorks';
 import ProductPage from './components/Products/ProductPage';
-import Brands from './pages/Categories/Brands';
 import WishlistPage from './components/Products/WishlistPage';
 import EmbroideryPage from './pages/EmbroideryPage';
 import CustomAccessories from './pages/Categories/CustomAccessories';
@@ -34,12 +33,9 @@ import { Product } from './components/Products/ProductCard';
 import TestProductPage from './pages/testProductPage';
 import ThreeDProducts from './pages/testProductPage';
 
-
-import Login from "./pages/admin/login";
 import Dashboard from "./pages/admin/dashboard";
 import SearchProducts from "./pages/admin/search-products";
 import UpdateProducts from "./pages/admin/update-products";
-import NotFound from "./pages/admin/not-found";
 
 import SecondTestProductPage from './pages/testProductPagesecond';
 import HomeBrandGrid from './components/Products/HomeBrandGrid';
@@ -62,8 +58,6 @@ function AppContent() {
   const [loadingAccessories, setLoadingAccessories] = useState(true);
   const [outerwear, setOuterwear] = useState<Product[]>([]);
   const [loadingOuterwear, setLoadingOuterwear] = useState(true);
-  const [loadingBrands, setLoadingBrands] = useState(true);
-  const [brand, setBrand] = useState<Product[]>([]);
   const [headwear, setHeadwear] = useState<Product[]>([]);
   const [loadingHeadwear, setLoadingHeadwear] = useState(true);
   const location = useLocation();
@@ -125,6 +119,9 @@ function AppContent() {
               {/* SEO-Optimized Static Hero Section - First for Search Engines */}
               <Hero />
               
+              {/* Top Categories Mesh - Above the fold per Figma requirement */}
+              <TopCategoriesMesh />
+              
               {/* SEO Content Above The Fold */}
               <SEOContentSection />
               
@@ -132,9 +129,6 @@ function AppContent() {
               <div className="space-y-12">
                 {/* Brand Grid (Previously at top, now moved below hero) */}
                 <HomeBrandGrid />
-                
-                {/* Top Categories Mesh - Figma requirement */}
-                <TopCategoriesMeshBelowFold />
                 
                 {/* Trust Signals Section */}
                 <TrustSignalsSection />
@@ -160,6 +154,10 @@ function AppContent() {
                     products={headwear}
                   />
                 )}
+                
+                {/* Internal Categories Mesh - Additional mesh section */}
+                <InternalCategoriesMesh />
+                
                 {loadingAccessories ? (
                   <div className="text-gray-400 px-4 py-8">Loading accessories...</div>
                 ) : !accessories || accessories.length === 0 ? (
@@ -247,8 +245,8 @@ function App() {
 export default App;
 
 // ---
-// TopCategoriesMeshBelowFold component (add this above App or in a separate file and import it)
-function TopCategoriesMeshBelowFold() {
+// TopCategoriesMesh component - Above the fold as per Figma requirement
+function TopCategoriesMesh() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -267,29 +265,119 @@ function TopCategoriesMeshBelowFold() {
     load();
   }, []);
 
-  if (loading) return <div className="p-8 text-blue-700">Loading top categories...</div>;
+  if (loading) return (
+    <div className="w-full max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+      <div className="text-center text-blue-700">Loading top categories...</div>
+    </div>
+  );
 
   return (
-    <div className="my-8 px-4 md:px-12 lg:px-24">
-      <div className="text-xl font-bold text-blue-900 mb-4">Top Categories</div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {categories.map((cat) => (
+    <section className="w-full max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-12 bg-gradient-to-r from-blue-50 to-indigo-50">
+      <div className="text-center mb-8">
+        <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Shop by Category</h2>
+        <p className="text-gray-600">Find exactly what you're looking for</p>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        {categories.slice(0, 12).map((cat) => (
           <div
             key={cat}
-            className="flex items-center justify-center h-14 rounded-lg border border-blue-100 bg-white text-base font-semibold text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer outline-none focus:ring-2 focus:ring-[#4DB8E7] hover:border-[#4DB8E7] px-2"
+            className="group flex items-center justify-center h-20 rounded-xl border-2 border-blue-100 bg-white text-center font-semibold text-gray-900 transition-all duration-300 shadow-sm hover:shadow-lg cursor-pointer hover:border-[#4DB8E7] hover:bg-gradient-to-r hover:from-[#4DB8E7] hover:to-[#3ab7ea] hover:text-white transform hover:-translate-y-1 px-3"
             style={{ boxShadow: '0 2px 8px 0 rgba(77,184,231,0.04)' }}
             tabIndex={0}
+            role="button"
+            aria-label={`Browse ${cat} category`}
           >
-            {cat}
+            <span className="text-sm lg:text-base font-medium leading-tight">{cat}</span>
           </div>
         ))}
       </div>
-      <style>{`
-        .hover\\:border-\\[\\#4DB8E7\\]:hover {
-          border-color: #4DB8E7 !important;
-        }
-      `}</style>
+    </section>
+  );
+}
+
+// ---
+// InternalCategoriesMesh component - Additional mesh section for homepage
+function InternalCategoriesMesh() {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch('http://31.97.41.27:5000/api/styles/base-categories');
+        const data = await res.json();
+        setCategories(data.baseCategories || []);
+      } catch {
+        setCategories([]);
+      }
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  if (loading) return (
+    <div className="w-full max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+      <div className="text-center text-blue-700">Loading categories...</div>
     </div>
+  );
+
+  const specialCategories = [
+    { name: 'Custom Embroidered Apparel', description: 'Professional embroidery for businesses and teams', color: 'from-blue-500 to-purple-600' },
+    { name: 'Custom Printed Apparel', description: 'High-quality screen printing and digital prints', color: 'from-green-500 to-teal-600' },
+    { name: 'Custom Headwear', description: 'Hats, caps, and beanies with your logo', color: 'from-orange-500 to-red-600' },
+    { name: 'Custom Outerwear', description: 'Jackets, hoodies, and vests for all seasons', color: 'from-indigo-500 to-blue-600' },
+    { name: 'Custom Bags', description: 'Backpacks, totes, and promotional bags', color: 'from-pink-500 to-purple-600' },
+    { name: 'Accessories', description: 'Complete your look with custom accessories', color: 'from-yellow-500 to-orange-600' }
+  ];
+
+  return (
+    <section className="w-full max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-16 bg-white">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Explore Our Custom Categories</h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">From corporate apparel to team uniforms, we've got everything you need to make your brand stand out</p>
+      </div>
+      
+      {/* Special Categories Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {specialCategories.map((category) => (
+          <div
+            key={category.name}
+            className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
+          >
+            <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-90 group-hover:opacity-100 transition-opacity duration-300`}></div>
+            <div className="relative p-8 text-white">
+              <h3 className="text-xl font-bold mb-2">{category.name}</h3>
+              <p className="text-white/90 text-sm leading-relaxed">{category.description}</p>
+              <div className="mt-4 inline-flex items-center text-sm font-medium">
+                Shop Now 
+                <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Additional Categories Mesh */}
+      <div className="bg-gray-50 rounded-2xl p-8">
+        <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">More Categories</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {categories.slice(6, 18).map((cat) => (
+            <div
+              key={cat}
+              className="flex items-center justify-center h-14 rounded-lg border border-gray-200 bg-white text-center font-medium text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer hover:border-blue-300 hover:text-blue-600 transform hover:-translate-y-0.5 px-2"
+              tabIndex={0}
+              role="button"
+              aria-label={`Browse ${cat} category`}
+            >
+              <span className="text-xs lg:text-sm leading-tight">{cat}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
