@@ -10,8 +10,8 @@ const DynamicProductPage: React.FC = () => {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [relatedCategories, setRelatedCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [relatedCategories, setRelatedCategories] = useState<string[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
 
   // Restore missing states for logo and size quantities
@@ -81,7 +81,7 @@ const DynamicProductPage: React.FC = () => {
   // Find related categories (excluding current)
   useEffect(() => {
     if (!product || !product.baseCategory) return;
-    setRelatedCategories(categories.filter((cat) => cat.name !== product.baseCategory));
+    setRelatedCategories(categories.filter((cat) => cat !== product.baseCategory));
   }, [categories, product]);
 
   // Fetch brands
@@ -542,13 +542,13 @@ const DynamicProductPage: React.FC = () => {
             {categories.length === 0 ? (
               <span className="text-gray-400">No categories found.</span>
             ) : (
-              categories.map((cat) => (
+              categories.map((cat: string) => (
                 <button
-                  key={cat._id || cat.name}
-                  onClick={() => navigate(`/category/${cat.name}`)}
+                  key={cat}
+                  onClick={() => navigate(`/category/${cat}`)}
                   className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
                 >
-                  {cat.name}
+                  {cat}
                 </button>
               ))
             )}
@@ -962,13 +962,13 @@ const DynamicProductPage: React.FC = () => {
           <section className="bg-white rounded-xl shadow p-6 mb-8 border border-blue-100">
             <h2 className="text-xl font-bold text-blue-900 mb-4">Related Categories</h2>
             <div className="flex flex-wrap gap-4">
-              {relatedCategories.map((cat: any) => (
+              {relatedCategories.map((cat: string) => (
                 <button
-                  key={cat._id}
+                  key={cat}
                   className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
-                  onClick={() => navigate(`/category/${cat.name}`)}
+                  onClick={() => navigate(`/category/${cat}`)}
                 >
-                  {cat.name}
+                  {cat}
                 </button>
               ))}
             </div>

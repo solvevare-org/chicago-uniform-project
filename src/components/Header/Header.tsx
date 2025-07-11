@@ -574,7 +574,7 @@ const Header: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span
                       className="font-semibold cursor-pointer"
-                      onClick={() => toggleDropdown("Custom Embroidered Apparel")}
+                      onClick={() => toggleDropdown("Custom Embroidered Polo")}
                     >
                       Custom Embroidered Apparel
                     </span>
@@ -586,7 +586,7 @@ const Header: React.FC = () => {
                     />
                   </div>
                   {openDropdown === "Custom Embroidered Apparel" && (
-                    <div className="mt-2">{renderCustomApparel("Custom Embroidered Apparel", true)}</div>
+                    <div className="mt-2">{renderCustomApparel("Custom Embroidered Polo", true)}</div>
                   )}
                 </div>
 
@@ -667,7 +667,7 @@ const Header: React.FC = () => {
                   onMouseLeave={handleNavMouseLeave}
                 >
                   <Link
-                    to="/custom-embroidered-apparel"
+                    to="/custom-embroidered-polo"
                     className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
                       openDropdown === "Custom Embroidered Apparel" ? "text-[#f2f1e6]" : ""
                     }`}
@@ -687,7 +687,7 @@ const Header: React.FC = () => {
                   onMouseLeave={handleNavMouseLeave}
                 >
                   <Link
-                    to="/custom-printed-apparel"
+                    to="/screen-printed-t-shirts"
                     className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
                       openDropdown === "Custom Printed Apparel" ? "text-[#f2f1e6]" : ""
                     }`}
@@ -707,7 +707,7 @@ const Header: React.FC = () => {
                   onMouseLeave={handleNavMouseLeave}
                 >
                   <Link
-                    to="/custom-apparel"
+                    to="/custom-apparel/embroidered-apparel"
                     className={`cursor-pointer font-medium text-base md:text-lg tracking-wide hover:text-[#f2f1e6] transition duration-200 ${
                       openDropdown === "Custom Apparel" ? "text-[#f2f1e6]" : ""
                     }`}
