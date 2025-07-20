@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FaChevronDown } from 'react-icons/fa';
-import { Helmet } from 'react-helmet';
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
+import { Helmet } from "react-helmet";
 
 const DynamicCategoryPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<string | null>('CATEGORY');
-  const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: Set<string> }>({
+  const [activeTab, setActiveTab] = useState<string | null>("CATEGORY");
+  const [selectedFilters, setSelectedFilters] = useState<{
+    [key: string]: Set<string>;
+  }>({
     CATEGORY: new Set(),
     BRANDS: new Set(),
     COLOR: new Set(),
@@ -28,7 +30,7 @@ const DynamicCategoryPage: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/categories');
+        const res = await fetch("http://localhost:3000/api/categories");
         const data = await res.json();
         setCategories(data.categories || []);
       } catch {
@@ -45,12 +47,15 @@ const DynamicCategoryPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://31.97.41.27:5000/api/products/by-title/${category}?limit=100`);
-        if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
+        const response = await fetch(
+          `http://localhost:3000/api/products/by-title/${category}?limit=100`
+        );
+        if (!response.ok)
+          throw new Error(`Failed to fetch products: ${response.statusText}`);
         const data = await response.json();
         setProducts(data.products || []);
       } catch (error: any) {
-        setError(error.message || 'An error occurred while fetching products.');
+        setError(error.message || "An error occurred while fetching products.");
       } finally {
         setLoading(false);
       }
@@ -61,7 +66,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch subcategories (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://31.97.41.27:5000/api/categories/subcategories/${category}`)
+    fetch(`http://localhost:3000/api/categories/subcategories/${category}`)
       .then((res) => res.json())
       .then((data) => setSubcategories(data.subcategories || []))
       .catch(() => setSubcategories([]));
@@ -70,7 +75,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch reviews for this category (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://31.97.41.27:5000/api/reviews/category/${category}`)
+    fetch(`http://localhost:3000/api/reviews/category/${category}`)
       .then((res) => res.json())
       .then((data) => setCategoryReviews(data.reviews || []))
       .catch(() => setCategoryReviews([]));
@@ -79,7 +84,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch related categories (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://31.97.41.27:5000/api/categories/related/${category}`)
+    fetch(`http://localhost:3000/api/categories/related/${category}`)
       .then((res) => res.json())
       .then((data) => setRelatedCategories(data.relatedCategories || []))
       .catch(() => setRelatedCategories([]));
@@ -88,7 +93,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch SEO content (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://31.97.41.27:5000/api/categories/seo/${category}`)
+    fetch(`http://localhost:3000/api/categories/seo/${category}`)
       .then((res) => res.json())
       .then((data) => setSeoContent(data.seoContent || null))
       .catch(() => setSeoContent(null));
@@ -112,58 +117,104 @@ const DynamicCategoryPage: React.FC = () => {
   // Filter products client-side
   const filteredProducts = products.filter((product) => {
     // Category filter
-    if (selectedFilters.CATEGORY.size > 0 && !selectedFilters.CATEGORY.has(product.category)) return false;
+    if (
+      selectedFilters.CATEGORY.size > 0 &&
+      !selectedFilters.CATEGORY.has(product.category)
+    )
+      return false;
     // Brand filter
-    if (selectedFilters.BRANDS.size > 0 && !selectedFilters.BRANDS.has(product.brandName)) return false;
+    if (
+      selectedFilters.BRANDS.size > 0 &&
+      !selectedFilters.BRANDS.has(product.brandName)
+    )
+      return false;
     // Color filter
-    if (selectedFilters.COLOR.size > 0 && !selectedFilters.COLOR.has(product.colorName)) return false;
+    if (
+      selectedFilters.COLOR.size > 0 &&
+      !selectedFilters.COLOR.has(product.colorName)
+    )
+      return false;
     // Price filter
     if (product.salePrice > priceRange) return false;
     return true;
   });
 
   // Get unique brands and colors from products
-  const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(Boolean);
-  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(Boolean);
+  const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(
+    Boolean
+  );
+  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
+    Boolean
+  );
 
   return (
     <>
       <Helmet>
-        {category && category.toLowerCase() === 'headwear' && (
-          <meta name="keywords" content="custom hats, custom baseball hats, embroidered baseball caps, custom embroidered baseball hats, embroidered baseball hats, custom embroidered baseball hat, custom embroidered hats, custom trucker hats, trucker hats custom, embroidered trucker hats, custom patch trucker hats, flat bill trucker hats, custom made trucker hats, custom embroidered trucker hats, embroidered trucker hat, custom bucket hats, custom embroidered bucket hats, embroidered bucket hat, embroidered richardson 112 hats, embroidered richardson hats, custom richardson 112 hats, richardson custom hats, custom fitted hats, embroidered fitted hats, custom embroidered fitted hats, custom flexfit hats, custom embroidered flexfit hats, embroidered flexfit hats, custom beanies, custom beanie, embroidered beanie, custom winter hats, custom beanie hats, customized beanies, custom beanies with logo, custom embroidered beanies, embroidered beanies, customizable beanies, personalized beanie, beanie embroidery, custom embroidered beanie, custom 47 brand hats, custom snapback hats, custom dad hats, custom embroidered dad hats, custom golf hats, custom cammo hats, custom visors, custom visor, custom sun visor, custom sun visors, custom headbands, custom headband, customized headbands, custom headbands with logo, custom sports headbands, customizable headbands, custom embroidered hats" />
+        {category && category.toLowerCase() === "headwear" && (
+          <meta
+            name="keywords"
+            content="custom hats, custom baseball hats, embroidered baseball caps, custom embroidered baseball hats, embroidered baseball hats, custom embroidered baseball hat, custom embroidered hats, custom trucker hats, trucker hats custom, embroidered trucker hats, custom patch trucker hats, flat bill trucker hats, custom made trucker hats, custom embroidered trucker hats, embroidered trucker hat, custom bucket hats, custom embroidered bucket hats, embroidered bucket hat, embroidered richardson 112 hats, embroidered richardson hats, custom richardson 112 hats, richardson custom hats, custom fitted hats, embroidered fitted hats, custom embroidered fitted hats, custom flexfit hats, custom embroidered flexfit hats, embroidered flexfit hats, custom beanies, custom beanie, embroidered beanie, custom winter hats, custom beanie hats, customized beanies, custom beanies with logo, custom embroidered beanies, embroidered beanies, customizable beanies, personalized beanie, beanie embroidery, custom embroidered beanie, custom 47 brand hats, custom snapback hats, custom dad hats, custom embroidered dad hats, custom golf hats, custom cammo hats, custom visors, custom visor, custom sun visor, custom sun visors, custom headbands, custom headband, customized headbands, custom headbands with logo, custom sports headbands, customizable headbands, custom embroidered hats"
+          />
         )}
-        {category && [
-          't-shirts - long sleeve',
-          't-shirts - premium',
-          't-shirts - core',
-        ].includes(category.toLowerCase()) && (
-          <meta name="keywords" content="custom t shirts, custom print t-shirt, custom printed t-shirt, custom long sleeve shirt, embroidered t shirts, bulk custom t shirts, cheap custom t shirts, custom embroidered t-shirts, t shirts embroidered, custom embroidered t shirts" />
+        {category &&
+          [
+            "t-shirts - long sleeve",
+            "t-shirts - premium",
+            "t-shirts - core",
+          ].includes(category.toLowerCase()) && (
+            <meta
+              name="keywords"
+              content="custom t shirts, custom print t-shirt, custom printed t-shirt, custom long sleeve shirt, embroidered t shirts, bulk custom t shirts, cheap custom t shirts, custom embroidered t-shirts, t shirts embroidered, custom embroidered t shirts"
+            />
+          )}
+        {category &&
+          (category.toLowerCase().includes("shirt") ||
+            category.toLowerCase().includes("shirts")) && (
+            <meta
+              name="keywords"
+              content="custom polo shirts, custom polo shirts with logo, embroidered polo shirts, custom embroidered polo shirts, custom logo polo shirts, custom printed polo shirts, polo shirts embroidered, embroidered polo shirts no minimum order, embroidered polo shirts custom, mens embroidered polo shirts, embroidered logo polo shirts, custom t shirts, custom print t-shirt, custom printed t-shirt, custom long sleeve shirt, embroidered t shirts, bulk custom t shirts, cheap custom t shirts, custom embroidered t-shirts, t shirts embroidered, custom embroidered t shirts, custom work shirts, work shirts with logo, embroidered work shirts, custom embroidered work shirts, work shirts embroidered, embroidered dickies work shirts, embroidered shirts for work, custom golf shirts, embroidered golf shirts, embroidered dress shirts, custom logo dress shirts, embroidered business shirts, embroidered button up shirts, custom embroidered golf shirts, custom embroidered golf shirts no minimum, custom embroidered dress shirts, business embroidered shirts, custom embroidered button down shirts, dress shirts embroidered, business polo shirts embroidered, custom tank tops"
+            />
+          )}
+        {category && category.toLowerCase().includes("outerwear") && (
+          <meta
+            name="keywords"
+            content="custom hoodies, custom embroidered hoodies, custom zip up  hoodies, custom hoodies for men, custom nike hoodies, custom printed hoodies, embroidered hoodies, custom print hoodies, custom sweaters, custom embroidered sweaters, custom christmas sweaters, embroidered sweaters, custom knit sweaters, custom sweatshirts, custom embroidered sweatshirts, custom printed sweatshirts, custom college sweatshirts, custom crewneck sweatshirts, custom embroidered sweatshirts, custom embroidery sweatshirts, custom logo sweatshirts, custom sweatshirts embroidered, custom sweatshirts no minimum, cute embroidered sweatshirts, embroidered college sweatshirts, embroidered sweatshirts, embroidered sweatshirts custom, custom quarter zip, embroidered quarter zip, custom quarter zip pullover, custom quarter zip sweatshirt, personalized embroidered sweatshirts, custom jackets, custom jackets with logo, custom logo jackets, custom windbreakers, custom bomber jackets, custom denim jackets, custom embroidered jackets, custom fleece jackets, custom hi vis jackets, custom jackets with logo, custom leather jackets, custom letterman jackets, custom logo jackets, custom nike jackets, custom rain jackets, custom sports jackets, custom starter jackets, custom team jackets, custom track jackets, custom windbreaker jackets, custom work jackets, custom zip up jackets, embroidered fleece jackets, embroidered jackets, varsity jackets custom, women's embroidered jackets, custom vests, embroidered vests"
+          />
         )}
-        {category && (category.toLowerCase().includes('shirt') || category.toLowerCase().includes('shirts')) && (
-          <meta name="keywords" content="custom polo shirts, custom polo shirts with logo, embroidered polo shirts, custom embroidered polo shirts, custom logo polo shirts, custom printed polo shirts, polo shirts embroidered, embroidered polo shirts no minimum order, embroidered polo shirts custom, mens embroidered polo shirts, embroidered logo polo shirts, custom t shirts, custom print t-shirt, custom printed t-shirt, custom long sleeve shirt, embroidered t shirts, bulk custom t shirts, cheap custom t shirts, custom embroidered t-shirts, t shirts embroidered, custom embroidered t shirts, custom work shirts, work shirts with logo, embroidered work shirts, custom embroidered work shirts, work shirts embroidered, embroidered dickies work shirts, embroidered shirts for work, custom golf shirts, embroidered golf shirts, embroidered dress shirts, custom logo dress shirts, embroidered business shirts, embroidered button up shirts, custom embroidered golf shirts, custom embroidered golf shirts no minimum, custom embroidered dress shirts, business embroidered shirts, custom embroidered button down shirts, dress shirts embroidered, business polo shirts embroidered, custom tank tops" />
+        {category && category.toLowerCase().includes("bags") && (
+          <meta
+            name="keywords"
+            content="custom bags, custom backpacks nike, embroidered tote bag, embroidered backpack, custom nike backpack, custom nike elite backpack, custom kids backpack, custom toddler backpack, custom drawstring backpack, embroidered tote bags, backpack custom, embroidered tote, custom tote bags, custom drawstring bags, custom bags with logo, custom paper bags, custom duffle bags, custom tote bags with logo, custom printed bags, custom printed tote bags, custom printed canvas tote bags, custom gym bags, custom duffle bags"
+          />
         )}
-        {category && category.toLowerCase().includes('outerwear') && (
-          <meta name="keywords" content="custom hoodies, custom embroidered hoodies, custom zip up  hoodies, custom hoodies for men, custom nike hoodies, custom printed hoodies, embroidered hoodies, custom print hoodies, custom sweaters, custom embroidered sweaters, custom christmas sweaters, embroidered sweaters, custom knit sweaters, custom sweatshirts, custom embroidered sweatshirts, custom printed sweatshirts, custom college sweatshirts, custom crewneck sweatshirts, custom embroidered sweatshirts, custom embroidery sweatshirts, custom logo sweatshirts, custom sweatshirts embroidered, custom sweatshirts no minimum, cute embroidered sweatshirts, embroidered college sweatshirts, embroidered sweatshirts, embroidered sweatshirts custom, custom quarter zip, embroidered quarter zip, custom quarter zip pullover, custom quarter zip sweatshirt, personalized embroidered sweatshirts, custom jackets, custom jackets with logo, custom logo jackets, custom windbreakers, custom bomber jackets, custom denim jackets, custom embroidered jackets, custom fleece jackets, custom hi vis jackets, custom jackets with logo, custom leather jackets, custom letterman jackets, custom logo jackets, custom nike jackets, custom rain jackets, custom sports jackets, custom starter jackets, custom team jackets, custom track jackets, custom windbreaker jackets, custom work jackets, custom zip up jackets, embroidered fleece jackets, embroidered jackets, varsity jackets custom, women's embroidered jackets, custom vests, embroidered vests" />
+        {category && category.toLowerCase().includes("bottoms") && (
+          <meta
+            name="keywords"
+            content="custom pants, custom shorts, custom sweatpants, embroidered sweatpants, custom pants design, custom sweat pants, embroidered jean shorts, embroidered denim shorts, mens embroidered pants, custom cargo pants, embroidered linen pants, custom embroidered sweatpants, custom scrubs, custom scrubs with logo, custom nurse scrubs, custom embroidered scrubs"
+          />
         )}
-        {category && category.toLowerCase().includes('bags') && (
-          <meta name="keywords" content="custom bags, custom backpacks nike, embroidered tote bag, embroidered backpack, custom nike backpack, custom nike elite backpack, custom kids backpack, custom toddler backpack, custom drawstring backpack, embroidered tote bags, backpack custom, embroidered tote, custom tote bags, custom drawstring bags, custom bags with logo, custom paper bags, custom duffle bags, custom tote bags with logo, custom printed bags, custom printed tote bags, custom printed canvas tote bags, custom gym bags, custom duffle bags" />
-        )}
-        {category && category.toLowerCase().includes('bottoms') && (
-          <meta name="keywords" content="custom pants, custom shorts, custom sweatpants, embroidered sweatpants, custom pants design, custom sweat pants, embroidered jean shorts, embroidered denim shorts, mens embroidered pants, custom cargo pants, embroidered linen pants, custom embroidered sweatpants, custom scrubs, custom scrubs with logo, custom nurse scrubs, custom embroidered scrubs" />
-        )}
-        {category && category.toLowerCase().includes('accessories') && (
-          <meta name="keywords" content="embroidered blankets, custom blankets, custom embroidered blankets, embroidered hand towels, custom hand towels, embroidered towel, custom scarves, custom scarves with logo, custom aprons, custom printed aprons, custom aprons with logo, custom embroidered aprons, custom bandanas" />
+        {category && category.toLowerCase().includes("accessories") && (
+          <meta
+            name="keywords"
+            content="embroidered blankets, custom blankets, custom embroidered blankets, embroidered hand towels, custom hand towels, embroidered towel, custom scarves, custom scarves with logo, custom aprons, custom printed aprons, custom aprons with logo, custom embroidered aprons, custom bandanas"
+          />
         )}
       </Helmet>
       <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
         <div className="max-w-screen-2xl mx-auto">
           {/* Header tags */}
-          <h1 className="text-4xl font-extrabold mb-2 text-[#b3ddf3]">{category}</h1>
-          <h2 className="text-2xl font-bold mb-4 text-blue-900">{products.length} Products</h2>
+          <h1 className="text-4xl font-extrabold mb-2 text-[#b3ddf3]">
+            {category}
+          </h1>
+          <h2 className="text-2xl font-bold mb-4 text-blue-900">
+            {products.length} Products
+          </h2>
           {/* Subcategory Internal Mesh */}
           {subcategories.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-xl font-bold mb-2 text-blue-900">Subcategories</h2>
+              <h2 className="text-xl font-bold mb-2 text-blue-900">
+                Subcategories
+              </h2>
               <div className="flex flex-wrap gap-4">
                 {subcategories.map((sub: any) => (
                   <button
@@ -183,21 +234,30 @@ const DynamicCategoryPage: React.FC = () => {
               <div className="mb-6 border-b border-[#b3ddf3] pb-4">
                 <h2
                   className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                  onClick={() => toggleTab('CATEGORY')}
+                  onClick={() => toggleTab("CATEGORY")}
                 >
                   CATEGORY
-                  <FaChevronDown className={`transition-transform ${activeTab === 'CATEGORY' ? 'rotate-180' : ''}`} />
+                  <FaChevronDown
+                    className={`transition-transform ${
+                      activeTab === "CATEGORY" ? "rotate-180" : ""
+                    }`}
+                  />
                 </h2>
-                {activeTab === 'CATEGORY' && (
+                {activeTab === "CATEGORY" && (
                   <ul className="mt-4 space-y-2 text-sm text-gray-300">
                     {categories.length > 0 &&
                       categories.map((cat: any) => (
-                        <li key={cat.title} className="flex items-center space-x-2">
+                        <li
+                          key={cat.title}
+                          className="flex items-center space-x-2"
+                        >
                           <input
                             type="checkbox"
                             className="accent-[#b3ddf3]"
                             checked={selectedFilters.CATEGORY.has(cat.title)}
-                            onChange={() => handleFilterChange('CATEGORY', cat.title)}
+                            onChange={() =>
+                              handleFilterChange("CATEGORY", cat.title)
+                            }
                           />
                           <span>{cat.title}</span>
                         </li>
@@ -209,12 +269,16 @@ const DynamicCategoryPage: React.FC = () => {
               <div className="mb-6 border-b border-[#b3ddf3] pb-4">
                 <h2
                   className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                  onClick={() => toggleTab('BRANDS')}
+                  onClick={() => toggleTab("BRANDS")}
                 >
                   BRANDS
-                  <FaChevronDown className={`transition-transform ${activeTab === 'BRANDS' ? 'rotate-180' : ''}`} />
+                  <FaChevronDown
+                    className={`transition-transform ${
+                      activeTab === "BRANDS" ? "rotate-180" : ""
+                    }`}
+                  />
                 </h2>
-                {activeTab === 'BRANDS' && (
+                {activeTab === "BRANDS" && (
                   <ul className="mt-4 space-y-2 text-sm text-gray-300">
                     {brands.map((brand) => (
                       <li key={brand} className="flex items-center space-x-2">
@@ -222,7 +286,7 @@ const DynamicCategoryPage: React.FC = () => {
                           type="checkbox"
                           className="accent-[#b3ddf3]"
                           checked={selectedFilters.BRANDS.has(brand)}
-                          onChange={() => handleFilterChange('BRANDS', brand)}
+                          onChange={() => handleFilterChange("BRANDS", brand)}
                         />
                         <span>{brand}</span>
                       </li>
@@ -234,12 +298,16 @@ const DynamicCategoryPage: React.FC = () => {
               <div className="mb-6 border-b border-[#b3ddf3] pb-4">
                 <h2
                   className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                  onClick={() => toggleTab('COLOR')}
+                  onClick={() => toggleTab("COLOR")}
                 >
                   COLOR
-                  <FaChevronDown className={`transition-transform ${activeTab === 'COLOR' ? 'rotate-180' : ''}`} />
+                  <FaChevronDown
+                    className={`transition-transform ${
+                      activeTab === "COLOR" ? "rotate-180" : ""
+                    }`}
+                  />
                 </h2>
-                {activeTab === 'COLOR' && (
+                {activeTab === "COLOR" && (
                   <ul className="mt-4 space-y-2 text-sm text-gray-300">
                     {colors.map((color) => (
                       <li key={color} className="flex items-center space-x-2">
@@ -247,7 +315,7 @@ const DynamicCategoryPage: React.FC = () => {
                           type="checkbox"
                           className="accent-[#b3ddf3]"
                           checked={selectedFilters.COLOR.has(color)}
-                          onChange={() => handleFilterChange('COLOR', color)}
+                          onChange={() => handleFilterChange("COLOR", color)}
                         />
                         <span>{color}</span>
                       </li>
@@ -259,12 +327,16 @@ const DynamicCategoryPage: React.FC = () => {
               <div className="pb-2">
                 <h2
                   className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                  onClick={() => toggleTab('PRICE')}
+                  onClick={() => toggleTab("PRICE")}
                 >
                   PRICE
-                  <FaChevronDown className={`transition-transform ${activeTab === 'PRICE' ? 'rotate-180' : ''}`} />
+                  <FaChevronDown
+                    className={`transition-transform ${
+                      activeTab === "PRICE" ? "rotate-180" : ""
+                    }`}
+                  />
                 </h2>
-                {activeTab === 'PRICE' && (
+                {activeTab === "PRICE" && (
                   <div className="mt-4">
                     <input
                       type="range"
@@ -285,9 +357,13 @@ const DynamicCategoryPage: React.FC = () => {
             {/* Product Grid Section */}
             <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {loading ? (
-                <p className="text-center text-gray-400 col-span-full">Loading products...</p>
+                <p className="text-center text-gray-400 col-span-full">
+                  Loading products...
+                </p>
               ) : error ? (
-                <p className="text-center text-red-500 col-span-full">{error}</p>
+                <p className="text-center text-red-500 col-span-full">
+                  {error}
+                </p>
               ) : filteredProducts.length > 0 ? (
                 filteredProducts.map((product, index) => (
                   <Link
@@ -308,26 +384,41 @@ const DynamicCategoryPage: React.FC = () => {
                         className="h-4 w-4 rounded-full"
                         style={{ backgroundColor: product.color1 }}
                       ></div>
-                      <span className="text-sm text-gray-400">{product.colorName}</span>
+                      <span className="text-sm text-gray-400">
+                        {product.colorName}
+                      </span>
                     </div>
-                    <p className="text-[#b3ddf3] font-semibold text-md">${product.salePrice.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">In Stock: {product.qty}</p>
+                    <p className="text-[#b3ddf3] font-semibold text-md">
+                      ${product.salePrice.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      In Stock: {product.qty}
+                    </p>
                   </Link>
                 ))
               ) : (
-                <p className="text-gray-400 text-center col-span-full">No products found for this category.</p>
+                <p className="text-gray-400 text-center col-span-full">
+                  No products found for this category.
+                </p>
               )}
             </div>
           </div>
           {/* Customer reviews relevant for that category */}
           {categoryReviews.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-xl font-bold mb-2 text-blue-900">Customer Reviews</h2>
+              <h2 className="text-xl font-bold mb-2 text-blue-900">
+                Customer Reviews
+              </h2>
               <ul className="space-y-4">
                 {categoryReviews.map((review: any, idx: number) => (
                   <li key={idx} className="bg-gray-50 p-4 rounded-xl shadow">
-                    <div className="font-semibold text-blue-900 mb-1">{review.user}</div>
-                    <div className="text-yellow-400 mb-1">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
+                    <div className="font-semibold text-blue-900 mb-1">
+                      {review.user}
+                    </div>
+                    <div className="text-yellow-400 mb-1">
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </div>
                     <div className="text-gray-700">{review.comment}</div>
                   </li>
                 ))}
@@ -337,7 +428,9 @@ const DynamicCategoryPage: React.FC = () => {
           {/* Related Categories Internal Mesh */}
           {relatedCategories.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-xl font-bold mb-2 text-blue-900">Related Categories</h2>
+              <h2 className="text-xl font-bold mb-2 text-blue-900">
+                Related Categories
+              </h2>
               <div className="flex flex-wrap gap-4">
                 {relatedCategories.map((cat: any) => (
                   <button
@@ -353,7 +446,9 @@ const DynamicCategoryPage: React.FC = () => {
           {/* Place for SEO Content */}
           {seoContent && (
             <div className="mb-8 bg-blue-50 rounded-xl p-4 shadow text-gray-700">
-              <h2 className="text-xl font-bold mb-2 text-blue-900">About {category}</h2>
+              <h2 className="text-xl font-bold mb-2 text-blue-900">
+                About {category}
+              </h2>
               <div dangerouslySetInnerHTML={{ __html: seoContent }} />
             </div>
           )}

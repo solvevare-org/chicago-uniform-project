@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface Brand {
   _id: string;
@@ -21,11 +21,11 @@ const AllBrandPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/brands/');
+        const res = await fetch("http://localhost:3000/api/brands/");
         const data = await res.json();
         setBrands(Array.isArray(data.brands) ? data.brands : []);
       } catch (err: any) {
-        setError('Failed to load brands');
+        setError("Failed to load brands");
       } finally {
         setLoading(false);
       }
@@ -54,9 +54,11 @@ const AllBrandPage: React.FC = () => {
                     src={`https://www.ssactivewear.com/${brand.image}`}
                     alt={brand.name}
                     className="w-20 h-20 object-contain mb-3 rounded bg-white border border-[#b3ddf3]"
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                    onError={(e) => (e.currentTarget.style.display = "none")}
                   />
-                  <span className="mt-2 text-[#222] font-bold">{brand.name}</span>
+                  <span className="mt-2 text-[#222] font-bold">
+                    {brand.name}
+                  </span>
                 </a>
               ))}
             </div>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Product } from '../components/Products/ProductCard';
+import React, { useEffect, useState } from "react";
+import { Product } from "../components/Products/ProductCard";
 
 const AccessoriesSection: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,11 +11,13 @@ const AccessoriesSection: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/products/by-base-category/Accessories?limit=10');
+        const res = await fetch(
+          "http://localhost:3000/api/products/by-base-category/Accessories?limit=10"
+        );
         const data = await res.json();
         setProducts(data.products ? data.products.slice(0, 10) : []);
       } catch (err: any) {
-        setError('Failed to load accessories');
+        setError("Failed to load accessories");
       } finally {
         setLoading(false);
       }
@@ -47,7 +49,10 @@ const AccessoriesSection: React.FC = () => {
                 className="min-w-[220px] max-w-[220px] bg-[#2563eb] rounded-xl shadow border border-gray-200 flex-shrink-0 flex flex-col items-center p-4"
               >
                 <img
-                  src={product.image || `https://www.ssactivewear.com/${product.colorFrontImage}`}
+                  src={
+                    product.image ||
+                    `https://www.ssactivewear.com/${product.colorFrontImage}`
+                  }
                   alt={product.name || product.styleName}
                   className="h-32 w-full object-cover rounded mb-3"
                 />
@@ -58,7 +63,9 @@ const AccessoriesSection: React.FC = () => {
                   ${product.price || product.salePrice}
                 </div>
                 {product.brandName && (
-                  <div className="text-xs text-gray-500 mb-1">{product.brandName}</div>
+                  <div className="text-xs text-gray-500 mb-1">
+                    {product.brandName}
+                  </div>
                 )}
               </div>
             ))}

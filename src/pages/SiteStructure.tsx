@@ -1,22 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // Utility to fetch categories and subcategories from backend (similar to Header)
 async function fetchCategories() {
-  const res = await fetch('http://31.97.41.27:5000/api/styles/base-categories');
+  const res = await fetch("http://localhost:3000/api/styles/base-categories");
   const data = await res.json();
   return data.baseCategories || [];
 }
 
 async function fetchSubcategories(category: string) {
-  const res = await fetch(`http://31.97.41.27:5000/api/styles/subcategories?category=${encodeURIComponent(category)}`);
+  const res = await fetch(
+    `http://localhost:3000/api/styles/subcategories?category=${encodeURIComponent(
+      category
+    )}`
+  );
   const data = await res.json();
   return data.subcategories || [];
 }
 
 const SiteStructure: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
-  const [subcategories, setSubcategories] = useState<Record<string, string[]>>({});
+  const [subcategories, setSubcategories] = useState<Record<string, string[]>>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,16 +56,32 @@ const SiteStructure: React.FC = () => {
           <div key={cat}>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-lg text-blue-700">{cat}</span>
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Hybrid Product Listing Page Model</span>
-              <Link to={`/category/${encodeURIComponent(cat)}`} className="text-blue-500 underline ml-2">View</Link>
+              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                Hybrid Product Listing Page Model
+              </span>
+              <Link
+                to={`/category/${encodeURIComponent(cat)}`}
+                className="text-blue-500 underline ml-2"
+              >
+                View
+              </Link>
             </div>
             {subcategories[cat] && subcategories[cat].length > 0 && (
               <ul className="ml-8 mt-2 space-y-1">
                 {subcategories[cat].map((sub) => (
                   <li key={sub} className="flex items-center gap-2">
                     <span className="text-gray-700">{sub}</span>
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Product Listing Page Model</span>
-                    <Link to={`/category/${encodeURIComponent(cat)}/${encodeURIComponent(sub)}`} className="text-blue-400 underline ml-2">View</Link>
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                      Product Listing Page Model
+                    </span>
+                    <Link
+                      to={`/category/${encodeURIComponent(
+                        cat
+                      )}/${encodeURIComponent(sub)}`}
+                      className="text-blue-400 underline ml-2"
+                    >
+                      View
+                    </Link>
                   </li>
                 ))}
               </ul>

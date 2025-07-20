@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaChevronDown } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 
 const EmbroideredApparelPage: React.FC = () => {
@@ -8,8 +8,10 @@ const EmbroideredApparelPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<string | null>('CATEGORY');
-  const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: Set<string> }>({
+  const [activeTab, setActiveTab] = useState<string | null>("CATEGORY");
+  const [selectedFilters, setSelectedFilters] = useState<{
+    [key: string]: Set<string>;
+  }>({
     CATEGORY: new Set(),
     BRANDS: new Set(),
     COLOR: new Set(),
@@ -19,25 +21,25 @@ const EmbroideredApparelPage: React.FC = () => {
 
   // Subcategories for Embroidered Apparel
   const EMBROIDERED_SUBCATEGORIES = [
-    'T-Shirts - Core',
-  'T-Shirts - Long Sleeve',
-  'T-Shirts - Premium',
-  'Sport Shirts',
-  'Fleece - Core - Crew',
-  'Fleece - Core - Hood',
-  'Fleece - Premium - Crew',
-  'Fleece - Premium - Hood',
-  'Quarter-Zips',
-  'Outerwear',
-  'Workwear',
-  'Wovens'
+    "T-Shirts - Core",
+    "T-Shirts - Long Sleeve",
+    "T-Shirts - Premium",
+    "Sport Shirts",
+    "Fleece - Core - Crew",
+    "Fleece - Core - Hood",
+    "Fleece - Premium - Crew",
+    "Fleece - Premium - Hood",
+    "Quarter-Zips",
+    "Outerwear",
+    "Workwear",
+    "Wovens",
   ];
 
   // Fetch categories (for sidebar)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://31.97.41.27:5000/api/categories');
+        const res = await fetch("http://localhost:3000/api/categories");
         const data = await res.json();
         setCategories(data.categories || []);
       } catch {
@@ -54,10 +56,14 @@ const EmbroideredApparelPage: React.FC = () => {
       setError(null);
       try {
         const allProducts: any[] = [];
-        
+
         for (const subcategory of EMBROIDERED_SUBCATEGORIES) {
           try {
-            const response = await fetch(`http://31.97.41.27:5000/api/products/by-base-category/${encodeURIComponent(subcategory)}?limit=100`);
+            const response = await fetch(
+              `http://localhost:3000/api/products/by-base-category/${encodeURIComponent(
+                subcategory
+              )}?limit=100`
+            );
             if (response.ok) {
               const data = await response.json();
               if (data.products && Array.isArray(data.products)) {
@@ -68,10 +74,10 @@ const EmbroideredApparelPage: React.FC = () => {
             console.warn(`Failed to fetch products for ${subcategory}:`, error);
           }
         }
-        
+
         setProducts(allProducts);
       } catch (error: any) {
-        setError(error.message || 'An error occurred while fetching products.');
+        setError(error.message || "An error occurred while fetching products.");
       } finally {
         setLoading(false);
       }
@@ -97,19 +103,35 @@ const EmbroideredApparelPage: React.FC = () => {
   // Filter products client-side
   const filteredProducts = products.filter((product) => {
     // Category filter
-    if (selectedFilters.CATEGORY.size > 0 && !selectedFilters.CATEGORY.has(product.category)) return false;
+    if (
+      selectedFilters.CATEGORY.size > 0 &&
+      !selectedFilters.CATEGORY.has(product.category)
+    )
+      return false;
     // Brand filter
-    if (selectedFilters.BRANDS.size > 0 && !selectedFilters.BRANDS.has(product.brandName)) return false;
+    if (
+      selectedFilters.BRANDS.size > 0 &&
+      !selectedFilters.BRANDS.has(product.brandName)
+    )
+      return false;
     // Color filter
-    if (selectedFilters.COLOR.size > 0 && !selectedFilters.COLOR.has(product.colorName)) return false;
+    if (
+      selectedFilters.COLOR.size > 0 &&
+      !selectedFilters.COLOR.has(product.colorName)
+    )
+      return false;
     // Price filter
     if (product.salePrice > priceRange) return false;
     return true;
   });
 
   // Get unique brands and colors from products
-  const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(Boolean);
-  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(Boolean);
+  const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(
+    Boolean
+  );
+  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
+    Boolean
+  );
 
   // Products to display based on pagination
   const paginatedProducts = filteredProducts.slice(0, visibleCount);
@@ -117,7 +139,10 @@ const EmbroideredApparelPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
       <Helmet>
-        <meta name="keywords" content="custom bags, custom backpacks nike, embroidered tote bag, embroidered backpack, custom nike backpack, custom nike elite backpack, custom kids backpack, custom toddler backpack, custom drawstring backpack, embroidered tote bags, backpack custom, embroidered tote, custom tote bags, custom drawstring bags, custom bags with logo, custom paper bags, custom duffle bags, custom tote bags with logo, custom printed bags, custom printed tote bags, custom printed canvas tote bags, custom gym bags, custom duffle bags" />
+        <meta
+          name="keywords"
+          content="custom bags, custom backpacks nike, embroidered tote bag, embroidered backpack, custom nike backpack, custom nike elite backpack, custom kids backpack, custom toddler backpack, custom drawstring backpack, embroidered tote bags, backpack custom, embroidered tote, custom tote bags, custom drawstring bags, custom bags with logo, custom paper bags, custom duffle bags, custom tote bags with logo, custom printed bags, custom printed tote bags, custom printed canvas tote bags, custom gym bags, custom duffle bags"
+        />
       </Helmet>
       <div className="max-w-screen-2xl mx-auto">
         <div className="flex flex-col md:flex-row gap-8">
@@ -127,12 +152,16 @@ const EmbroideredApparelPage: React.FC = () => {
             <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
                 className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                onClick={() => toggleTab('CATEGORY')}
+                onClick={() => toggleTab("CATEGORY")}
               >
                 CATEGORY
-                <FaChevronDown className={`transition-transform ${activeTab === 'CATEGORY' ? 'rotate-180' : ''}`} />
+                <FaChevronDown
+                  className={`transition-transform ${
+                    activeTab === "CATEGORY" ? "rotate-180" : ""
+                  }`}
+                />
               </h2>
-              {activeTab === 'CATEGORY' && (
+              {activeTab === "CATEGORY" && (
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">
                   {EMBROIDERED_SUBCATEGORIES.map((cat: string) => (
                     <li key={cat} className="flex items-center space-x-2">
@@ -140,7 +169,7 @@ const EmbroideredApparelPage: React.FC = () => {
                         type="checkbox"
                         className="accent-[#b3ddf3]"
                         checked={selectedFilters.CATEGORY.has(cat)}
-                        onChange={() => handleFilterChange('CATEGORY', cat)}
+                        onChange={() => handleFilterChange("CATEGORY", cat)}
                       />
                       <span>{cat}</span>
                     </li>
@@ -152,12 +181,16 @@ const EmbroideredApparelPage: React.FC = () => {
             <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
                 className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                onClick={() => toggleTab('BRANDS')}
+                onClick={() => toggleTab("BRANDS")}
               >
                 BRANDS
-                <FaChevronDown className={`transition-transform ${activeTab === 'BRANDS' ? 'rotate-180' : ''}`} />
+                <FaChevronDown
+                  className={`transition-transform ${
+                    activeTab === "BRANDS" ? "rotate-180" : ""
+                  }`}
+                />
               </h2>
-              {activeTab === 'BRANDS' && (
+              {activeTab === "BRANDS" && (
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">
                   {brands.map((brand) => (
                     <li key={brand} className="flex items-center space-x-2">
@@ -165,7 +198,7 @@ const EmbroideredApparelPage: React.FC = () => {
                         type="checkbox"
                         className="accent-[#b3ddf3]"
                         checked={selectedFilters.BRANDS.has(brand)}
-                        onChange={() => handleFilterChange('BRANDS', brand)}
+                        onChange={() => handleFilterChange("BRANDS", brand)}
                       />
                       <span>{brand}</span>
                     </li>
@@ -177,12 +210,16 @@ const EmbroideredApparelPage: React.FC = () => {
             <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
                 className="text-xl font-semibged flex justify-between items-center cursor-pointer"
-                onClick={() => toggleTab('COLOR')}
+                onClick={() => toggleTab("COLOR")}
               >
                 COLOR
-                <FaChevronDown className={`transition-transform ${activeTab === 'COLOR' ? 'rotate-180' : ''}`} />
+                <FaChevronDown
+                  className={`transition-transform ${
+                    activeTab === "COLOR" ? "rotate-180" : ""
+                  }`}
+                />
               </h2>
-              {activeTab === 'COLOR' && (
+              {activeTab === "COLOR" && (
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">
                   {colors.map((color) => (
                     <li key={color} className="flex items-center space-x-2">
@@ -190,7 +227,7 @@ const EmbroideredApparelPage: React.FC = () => {
                         type="checkbox"
                         className="accent-[#b3ddf3]"
                         checked={selectedFilters.COLOR.has(color)}
-                        onChange={() => handleFilterChange('COLOR', color)}
+                        onChange={() => handleFilterChange("COLOR", color)}
                       />
                       <span>{color}</span>
                     </li>
@@ -202,12 +239,16 @@ const EmbroideredApparelPage: React.FC = () => {
             <div className="pb-2">
               <h2
                 className="text-xl font-semibold flex justify-between items-center cursor-pointer"
-                onClick={() => toggleTab('PRICE')}
+                onClick={() => toggleTab("PRICE")}
               >
                 PRICE
-                <FaChevronDown className={`transition-transform ${activeTab === 'PRICE' ? 'rotate-180' : ''}`} />
+                <FaChevronDown
+                  className={`transition-transform ${
+                    activeTab === "PRICE" ? "rotate-180" : ""
+                  }`}
+                />
               </h2>
-              {activeTab === 'PRICE' && (
+              {activeTab === "PRICE" && (
                 <div className="mt-4">
                   <input
                     type="range"
@@ -229,9 +270,13 @@ const EmbroideredApparelPage: React.FC = () => {
           <section className="flex-1">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {loading ? (
-                <p className="text-center text-gray-400 col-span-full">Loading products...</p>
+                <p className="text-center text-gray-400 col-span-full">
+                  Loading products...
+                </p>
               ) : error ? (
-                <p className="text-center text-red-500 col-span-full">{error}</p>
+                <p className="text-center text-red-500 col-span-full">
+                  {error}
+                </p>
               ) : paginatedProducts.length > 0 ? (
                 paginatedProducts.map((product, index) => (
                   <Link
@@ -252,14 +297,22 @@ const EmbroideredApparelPage: React.FC = () => {
                         className="h-4 w-4 rounded-full"
                         style={{ backgroundColor: product.color1 }}
                       ></div>
-                      <span className="text-sm text-gray-400">{product.colorName}</span>
+                      <span className="text-sm text-gray-400">
+                        {product.colorName}
+                      </span>
                     </div>
-                    <p className="text-[#b3ddf3] font-semibold text-md">${product.salePrice.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">In Stock: {product.qty}</p>
+                    <p className="text-[#b3ddf3] font-semibold text-md">
+                      ${product.salePrice.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      In Stock: {product.qty}
+                    </p>
                   </Link>
                 ))
               ) : (
-                <p className="text-gray-400 text-center col-span-full">No products found for this category.</p>
+                <p className="text-gray-400 text-center col-span-full">
+                  No products found for this category.
+                </p>
               )}
             </div>
             {/* Pagination: Show More button */}
@@ -281,4 +334,3 @@ const EmbroideredApparelPage: React.FC = () => {
 };
 
 export default EmbroideredApparelPage;
- 

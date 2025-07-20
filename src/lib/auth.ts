@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 import { apiRequest } from "./queryClient";
 
@@ -19,32 +19,39 @@ class AuthService {
 
   constructor() {
     // Try to load session from localStorage
-    this.sessionId = localStorage.getItem('sessionId');
+    this.sessionId = localStorage.getItem("sessionId");
   }
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    const res = await axios.post('http://31.97.41.27:5000/api/auth/login', { email, password });
+    const res = await axios.post("http://localhost:3000/api/auth/login", {
+      email,
+      password,
+    });
     const data: LoginResponse = res.data;
-    
+
     this.sessionId = data.sessionId;
-    localStorage.setItem('sessionId', data.sessionId);
-    
+    localStorage.setItem("sessionId", data.sessionId);
+
     return data;
   }
 
   async logout(): Promise<void> {
     if (this.sessionId) {
       try {
-        await axios.post('http://31.97.41.27:5000/api/auth/logout', {}, {
-          headers: { 'X-Session-Id': this.sessionId }
-        });
+        await axios.post(
+          "http://localhost:3000/api/auth/logout",
+          {},
+          {
+            headers: { "X-Session-Id": this.sessionId },
+          }
+        );
       } catch (error) {
         // ignore
       }
     }
-    
+
     this.sessionId = null;
-    localStorage.removeItem('sessionId');
+    localStorage.removeItem("sessionId");
   }
 
   async getCurrentUser(): Promise<User | null> {
@@ -53,8 +60,8 @@ class AuthService {
     }
 
     try {
-      const res = await axios.get('http://31.97.41.27:5000/api/auth/me', {
-        headers: { 'X-Session-Id': this.sessionId }
+      const res = await axios.get("http://localhost:3000/api/auth/me", {
+        headers: { "X-Session-Id": this.sessionId },
       });
 
       return res.data;
@@ -79,10 +86,10 @@ export const authService = new AuthService();
 export async function authenticatedApiRequest(
   method: string,
   url: string,
-  data?: unknown | undefined,
+  data?: unknown | undefined
 ): Promise<Response> {
   const sessionId = authService.getSessionId();
-  
+
   const headers: Record<string, string> = {
     ...(data ? { "Content-Type": "application/json" } : {}),
     ...(sessionId ? { "X-Session-Id": sessionId } : {}),
@@ -99,7 +106,7 @@ export async function authenticatedApiRequest(
     if (res.status === 401) {
       // Session expired, logout user
       authService.logout();
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
