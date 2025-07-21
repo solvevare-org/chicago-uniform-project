@@ -15,6 +15,7 @@ const CategoryPage: React.FC = () => {
     CATEGORY: new Set(),
     BRANDS: new Set(),
     COLOR: new Set(),
+    Price: new Set(),
   });
   const [priceRange, setPriceRange] = useState<number>(500);
   const [visibleCount, setVisibleCount] = useState<number>(15);
@@ -97,38 +98,61 @@ const CategoryPage: React.FC = () => {
     });
   };
 
-  // Filter products client-side
-  const filteredProducts = products.filter((product) => {
+  // Filter products client-side and return products with filtered variations
+  const filteredProducts = products.reduce((acc: any[], product) => {
+    // First filter variations based on price and color
+    let validVariations = product.variations.filter((variation: any) => {
+      // Price filter - check if variation is within price range
+      const price =
+        variation.salePrice || variation.customerPrice || variation.piecePrice;
+      const withinPriceRange = price >= 0 && price <= priceRange;
+
+      // Color filter - check if variation color matches selected colors
+      const matchesColor =
+        selectedFilters.COLOR.size === 0 ||
+        selectedFilters.COLOR.has(variation.colorName);
+
+      return withinPriceRange && matchesColor;
+    });
+
+    // If no variations pass the filter, exclude this product
+    if (validVariations.length === 0) return acc;
+
+    // Apply other product-level filters
     // Category filter
     if (
       selectedFilters.CATEGORY.size > 0 &&
       !selectedFilters.CATEGORY.has(product.category)
     )
-      return false;
+      return acc;
+
     // Brand filter
     if (
       selectedFilters.BRANDS.size > 0 &&
       !selectedFilters.BRANDS.has(product.brandName)
     )
-      return false;
-    // Color filter
-    if (
-      selectedFilters.COLOR.size > 0 &&
-      !selectedFilters.COLOR.has(product.colorName)
-    )
-      return false;
-    // Price filter
-    if (product.salePrice > priceRange) return false;
-    return true;
-  });
+      return acc;
 
-  // Get unique brands and colors from products
+    // Add product with only the valid variations
+    acc.push({
+      ...product,
+      variations: validVariations,
+    });
+
+    return acc;
+  }, []);
+
+  // Get unique brands from all products
   const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(
     Boolean
   );
-  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
-    Boolean
-  );
+
+  // Get unique colors from currently displayed variations only
+  const colors = Array.from(
+    new Set(
+      filteredProducts.flatMap((p) => p.variations.map((v: any) => v.colorName))
+    )
+  ).filter(Boolean);
 
   // Products to display based on pagination
   const paginatedProducts = filteredProducts.slice(0, visibleCount);
@@ -326,47 +350,57 @@ const CategoryPage: React.FC = () => {
                   {error}
                 </p>
               ) : paginatedProducts.length > 0 ? (
-                paginatedProducts.map((product, index) => (
-                  <Link
-                    to={`/product/${product.variations[0].sku}`}
-                    key={index}
-                    className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
-                  >
-                    {product.variations[0].colorFrontImage && (
-                      <img
-                        src={`https://www.ssactivewear.com/${product.variations[0].colorFrontImage}`}
-                        alt={product.styleName}
-                        className="h-48 w-full object-cover rounded-lg mb-4"
-                        onError={(e) => {
-                          // If image fails to load, set a default image
-                          (e.target as HTMLImageElement).src =
-                            "/public/img01.avif";
-                        }}
-                      />
-                    )}
-                    <h3 className="text-lg font-bold mb-1 truncate">
-                      {product.productName}
-                    </h3>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div
-                        className="h-4 w-4 rounded-full"
-                        style={{
-                          backgroundColor:
-                            product.variations[0].color1 || product.color1,
-                        }}
-                      ></div>
-                      <span className="text-sm text-gray-400">
-                        {product.variations[0].colorName}
-                      </span>
-                    </div>
-                    <p className="text-[#b3ddf3] font-semibold text-md">
-                      ${product.variations[0].salePrice.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      In Stock: {product.variations[0].qty}
-                    </p>
-                  </Link>
-                ))
+                paginatedProducts.map((product, index) => {
+                  // Use the first variation from the filtered variations
+                  const displayVariation = product.variations[0];
+                  return (
+                    <Link
+                      to={`/product/${displayVariation.sku}`}
+                      key={index}
+                      className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
+                    >
+                      {displayVariation.colorFrontImage && (
+                        <img
+                          src={`https://www.ssactivewear.com/${displayVariation.colorFrontImage}`}
+                          alt={product.styleName}
+                          className="h-48 w-full object-cover rounded-lg mb-4"
+                          onError={(e) => {
+                            // If image fails to load, set a default image
+                            (e.target as HTMLImageElement).src =
+                              "/public/img01.avif";
+                          }}
+                        />
+                      )}
+                      <h3 className="text-lg font-bold mb-1 truncate">
+                        {product.productName}
+                      </h3>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div
+                          className="h-4 w-4 rounded-full"
+                          style={{
+                            backgroundColor:
+                              displayVariation.color1 ||
+                              displayVariation.color2,
+                          }}
+                        ></div>
+                        <span className="text-sm text-gray-400">
+                          {displayVariation.colorName}
+                        </span>
+                      </div>
+                      <p className="text-[#b3ddf3] font-semibold text-md">
+                        $
+                        {(
+                          displayVariation.salePrice ||
+                          displayVariation.customerPrice ||
+                          displayVariation.piecePrice
+                        ).toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        In Stock: {displayVariation.qty}
+                      </p>
+                    </Link>
+                  );
+                })
               ) : (
                 <p className="text-gray-400 text-center col-span-full">
                   No products found for this category.
