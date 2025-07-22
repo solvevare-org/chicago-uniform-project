@@ -61,14 +61,18 @@ const DynamicProductPage: React.FC = () => {
         console.log("product data", data);
         // Filter out variations without any color image
         if (data.product?.variations?.length > 0) {
-          data.product.variations = data.product.variations.filter((v: any) =>
-            v.colorFrontImage && v.colorFrontImage.trim() !== "" ||
-            v.colorSideImage && v.colorSideImage.trim() !== "" ||
-            v.colorBackImage && v.colorBackImage.trim() !== "" ||
-            v.colorOnModelFrontImage && v.colorOnModelFrontImage.trim() !== "" ||
-            v.colorOnModelSideImage && v.colorOnModelSideImage.trim() !== "" ||
-            v.colorOnModelBackImage && v.colorOnModelBackImage.trim() !== "" ||
-            v.colorDirectSideImage && v.colorDirectSideImage.trim() !== ""
+          data.product.variations = data.product.variations.filter(
+            (v: any) =>
+              (v.colorFrontImage && v.colorFrontImage.trim() !== "") ||
+              (v.colorSideImage && v.colorSideImage.trim() !== "") ||
+              (v.colorBackImage && v.colorBackImage.trim() !== "") ||
+              (v.colorOnModelFrontImage &&
+                v.colorOnModelFrontImage.trim() !== "") ||
+              (v.colorOnModelSideImage &&
+                v.colorOnModelSideImage.trim() !== "") ||
+              (v.colorOnModelBackImage &&
+                v.colorOnModelBackImage.trim() !== "") ||
+              (v.colorDirectSideImage && v.colorDirectSideImage.trim() !== "")
           );
         }
         setProduct(data.product);
@@ -784,7 +788,7 @@ const DynamicProductPage: React.FC = () => {
             {displayedBrands.map((brand) => (
               <button
                 key={brand._id}
-                onClick={() => navigate(`/brand/${brand.name}`)}
+                onClick={() => navigate(`/brands/${brand.name}`)}
                 className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
               >
                 {brand.name}
