@@ -766,7 +766,7 @@ const DynamicProductPage: React.FC = () => {
               categories.map((cat: string) => (
                 <button
                   key={cat}
-                  onClick={() => navigate(`/category/${cat}`)}
+                  onClick={() => navigate(`/${cat}`)}
                   className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
                 >
                   {cat}
