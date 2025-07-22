@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FaChevronDown } from "react-icons/fa";
-import { Helmet } from "react-helmet";
 import {
   Accordion,
   AccordionItem,
@@ -40,6 +39,16 @@ const EmbroideredDynamicPage: React.FC = () => {
     embroideredType = "sweatshirt";
   console.log("embroideredType:", embroideredType);
 
+  // Reset filters and pagination when embroideredType changes
+  useEffect(() => {
+    setSelectedFilters({
+      CATEGORY: new Set(),
+      BRANDS: new Set(),
+      COLOR: new Set(),
+    });
+    setVisibleCount(30);
+  }, [embroideredType]);
+
   // Fetch products (filtered by embroidered subcategory)
   useEffect(() => {
     const fetchProducts = async () => {
@@ -73,13 +82,58 @@ const EmbroideredDynamicPage: React.FC = () => {
     fetchProducts();
   }, [embroideredType]);
 
-  // Get unique brands and colors from products
-  const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(
-    Boolean
-  );
-  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
-    Boolean
-  );
+  // Get all valid variations for each product
+  const productsWithValidVariation = products
+    .map((product) => {
+      const validVariations = (product.variations || [product]).filter(
+        (v: any) => v.colorFrontImage && v.colorFrontImage.trim() !== ""
+      );
+      if (validVariations.length === 0) return null;
+      return { ...product, _validVariations: validVariations };
+    })
+    .filter(Boolean);
+
+  // Get unique brands from all products
+  const brands = Array.from(
+    new Set(productsWithValidVariation.map((p: any) => p.brandName))
+  ).filter(Boolean);
+  // Get unique colors from all valid variations
+  const colors = Array.from(
+    new Set(
+      productsWithValidVariation.flatMap((p: any) =>
+        (p._validVariations || []).map((v: any) => v.colorName)
+      )
+    )
+  ).filter(Boolean);
+
+  // Filter products client-side
+  const filteredProducts = productsWithValidVariation
+    .map((product: any) => {
+      let displayVariation = product._validVariations[0];
+      if (selectedFilters.COLOR.size > 0) {
+        const match = product._validVariations.find((vv: any) =>
+          selectedFilters.COLOR.has(vv.colorName)
+        );
+        if (match) displayVariation = match;
+        else return null; // If no variation matches the color, exclude product
+      }
+      // Price filter (use displayVariation.salePrice)
+      if (displayVariation.salePrice > priceRange) return null;
+      // Brand filter
+      if (
+        selectedFilters.BRANDS.size > 0 &&
+        !selectedFilters.BRANDS.has(product.brandName)
+      )
+        return null;
+      // Category filter
+      if (
+        selectedFilters.CATEGORY.size > 0 &&
+        !selectedFilters.CATEGORY.has(embroideredType)
+      )
+        return null;
+      return { ...product, _displayVariation: displayVariation };
+    })
+    .filter(Boolean);
 
   // Improved return logic for loading and empty state
   return (
@@ -115,7 +169,10 @@ const EmbroideredDynamicPage: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Filters Section */}
-          <div className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">
+          <div
+            className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]"
+            style={{ maxHeight: "24rem", overflowY: "auto" }}
+          >
             {/* CATEGORY (filtered by embroideredCategory) */}
             <div className="mb-6 border-b border-[#b3ddf3] pb-4">
               <h2
@@ -207,26 +264,28 @@ const EmbroideredDynamicPage: React.FC = () => {
                 />
               </h2>
               {activeTab === "COLOR" && (
-                <ul className="mt-4 space-y-2 text-sm text-black">
-                  {colors.map((color) => (
-                    <li key={color} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        className="accent-[#b3ddf3]"
-                        checked={selectedFilters.COLOR.has(color)}
-                        onChange={() => {
-                          setSelectedFilters((prev) => {
-                            const updated = new Set(prev.COLOR);
-                            if (updated.has(color)) updated.delete(color);
-                            else updated.add(color);
-                            return { ...prev, COLOR: updated };
-                          });
-                        }}
-                      />
-                      <span>{color}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="mt-4 max-h-48 overflow-y-auto">
+                  <ul className="space-y-2 text-sm text-black">
+                    {colors.map((color) => (
+                      <li key={color} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          className="accent-[#b3ddf3]"
+                          checked={selectedFilters.COLOR.has(color)}
+                          onChange={() => {
+                            setSelectedFilters((prev) => {
+                              // Single-select: only one color can be selected
+                              const updated = new Set<string>();
+                              if (!prev.COLOR.has(color)) updated.add(color);
+                              return { ...prev, COLOR: updated };
+                            });
+                          }}
+                        />
+                        <span>{color}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
             {/* PRICE */}
@@ -263,106 +322,64 @@ const EmbroideredDynamicPage: React.FC = () => {
             </div>
           </div>
           {/* Product Grid Section */}
-          <div
-            className="col-span-3 grid gap-8"
-            style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            }}
-          >
+          <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {loading ? (
               <p className="text-center text-gray-400 col-span-full">
                 Loading products...
               </p>
             ) : error ? (
               <p className="text-center text-red-500 col-span-full">{error}</p>
-            ) : products.length > 0 ? (
-              products
-                .filter((product) => {
-                  if (
-                    selectedFilters.CATEGORY.size > 0 &&
-                    !selectedFilters.CATEGORY.has(embroideredType)
-                  )
-                    return false;
-                  if (
-                    selectedFilters.BRANDS.size > 0 &&
-                    !selectedFilters.BRANDS.has(product.brandName)
-                  )
-                    return false;
-                  if (
-                    selectedFilters.COLOR.size > 0 &&
-                    !selectedFilters.COLOR.has(product.colorName)
-                  )
-                    return false;
-                  if (product.salePrice > priceRange) return false;
-                  return true;
-                })
+            ) : filteredProducts.length > 0 ? (
+              filteredProducts
                 .slice(0, visibleCount)
-                .map((product, index) => (
-                  <Link
-                    to={`/product/${product.sku}`}
-                    key={index}
-                    className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
-                  >
-                    <img
-                      src={`https://www.ssactivewear.com/${product.colorFrontImage}`}
-                      alt={product.styleName}
-                      className="h-48 w-full object-cover rounded-lg mb-4"
-                    />
-                    <h3 className="text-lg font-bold mb-1 truncate">
-                      {product.brandName} {product.styleName}
-                    </h3>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div
-                        className="h-4 w-4 rounded-full"
-                        style={{ backgroundColor: product.color1 }}
-                      ></div>
-                      <span className="text-sm text-gray-400">
-                        {product.colorName}
-                      </span>
-                    </div>
-                    <p className="text-[#b3ddf3] font-semibold text-md">
-                      ${product.salePrice.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      In Stock: {product.qty}
-                    </p>
-                  </Link>
-                ))
+                .map((product: any, index: number) => {
+                  const v = product._displayVariation;
+                  return (
+                    <Link
+                      to={`/product/${v.sku}`}
+                      key={v.sku}
+                      className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
+                    >
+                      <img
+                        src={`https://www.ssactivewear.com/${v.colorFrontImage}`}
+                        alt={product.styleName}
+                        className="h-48 w-full object-cover rounded-lg mb-4"
+                      />
+                      <h3 className="text-lg font-bold mb-1 truncate">
+                        {product.brandName} {product.styleName}
+                      </h3>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div
+                          className="h-4 w-4 rounded-full"
+                          style={{ backgroundColor: v.color1 }}
+                        ></div>
+                        <span className="text-sm text-gray-400">
+                          {v.colorName}
+                        </span>
+                      </div>
+                      <p className="text-[#b3ddf3] font-semibold text-md">
+                        ${v.salePrice.toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-500">In Stock: {v.qty}</p>
+                    </Link>
+                  );
+                })
             ) : (
               <p className="text-gray-400 text-center col-span-full">
                 No products found for this category.
               </p>
             )}
             {/* Show More button */}
-            {!loading &&
-              products.filter((product) => {
-                if (
-                  selectedFilters.CATEGORY.size > 0 &&
-                  !selectedFilters.CATEGORY.has(embroideredType)
-                )
-                  return false;
-                if (
-                  selectedFilters.BRANDS.size > 0 &&
-                  !selectedFilters.BRANDS.has(product.brandName)
-                )
-                  return false;
-                if (
-                  selectedFilters.COLOR.size > 0 &&
-                  !selectedFilters.COLOR.has(product.colorName)
-                )
-                  return false;
-                if (product.salePrice > priceRange) return false;
-                return true;
-              }).length > visibleCount && (
-                <div className="col-span-full flex justify-center mt-6">
-                  <button
-                    onClick={() => setVisibleCount((prev) => prev + 30)}
-                    className="px-6 py-2 rounded-lg bg-[#3ab7ea] text-white font-semibold shadow hover:bg-[#2563eb] transition-all"
-                  >
-                    Show More
-                  </button>
-                </div>
-              )}
+            {!loading && filteredProducts.length > visibleCount && (
+              <div className="col-span-full flex justify-center mt-6">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 30)}
+                  className="px-6 py-2 rounded-lg bg-[#3ab7ea] text-white font-semibold shadow hover:bg-[#2563eb] transition-all"
+                >
+                  Show More
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
