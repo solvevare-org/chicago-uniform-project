@@ -46,8 +46,7 @@ const CategoryPage: React.FC = () => {
         const response = await fetch(
           `http://localhost:3000/api/products/by-base-category/${category}?limit=100`
         );
-        if (!response.ok)
-          throw new Error(`Failed to fetch products: ${response.statusText}`);
+        if (!response.ok) throw new Error(`No Products Found`);
         const data = await response.json();
         console.log("total products", data);
         // Filter out products that don't have valid variations with images
@@ -346,7 +345,7 @@ const CategoryPage: React.FC = () => {
                   Loading products...
                 </p>
               ) : error ? (
-                <p className="text-center text-red-500 col-span-full">
+                <p className="text-center text-black/50 col-span-full">
                   {error}
                 </p>
               ) : paginatedProducts.length > 0 ? (

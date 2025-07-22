@@ -328,7 +328,7 @@ const EmbroideredDynamicPage: React.FC = () => {
                 Loading products...
               </p>
             ) : error ? (
-              <p className="text-center text-red-500 col-span-full">{error}</p>
+              <p className="text-center text-black/50 col-span-full">{error}</p>
             ) : filteredProducts.length > 0 ? (
               filteredProducts
                 .slice(0, visibleCount)
@@ -366,7 +366,7 @@ const EmbroideredDynamicPage: React.FC = () => {
                 })
             ) : (
               <p className="text-gray-400 text-center col-span-full">
-                No products found for this category.
+                No Products Found.
               </p>
             )}
             {/* Show More button */}
