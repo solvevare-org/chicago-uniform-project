@@ -59,6 +59,18 @@ const DynamicProductPage: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("product data", data);
+        // Filter out variations without any color image
+        if (data.product?.variations?.length > 0) {
+          data.product.variations = data.product.variations.filter((v: any) =>
+            v.colorFrontImage && v.colorFrontImage.trim() !== "" ||
+            v.colorSideImage && v.colorSideImage.trim() !== "" ||
+            v.colorBackImage && v.colorBackImage.trim() !== "" ||
+            v.colorOnModelFrontImage && v.colorOnModelFrontImage.trim() !== "" ||
+            v.colorOnModelSideImage && v.colorOnModelSideImage.trim() !== "" ||
+            v.colorOnModelBackImage && v.colorOnModelBackImage.trim() !== "" ||
+            v.colorDirectSideImage && v.colorDirectSideImage.trim() !== ""
+          );
+        }
         setProduct(data.product);
         // Set initial variation to the first one
         if (data.product?.variations?.length > 0) {
