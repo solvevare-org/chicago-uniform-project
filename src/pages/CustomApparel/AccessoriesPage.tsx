@@ -7,7 +7,6 @@ const CustomBagsPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("CATEGORY");
   const [selectedFilters, setSelectedFilters] = useState<{
     [key: string]: Set<string>;
@@ -19,8 +18,8 @@ const CustomBagsPage: React.FC = () => {
   const [priceRange, setPriceRange] = useState<number>(500);
   const [visibleCount, setVisibleCount] = useState<number>(15);
 
-  // Subcategories for Custom Bags
-  const BAGS_SUBCATEGORIES = [
+  // Define subcategories for Accessories
+  const SUBCATEGORIES = [
     "Accessories",
     "Headwear",
     "Bags",
@@ -29,55 +28,47 @@ const CustomBagsPage: React.FC = () => {
     "Office Use",
   ];
 
-  // Fetch categories (for sidebar)
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/categories");
-        const data = await res.json();
-        setCategories(data.categories || []);
-      } catch {
-        setCategories([]);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  // Fetch products from all subcategories
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const allProducts: any[] = [];
-
-        for (const subcategory of BAGS_SUBCATEGORIES) {
-          try {
-            const response = await fetch(
-              `http://localhost:3000/api/products/by-base-category/${encodeURIComponent(
-                subcategory
-              )}?limit=100`
-            );
-            if (response.ok) {
-              const data = await response.json();
-              if (data.products && Array.isArray(data.products)) {
-                allProducts.push(...data.products);
-              }
+  // Fetch products from selected subcategories (or all if none selected)
+  const fetchProducts = async (subcategories: string[]) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const allProducts: any[] = [];
+      for (const subcategory of subcategories) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/products/by-base-category/${encodeURIComponent(
+              subcategory
+            )}?limit=100`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data.products && Array.isArray(data.products)) {
+              allProducts.push(...data.products);
             }
-          } catch (error) {
-            console.warn(`Failed to fetch products for ${subcategory}:`, error);
           }
+        } catch (error) {
+          console.warn(`Failed to fetch products for ${subcategory}:`, error);
         }
-
-        setProducts(allProducts);
-      } catch (error: any) {
-        setError(error.message || "An error occurred while fetching products.");
-      } finally {
-        setLoading(false);
       }
-    };
-    fetchProducts();
-  }, []);
+      setProducts(allProducts);
+    } catch (error: any) {
+      setError(error.message || "An error occurred while fetching products.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch on mount and when selectedFilters.CATEGORY changes
+  useEffect(() => {
+    const selected = Array.from(selectedFilters.CATEGORY);
+    if (selected.length === 0) {
+      fetchProducts(SUBCATEGORIES);
+    } else {
+      fetchProducts(selected);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFilters.CATEGORY]);
 
   // Toggle filter tab
   const toggleTab = (label: string) => {
@@ -96,12 +87,7 @@ const CustomBagsPage: React.FC = () => {
 
   // Filter products client-side
   const filteredProducts = products.filter((product) => {
-    // Category filter
-    if (
-      selectedFilters.CATEGORY.size > 0 &&
-      !selectedFilters.CATEGORY.has(product.category)
-    )
-      return false;
+    // Remove client-side category filter
     // Brand filter
     if (
       selectedFilters.BRANDS.size > 0 &&
@@ -126,6 +112,11 @@ const CustomBagsPage: React.FC = () => {
   const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
     Boolean
   );
+
+  // Get unique subcategories from current products
+  const subcategories = Array.from(
+    new Set(products.map((p: any) => p.category))
+  ).filter(Boolean);
 
   // Products to display based on pagination
   const paginatedProducts = filteredProducts.slice(0, visibleCount);
@@ -157,7 +148,7 @@ const CustomBagsPage: React.FC = () => {
               </h2>
               {activeTab === "CATEGORY" && (
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">
-                  {BAGS_SUBCATEGORIES.map((cat: string) => (
+                  {SUBCATEGORIES.map((cat: string) => (
                     <li key={cat} className="flex items-center space-x-2">
                       <input
                         type="checkbox"

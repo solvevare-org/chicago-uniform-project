@@ -7,7 +7,6 @@ const PrintedApparelPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("CATEGORY");
   const [selectedFilters, setSelectedFilters] = useState<{
     [key: string]: Set<string>;
@@ -19,8 +18,8 @@ const PrintedApparelPage: React.FC = () => {
   const [priceRange, setPriceRange] = useState<number>(500);
   const [visibleCount, setVisibleCount] = useState<number>(15);
 
-  // Subcategories for Printed Apparel
-  const PRINTED_SUBCATEGORIES = [
+  // Define subcategories for Printed Apparel
+  const SUBCATEGORIES = [
     "T-Shirts - Core",
     "T-Shirts - Long Sleeve",
     "T-Shirts - Premium",
@@ -34,55 +33,47 @@ const PrintedApparelPage: React.FC = () => {
     "Workwear",
   ];
 
-  // Fetch categories (for sidebar)
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/categories");
-        const data = await res.json();
-        setCategories(data.categories || []);
-      } catch {
-        setCategories([]);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  // Fetch products from all subcategories
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const allProducts: any[] = [];
-
-        for (const subcategory of PRINTED_SUBCATEGORIES) {
-          try {
-            const response = await fetch(
-              `http://localhost:3000/api/products/by-base-category/${encodeURIComponent(
-                subcategory
-              )}?limit=100`
-            );
-            if (response.ok) {
-              const data = await response.json();
-              if (data.products && Array.isArray(data.products)) {
-                allProducts.push(...data.products);
-              }
+  // Fetch products from selected subcategories (or all if none selected)
+  const fetchProducts = async (subcategories: string[]) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const allProducts: any[] = [];
+      for (const subcategory of subcategories) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/products/by-base-category/${encodeURIComponent(
+              subcategory
+            )}?limit=100`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data.products && Array.isArray(data.products)) {
+              allProducts.push(...data.products);
             }
-          } catch (error) {
-            console.warn(`Failed to fetch products for ${subcategory}:`, error);
           }
+        } catch (error) {
+          console.warn(`Failed to fetch products for ${subcategory}:`, error);
         }
-
-        setProducts(allProducts);
-      } catch (error: any) {
-        setError(error.message || "An error occurred while fetching products.");
-      } finally {
-        setLoading(false);
       }
-    };
-    fetchProducts();
-  }, []);
+      setProducts(allProducts);
+    } catch (error: any) {
+      setError(error.message || "An error occurred while fetching products.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch on mount and when selectedFilters.CATEGORY changes
+  useEffect(() => {
+    const selected = Array.from(selectedFilters.CATEGORY);
+    if (selected.length === 0) {
+      fetchProducts(SUBCATEGORIES);
+    } else {
+      fetchProducts(selected);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFilters.CATEGORY]);
 
   // Toggle filter tab
   const toggleTab = (label: string) => {
@@ -99,38 +90,58 @@ const PrintedApparelPage: React.FC = () => {
     });
   };
 
-  // Filter products client-side
-  const filteredProducts = products.filter((product) => {
-    // Category filter
-    if (
-      selectedFilters.CATEGORY.size > 0 &&
-      !selectedFilters.CATEGORY.has(product.category)
-    )
-      return false;
-    // Brand filter
-    if (
-      selectedFilters.BRANDS.size > 0 &&
-      !selectedFilters.BRANDS.has(product.brandName)
-    )
-      return false;
-    // Color filter
-    if (
-      selectedFilters.COLOR.size > 0 &&
-      !selectedFilters.COLOR.has(product.colorName)
-    )
-      return false;
-    // Price filter
-    if (product.salePrice > priceRange) return false;
-    return true;
-  });
+  // Get all valid variations for each product
+  const productsWithValidVariation = products
+    .map((product) => {
+      const validVariations = (product.variations || [product]).filter(
+        (v: any) => v.colorFrontImage && v.colorFrontImage.trim() !== ""
+      );
+      if (validVariations.length === 0) return null;
+      return { ...product, _validVariations: validVariations };
+    })
+    .filter(Boolean);
 
-  // Get unique brands and colors from products
-  const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(
-    Boolean
-  );
-  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
-    Boolean
-  );
+  // Get unique brands from all products
+  const brands = Array.from(
+    new Set(productsWithValidVariation.map((p: any) => p.brandName))
+  ).filter(Boolean);
+  // Get unique colors from all valid variations
+  const colors = Array.from(
+    new Set(
+      productsWithValidVariation.flatMap((p: any) =>
+        (p._validVariations || []).map((v: any) => v.colorName)
+      )
+    )
+  ).filter(Boolean);
+
+  // Get unique subcategories from current products
+  const subcategories = Array.from(
+    new Set(productsWithValidVariation.map((p: any) => p.category))
+  ).filter(Boolean);
+
+  // Filter products client-side
+  const filteredProducts = productsWithValidVariation
+    .map((product: any) => {
+      let displayVariation = product._validVariations[0];
+      if (selectedFilters.COLOR.size > 0) {
+        const match = product._validVariations.find((vv: any) =>
+          selectedFilters.COLOR.has(vv.colorName)
+        );
+        if (match) displayVariation = match;
+        else return null; // If no variation matches the color, exclude product
+      }
+      // Price filter (use displayVariation.salePrice)
+      if (displayVariation.salePrice > priceRange) return null;
+      // Brand filter
+      if (
+        selectedFilters.BRANDS.size > 0 &&
+        !selectedFilters.BRANDS.has(product.brandName)
+      )
+        return null;
+      // Remove client-side category filter here
+      return { ...product, _displayVariation: displayVariation };
+    })
+    .filter(Boolean);
 
   // Products to display based on pagination
   const paginatedProducts = filteredProducts.slice(0, visibleCount);
@@ -162,7 +173,7 @@ const PrintedApparelPage: React.FC = () => {
               </h2>
               {activeTab === "CATEGORY" && (
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">
-                  {PRINTED_SUBCATEGORIES.map((cat: string) => (
+                  {SUBCATEGORIES.map((cat: string) => (
                     <li key={cat} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
@@ -284,27 +295,30 @@ const PrintedApparelPage: React.FC = () => {
                     className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
                   >
                     <img
-                      src={`https://www.ssactivewear.com/${product.colorFrontImage}`}
-                      alt={product.styleName}
+                      src={`https://www.ssactivewear.com/${product._displayVariation.colorFrontImage}`}
+                      alt={product._displayVariation.styleName}
                       className="h-48 w-full object-cover rounded-lg mb-4"
                     />
                     <h3 className="text-lg font-bold mb-1 truncate">
-                      {product.brandName} {product.styleName}
+                      {product._displayVariation.brandName}{" "}
+                      {product._displayVariation.styleName}
                     </h3>
                     <div className="flex items-center space-x-2 mb-2">
                       <div
                         className="h-4 w-4 rounded-full"
-                        style={{ backgroundColor: product.color1 }}
+                        style={{
+                          backgroundColor: product._displayVariation.color1,
+                        }}
                       ></div>
                       <span className="text-sm text-gray-400">
-                        {product.colorName}
+                        {product._displayVariation.colorName}
                       </span>
                     </div>
                     <p className="text-[#b3ddf3] font-semibold text-md">
-                      ${product.salePrice.toFixed(2)}
+                      ${product._displayVariation.salePrice.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-500">
-                      In Stock: {product.qty}
+                      In Stock: {product._displayVariation.qty}
                     </p>
                   </Link>
                 ))
