@@ -17,6 +17,8 @@ const DynamicBrands: React.FC = () => {
     COLOR: new Set(),
   });
   const [priceRange, setPriceRange] = useState<number>(500);
+  // Track selected color globally (not per product)
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   const { category } = useParams();
 
@@ -72,38 +74,47 @@ const DynamicBrands: React.FC = () => {
     });
   };
 
-  // Filter products client-side
-  const filteredProducts = products.filter((product) => {
-    // Category filter
-    if (
-      selectedFilters.CATEGORY.size > 0 &&
-      !selectedFilters.CATEGORY.has(product.category)
-    )
-      return false;
-    // Brand filter
-    if (
-      selectedFilters.BRANDS.size > 0 &&
-      !selectedFilters.BRANDS.has(product.brandName)
-    )
-      return false;
-    // Color filter
-    if (
-      selectedFilters.COLOR.size > 0 &&
-      !selectedFilters.COLOR.has(product.colorName)
-    )
-      return false;
-    // Price filter
-    if (product.salePrice > priceRange) return false;
-    return true;
-  });
-
   // Get unique brands and colors from products
   const brands = Array.from(new Set(products.map((p) => p.brandName))).filter(
     Boolean
   );
-  const colors = Array.from(new Set(products.map((p) => p.colorName))).filter(
-    Boolean
-  );
+
+  // Filter products client-side
+  const filteredProducts = products
+    .map((product) => {
+      // Find all valid variations with image and within price range
+      const validVariations = (product.variations || []).filter(
+        (v: any) =>
+          v.colorFrontImage &&
+          v.colorFrontImage.trim() !== "" &&
+          v.salePrice <= priceRange
+      );
+      if (validVariations.length === 0) return null;
+      // If a color is selected, use the first variation with that color
+      let displayVariation = validVariations[0];
+      if (selectedColor) {
+        const match = validVariations.find(
+          (v: any) => v.colorName === selectedColor
+        );
+        if (match) displayVariation = match;
+        else return null; // If product doesn't have the selected color, don't show it
+      }
+      return { ...product, _displayVariation: displayVariation };
+    })
+    .filter(Boolean);
+
+  // Get unique colors from all valid variations of all products
+  const colors = Array.from(
+    new Set(
+      products.flatMap((p) =>
+        (p.variations || [])
+          .filter(
+            (v: any) => v.colorFrontImage && v.colorFrontImage.trim() !== ""
+          )
+          .map((v: any) => v.colorName)
+      )
+    )
+  ).filter(Boolean);
 
   return (
     <>
@@ -155,7 +166,10 @@ const DynamicBrands: React.FC = () => {
         <div className="max-w-screen-2xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Filters Section */}
-            <div className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]">
+            <div
+              className="col-span-1 bg-[#f3f8fa] p-6 rounded-xl shadow-lg border border-[#b3ddf3]"
+              style={{ maxHeight: "24rem", overflowY: "auto" }}
+            >
               {/* CATEGORY */}
               <div className="mb-6 border-b border-[#b3ddf3] pb-4">
                 <h2
@@ -234,19 +248,28 @@ const DynamicBrands: React.FC = () => {
                   />
                 </h2>
                 {activeTab === "COLOR" && (
-                  <ul className="mt-4 space-y-2 text-sm text-gray-700">
-                    {colors.map((color) => (
-                      <li key={color} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          className="accent-[#b3ddf3]"
-                          checked={selectedFilters.COLOR.has(color)}
-                          onChange={() => handleFilterChange("COLOR", color)}
-                        />
-                        <span>{color}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mt-4 max-h-48 overflow-y-auto">
+                    <ul className="space-y-2 text-sm text-gray-700">
+                      {colors.map((color) => (
+                        <li
+                          key={color}
+                          className="flex items-center space-x-2 min-w-0"
+                        >
+                          <input
+                            type="checkbox"
+                            className="accent-[#b3ddf3] flex-shrink-0"
+                            checked={selectedColor === color}
+                            onChange={() =>
+                              setSelectedColor(
+                                selectedColor === color ? null : color
+                              )
+                            }
+                          />
+                          <span className="truncate">{color}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
               {/* PRICE */}
@@ -291,37 +314,45 @@ const DynamicBrands: React.FC = () => {
                   {error}
                 </p>
               ) : filteredProducts.length > 0 ? (
-                filteredProducts.map((product, index) => (
-                  <Link
-                    to={`/product/${product.sku}`}
-                    key={index}
-                    className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
-                  >
-                    <img
-                      src={`https://www.ssactivewear.com/${product.colorFrontImage}`}
-                      alt={product.styleName}
-                      className="h-48 w-full object-cover rounded-lg mb-4"
-                    />
-                    <h3 className="text-lg font-bold mb-1 truncate">
-                      {product.brandName} {product.styleName}
-                    </h3>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div
-                        className="h-4 w-4 rounded-full"
-                        style={{ backgroundColor: product.color1 }}
-                      ></div>
-                      <span className="text-sm text-gray-400">
-                        {product.colorName}
-                      </span>
+                filteredProducts.map((product: any, index: number) => {
+                  const v = product._displayVariation;
+                  return (
+                    <div
+                      key={v.sku}
+                      className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
+                    >
+                      <Link to={`/product/${v.sku}`} className="block">
+                        <img
+                          src={`https://www.ssactivewear.com/${v.colorFrontImage}`}
+                          alt={product.styleName}
+                          className="h-48 w-full object-cover rounded-lg mb-4"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              "/public/img01.avif";
+                          }}
+                        />
+                        <h3 className="text-lg font-bold mb-1 truncate">
+                          {product.brandName} {product.styleName}
+                        </h3>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div
+                            className="h-4 w-4 rounded-full"
+                            style={{ backgroundColor: v.color1 }}
+                          ></div>
+                          <span className="text-sm text-gray-400">
+                            {v.colorName}
+                          </span>
+                        </div>
+                        <p className="text-[#b3ddf3] font-semibold text-md">
+                          ${v.salePrice.toFixed(2)}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          In Stock: {v.qty}
+                        </p>
+                      </Link>
                     </div>
-                    <p className="text-[#b3ddf3] font-semibold text-md">
-                      ${product.salePrice.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      In Stock: {product.qty}
-                    </p>
-                  </Link>
-                ))
+                  );
+                })
               ) : (
                 <p className="text-gray-400 text-center col-span-full">
                   No products found for this category.
