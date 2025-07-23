@@ -167,7 +167,7 @@ const Footer: React.FC = () => {
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 py-8 mt-4 border-t border-blue-900">
           <div className="flex-1 flex flex-col items-center text-center">
             <img
-              src="/trust/76ers.png"
+              src="76ers.png"
               alt="76ers Partner"
               className="h-10 mb-2 object-contain"
             />
@@ -177,7 +177,7 @@ const Footer: React.FC = () => {
           </div>
           <div className="flex-1 flex flex-col items-center text-center">
             <img
-              src="/trust/inc5000.png"
+              src="inc5000.jpg"
               alt="Inc 5000"
               className="h-10 mb-2 object-contain"
             />
@@ -187,7 +187,7 @@ const Footer: React.FC = () => {
           </div>
           <div className="flex-1 flex flex-col items-center text-center">
             <img
-              src="/trust/nyt.png"
+              src="nyt.png"
               alt="NY Times"
               className="h-10 mb-2 object-contain"
             />
@@ -198,13 +198,8 @@ const Footer: React.FC = () => {
           <div className="flex-1 flex flex-col items-center text-center">
             <div className="flex items-center gap-2 mb-2">
               <img
-                src="/trust/bbb.png"
+                src="bbb.png"
                 alt="BBB Accredited"
-                className="h-8 object-contain"
-              />
-              <img
-                src="/trust/a-plus.png"
-                alt="A+ Rating"
                 className="h-8 object-contain"
               />
             </div>
