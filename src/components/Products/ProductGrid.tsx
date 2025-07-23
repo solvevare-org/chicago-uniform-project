@@ -1,5 +1,4 @@
 import React from "react";
-import ProductCard, { Product } from "./ProductCard";
 
 interface ProductGridProps {
   title: string;
@@ -50,15 +49,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                   </div>
                   <div className="p-5">
                     <h3 className="font-semibold text-[#222] text-lg line-clamp-2">
-                      {v.styleName || v.name}
+                      {product.productName}
                     </h3>
                     {v.colorName && (
                       <div className="flex items-center mt-1">
                         <span
                           className="inline-block w-4 h-4 rounded-full border border-[#b3ddf3] mr-2"
                           style={{
-                            backgroundColor:
-                              v.color1 || v.hexColor || "#b3ddf3",
+                            backgroundColor: v.color1 || v.color2,
                           }}
                         ></span>
                         <p className="text-sm text-gray-700">{v.colorName}</p>
