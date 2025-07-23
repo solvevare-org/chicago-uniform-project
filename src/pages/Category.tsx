@@ -35,7 +35,6 @@ const CategoryPage: React.FC = () => {
         );
         if (!response.ok) throw new Error(`No Products Found`);
         const data = await response.json();
-        console.log("total products", data);
         // Filter out products that don't have valid variations with images
         const validProducts = (data.products || []).reduce(
           (acc: any[], product: any) => {
@@ -57,8 +56,6 @@ const CategoryPage: React.FC = () => {
           },
           []
         );
-
-        console.log("Filtered products:", validProducts);
         setProducts(validProducts);
       } catch (error: any) {
         setError(error.message || "An error occurred while fetching products.");
