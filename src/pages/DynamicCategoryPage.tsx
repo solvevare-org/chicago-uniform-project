@@ -30,7 +30,7 @@ const DynamicCategoryPage: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/categories");
+        const res = await fetch("http://31.97.41.27:5000/api/categories");
         const data = await res.json();
         setCategories(data.categories || []);
       } catch {
@@ -48,7 +48,7 @@ const DynamicCategoryPage: React.FC = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:3000/api/products/by-title/${category}?limit=100`
+          `http://31.97.41.27:5000/api/products/by-title/${category}?limit=100`
         );
         if (!response.ok)
           throw new Error(`Failed to fetch products: ${response.statusText}`);
@@ -66,7 +66,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch subcategories (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://localhost:3000/api/categories/subcategories/${category}`)
+    fetch(`http://31.97.41.27:5000/api/categories/subcategories/${category}`)
       .then((res) => res.json())
       .then((data) => setSubcategories(data.subcategories || []))
       .catch(() => setSubcategories([]));
@@ -75,7 +75,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch reviews for this category (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://localhost:3000/api/reviews/category/${category}`)
+    fetch(`http://31.97.41.27:5000/api/reviews/category/${category}`)
       .then((res) => res.json())
       .then((data) => setCategoryReviews(data.reviews || []))
       .catch(() => setCategoryReviews([]));
@@ -84,7 +84,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch related categories (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://localhost:3000/api/categories/related/${category}`)
+    fetch(`http://31.97.41.27:5000/api/categories/related/${category}`)
       .then((res) => res.json())
       .then((data) => setRelatedCategories(data.relatedCategories || []))
       .catch(() => setRelatedCategories([]));
@@ -93,7 +93,7 @@ const DynamicCategoryPage: React.FC = () => {
   // Fetch SEO content (if any)
   useEffect(() => {
     if (!category) return;
-    fetch(`http://localhost:3000/api/categories/seo/${category}`)
+    fetch(`http://31.97.41.27:5000/api/categories/seo/${category}`)
       .then((res) => res.json())
       .then((data) => setSeoContent(data.seoContent || null))
       .catch(() => setSeoContent(null));

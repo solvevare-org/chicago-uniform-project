@@ -55,7 +55,7 @@ const DynamicProductPage: React.FC = () => {
     if (!sku) return;
     setLoading(true);
     setError(null);
-    fetch(`http://localhost:3000/api/products/sku/${sku}`)
+    fetch(`http://31.97.41.27:5000/api/products/sku/${sku}`)
       .then((res) => res.json())
       .then((data) => {
         // Filter out variations without any color image
@@ -114,7 +114,7 @@ const DynamicProductPage: React.FC = () => {
 
   // Fetch categories for related categories mesh
   useEffect(() => {
-    fetch("http://localhost:3000/api/styles/base-categories")
+    fetch("http://31.97.41.27:5000/api/styles/base-categories")
       .then((res) => res.json())
       .then((data) => setCategories(data.baseCategories || []))
       .catch(() => setCategories([]));
@@ -123,7 +123,7 @@ const DynamicProductPage: React.FC = () => {
   // Fetch reviews for this product
   useEffect(() => {
     if (!sku) return;
-    fetch(`http://localhost:3000/api/reviews/${sku}`)
+    fetch(`http://31.97.41.27:5000/api/reviews/${sku}`)
       .then((res) => res.json())
       .then((data) => setReviews(data.reviews || []))
       .catch(() => setReviews([]));
@@ -139,7 +139,7 @@ const DynamicProductPage: React.FC = () => {
 
   // Fetch brands
   useEffect(() => {
-    fetch("http://localhost:3000/api/brands/")
+    fetch("http://31.97.41.27:5000/api/brands/")
       .then((res) => res.json())
       .then((data) => setBrands(data.brands || []))
       .catch(() => setBrands([]));
@@ -149,7 +149,7 @@ const DynamicProductPage: React.FC = () => {
   useEffect(() => {
     if (product?.baseCategory) {
       fetch(
-        `http://localhost:3000/api/products/by-base-category/${product.baseCategory}?limit=8`
+        `http://31.97.41.27:5000/api/products/by-base-category/${product.baseCategory}?limit=8`
       )
         .then((res) => res.json())
         .then((data) => setBestSellers(data.products || []))
@@ -161,7 +161,7 @@ const DynamicProductPage: React.FC = () => {
   useEffect(() => {
     if (product?.baseCategory) {
       fetch(
-        `http://localhost:3000/api/products/by-base-category/${product.baseCategory}?limit=8`
+        `http://31.97.41.27:5000/api/products/by-base-category/${product.baseCategory}?limit=8`
       )
         .then((res) => res.json())
         .then((data) => setRelatedProducts(data.products || []))

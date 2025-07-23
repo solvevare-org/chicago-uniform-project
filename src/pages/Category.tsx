@@ -31,7 +31,7 @@ const CategoryPage: React.FC = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:3000/api/products/by-base-category/${category}?limit=100`
+          `http://31.97.41.27:5000/api/products/by-base-category/${category}?limit=100`
         );
         if (!response.ok) throw new Error(`No Products Found`);
         const data = await response.json();

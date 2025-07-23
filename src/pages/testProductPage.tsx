@@ -277,7 +277,7 @@ const ThreeDProducts: React.FC = () => {
     const fetchProductDetails = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/process-product/${sku}`,
+          `http://31.97.41.27:5000/api/process-product/${sku}`,
           {
             method: "POST",
           }

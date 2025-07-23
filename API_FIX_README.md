@@ -2,7 +2,7 @@
 
 ## Problem
 
-The error `net::ERR_BLOCKED_BY_CLIENT` occurs when ad blockers or browser security extensions block requests to specific URLs, especially IP addresses like `http://localhost:3000`.
+The error `net::ERR_BLOCKED_BY_CLIENT` occurs when ad blockers or browser security extensions block requests to specific URLs, especially IP addresses like `http://31.97.41.27:5000`.
 
 ## Solution
 
@@ -12,7 +12,7 @@ We've implemented multiple solutions to resolve this issue:
 
 - Added a proxy in `vite.config.ts` that routes `/api/*` requests through the development server
 - This masks the actual IP address from the browser and ad blockers
-- In development, all API calls now go through `localhost:3000/api/*` instead of directly to the IP
+- In development, all API calls now go through `31.97.41.27:5000/api/*` instead of directly to the IP
 
 ### 2. Environment Variable Support
 
@@ -31,7 +31,7 @@ We've implemented multiple solutions to resolve this issue:
 
 1. Run `npm run dev` or `yarn dev`
 2. The Vite proxy will automatically route API calls
-3. All requests go through `localhost:3000/api/*` → `31.97.41.27:5000/api/*`
+3. All requests go through `31.97.41.27:5000/api/*` → `31.97.41.27:5000/api/*`
 
 ### Production Mode
 
@@ -61,7 +61,7 @@ REACT_APP_API_URL=http://localhost:5000/api
 
 3. **Test Direct API Access**
 
-   - Try opening `http://localhost:3000/api/styles/brand-names` directly in browser
+   - Try opening `http://31.97.41.27:5000/api/styles/brand-names` directly in browser
    - If this fails, the issue is network/server related
 
 4. **Clear Browser Cache**
@@ -107,6 +107,6 @@ REACT_APP_API_URL=http://localhost:5000/api
 After making these changes:
 
 1. Restart your development server (`npm run dev`)
-2. Check browser network tab to see requests going to `localhost:3000/api/*`
+2. Check browser network tab to see requests going to `31.97.41.27:5000/api/*`
 3. Check console for API request logs
 4. Verify data loads correctly in the header dropdowns

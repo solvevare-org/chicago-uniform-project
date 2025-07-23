@@ -60,7 +60,7 @@ const EmbroideredDynamicPage: React.FC = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:3000/api/products/by-keyword/${embroideredType}`
+          `http://31.97.41.27:5000/api/products/by-keyword/${embroideredType}`
         );
         if (!response.ok)
           throw new Error(`Failed to fetch products: ${response.statusText}`);

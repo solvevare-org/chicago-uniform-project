@@ -12,7 +12,7 @@ const AllCategoriesPage: React.FC = () => {
       setError(null);
       try {
         const res = await fetch(
-          "http://localhost:3000/api/styles/base-categories"
+          "http://31.97.41.27:5000/api/styles/base-categories"
         );
         const data = await res.json();
         setCategories(data.baseCategories || []);

@@ -37,7 +37,7 @@ const CustomBagsPage: React.FC = () => {
       for (const subcategory of subcategories) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/products/by-base-category/${encodeURIComponent(
+            `http://31.97.41.27:5000/api/products/by-base-category/${encodeURIComponent(
               subcategory
             )}?limit=100`
           );

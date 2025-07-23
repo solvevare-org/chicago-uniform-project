@@ -1,5 +1,5 @@
 // API Configuration with fallback support
-const DEFAULT_API_URL = "http://localhost:3000/api";
+const DEFAULT_API_URL = "http://31.97.41.27:5000/api";
 
 // Try to use environment variable, fallback to proxy in development, then to direct IP
 const getApiBaseUrl = () => {

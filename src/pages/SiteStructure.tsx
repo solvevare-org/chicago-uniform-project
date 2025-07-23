@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 
 // Utility to fetch categories and subcategories from backend (similar to Header)
 async function fetchCategories() {
-  const res = await fetch("http://localhost:3000/api/styles/base-categories");
+  const res = await fetch("http://31.97.41.27:5000/api/styles/base-categories");
   const data = await res.json();
   return data.baseCategories || [];
 }
 
 async function fetchSubcategories(category: string) {
   const res = await fetch(
-    `http://localhost:3000/api/styles/subcategories?category=${encodeURIComponent(
+    `http://31.97.41.27:5000/api/styles/subcategories?category=${encodeURIComponent(
       category
     )}`
   );

@@ -23,7 +23,7 @@ class AuthService {
   }
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    const res = await axios.post("http://localhost:3000/api/auth/login", {
+    const res = await axios.post("http://31.97.41.27:5000/api/auth/login", {
       email,
       password,
     });
@@ -39,7 +39,7 @@ class AuthService {
     if (this.sessionId) {
       try {
         await axios.post(
-          "http://localhost:3000/api/auth/logout",
+          "http://31.97.41.27:5000/api/auth/logout",
           {},
           {
             headers: { "X-Session-Id": this.sessionId },
@@ -60,7 +60,7 @@ class AuthService {
     }
 
     try {
-      const res = await axios.get("http://localhost:3000/api/auth/me", {
+      const res = await axios.get("http://31.97.41.27:5000/api/auth/me", {
         headers: { "X-Session-Id": this.sessionId },
       });
 

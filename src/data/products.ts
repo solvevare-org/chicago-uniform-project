@@ -120,7 +120,7 @@ export const getAccessoriesProducts = async (
 ): Promise<Product[]> => {
   try {
     const res = await axios.get(
-      "http://localhost:3000/api/products/by-base-category/Accessories",
+      "http://31.97.41.27:5000/api/products/by-base-category/Accessories",
       {
         params: { limit },
       }
@@ -138,7 +138,7 @@ export const getOuterwearProducts = async (
 ): Promise<Product[]> => {
   try {
     const res = await axios.get(
-      "http://localhost:3000/api/products/by-base-category/quarter-zips",
+      "http://31.97.41.27:5000/api/products/by-base-category/quarter-zips",
       {
         params: { limit },
       }
@@ -155,7 +155,7 @@ export const getBrandsProducts = async (
 ): Promise<Product[]> => {
   try {
     const res = await axios.get(
-      "http://localhost:3000/api/products/by-brand/adidas",
+      "http://31.97.41.27:5000/api/products/by-brand/adidas",
       {
         params: { limit },
       }
@@ -172,7 +172,7 @@ export const getHeadwearProducts = async (
 ): Promise<Product[]> => {
   try {
     const res = await axios.get(
-      "http://localhost:3000/api/products/by-base-category/Headwear",
+      "http://31.97.41.27:5000/api/products/by-base-category/Headwear",
       {
         params: { limit },
       }

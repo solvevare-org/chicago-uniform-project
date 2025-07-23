@@ -29,7 +29,7 @@ export default function SearchProducts() {
         if (search.trim() !== "") {
           // Use the new search endpoint
           const res = await fetch(
-            `http://localhost:3000/api/products/search?q=${encodeURIComponent(
+            `http://31.97.41.27:5000/api/products/search?q=${encodeURIComponent(
               search
             )}`
           );
