@@ -23,9 +23,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {(title === "Accessories Products"
-            ? products.slice(0, 6)
-            : products.slice(0, 4)
+          {(products.slice(0, 4)
           ).map((product) => {
             // Use _displayVariation if available, otherwise find the first valid variation with image, otherwise fallback to product
             let v = product._displayVariation;
