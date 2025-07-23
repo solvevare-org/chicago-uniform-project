@@ -7,7 +7,8 @@ const CategoryPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<any[]>([]);
+  // Remove categories state and fetch
+  // const [categories, setCategories] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("CATEGORY");
   const [selectedFilters, setSelectedFilters] = useState<{
     [key: string]: Set<string>;
@@ -21,20 +22,6 @@ const CategoryPage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState<number>(15);
 
   const { category } = useParams();
-
-  // Fetch categories (for sidebar)
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/categories");
-        const data = await res.json();
-        setCategories(data.categories || []);
-      } catch {
-        setCategories([]);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   // Fetch products
   useEffect(() => {
@@ -82,6 +69,16 @@ const CategoryPage: React.FC = () => {
     fetchProducts();
   }, [category]);
 
+  // Set CATEGORY filter to match the product's category after products are loaded
+  useEffect(() => {
+    if (products.length > 0) {
+      setSelectedFilters((prev) => ({
+        ...prev,
+        CATEGORY: new Set([products[0].category]),
+      }));
+    }
+  }, [products]);
+
   // Toggle filter tab
   const toggleTab = (label: string) => {
     setActiveTab(activeTab === label ? null : label);
@@ -118,10 +115,11 @@ const CategoryPage: React.FC = () => {
     if (validVariations.length === 0) return acc;
 
     // Apply other product-level filters
-    // Category filter
+    // Category filter (case-insensitive)
     if (
-      selectedFilters.CATEGORY.size > 0 &&
-      !selectedFilters.CATEGORY.has(product.category)
+      category &&
+      typeof product.category === "string" &&
+      category.toLowerCase() !== product.category.toLowerCase()
     )
       return acc;
 
@@ -226,25 +224,17 @@ const CategoryPage: React.FC = () => {
                   }`}
                 />
               </h2>
-              {activeTab === "CATEGORY" && (
+              {activeTab === "CATEGORY" && category && (
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">
-                  {categories.length > 0 &&
-                    categories.map((cat: any) => (
-                      <li
-                        key={cat.title}
-                        className="flex items-center space-x-2"
-                      >
-                        <input
-                          type="checkbox"
-                          className="accent-[#b3ddf3]"
-                          checked={selectedFilters.CATEGORY.has(cat.title)}
-                          onChange={() =>
-                            handleFilterChange("CATEGORY", cat.title)
-                          }
-                        />
-                        <span>{cat.title}</span>
-                      </li>
-                    ))}
+                  <li className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      className="accent-[#b3ddf3]"
+                      checked={true}
+                      disabled={true}
+                    />
+                    <span>{category.toUpperCase()}</span>
+                  </li>
                 </ul>
               )}
             </div>
