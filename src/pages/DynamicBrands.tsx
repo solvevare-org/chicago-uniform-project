@@ -225,10 +225,10 @@ const DynamicBrands: React.FC = () => {
                         <input
                           type="checkbox"
                           className="accent-[#b3ddf3]"
-                          checked={selectedFilters.BRANDS.has(brand)}
-                          onChange={() => handleFilterChange("BRANDS", brand)}
+                          checked={true}
+                          disabled={true}
                         />
-                        <span>{brand}</span>
+                        <span>{brand.toUpperCase()}</span>
                       </li>
                     ))}
                   </ul>
