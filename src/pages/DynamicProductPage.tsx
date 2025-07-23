@@ -58,7 +58,6 @@ const DynamicProductPage: React.FC = () => {
     fetch(`http://localhost:3000/api/products/sku/${sku}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("product data", data);
         // Filter out variations without any color image
         if (data.product?.variations?.length > 0) {
           data.product.variations = data.product.variations.filter(
@@ -93,8 +92,6 @@ const DynamicProductPage: React.FC = () => {
                 .map((v: any) => v.sizeName as string)
             )
           ).sort() as string[];
-
-          console.log("Initial sizes for color:", sizesForColor);
 
           setSelectedVariation(firstVariation);
           setAvailableSizes(sizesForColor);
@@ -178,11 +175,6 @@ const DynamicProductPage: React.FC = () => {
 
   // Function to handle color selection
   const handleColorSelection = (selectedVariation: any) => {
-    console.log("Selected variation:", selectedVariation); // Debug log
-    console.log(
-      "Selected variation full data:",
-      JSON.stringify(selectedVariation, null, 2)
-    );
     // Find all variations with the same color code
     const colorVariations = product.variations.filter(
       (v: any) => v.colorCode === selectedVariation.colorCode
