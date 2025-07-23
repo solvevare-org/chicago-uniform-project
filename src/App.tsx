@@ -53,6 +53,7 @@ import EmbroideredDynamicPage from "./pages/EmbroideredDynamicPage";
 import SiteMap from "./pages/SiteMap";
 import FAQSection from "./components/FAQSection";
 import Breadcrumbs from "./components/ui/Breadcrumbs";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Custom Apparel Category Pages
 import EmbroideredApparelPage from "./pages/CustomApparel/EmbroideredApparelPage";
@@ -121,6 +122,7 @@ function AppContent() {
     <div className="min-h-screen bg-white text-[#222]">
       <Header />
       {!isHome && <Breadcrumbs />}
+      <ScrollToTop />
       <main>
         <Routes>
           <Route
