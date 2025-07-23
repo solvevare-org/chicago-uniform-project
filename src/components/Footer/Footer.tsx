@@ -112,14 +112,10 @@ const Footer: React.FC = () => {
             </div>
             <div className="text-xs tracking-widest mb-2">ACCEPTED CARDS</div>
             <div className="flex gap-2 mb-4">
-              <img src="/cards/visa.png" alt="Visa" className="h-6" />
-              <img
-                src="/cards/mastercard.png"
-                alt="Mastercard"
-                className="h-6"
-              />
-              <img src="/cards/amex.png" alt="Amex" className="h-6" />
-              <img src="/cards/discover.png" alt="Discover" className="h-6" />
+              <img src="visa.png" alt="Visa" className="h-6" />
+              <img src="card.png" alt="Mastercard" className="h-6" />
+              <img src="amex.png" alt="Amex" className="h-6" />
+              <img src="discover.png" alt="Discover" className="h-6" />
             </div>
           </div>
         </div>
