@@ -101,7 +101,7 @@ const CustomBagsPage: React.FC = () => {
   // Get all valid variations for each product
   const productsWithValidVariation = products
     .map((product) => {
-      const validVariations = (product.variations || [product]).filter(
+      const validVariations = (product.variations || []).filter(
         (v: any) => v.colorFrontImage && v.colorFrontImage.trim() !== ""
       );
       if (validVariations.length === 0) return null;
@@ -129,23 +129,25 @@ const CustomBagsPage: React.FC = () => {
   // Filter products client-side
   const filteredProducts = productsWithValidVariation
     .map((product: any) => {
+      // Filter variations by price and color
       let displayVariation = product._validVariations[0];
-      if (selectedFilters.COLOR.size > 0) {
-        const match = product._validVariations.find((vv: any) =>
-          selectedFilters.COLOR.has(vv.colorName)
-        );
-        if (match) displayVariation = match;
-        else return null; // If no variation matches the color, exclude product
-      }
-      // Price filter (use displayVariation.salePrice)
-      if (displayVariation.salePrice > priceRange) return null;
+      let filteredVariations = product._validVariations.filter((vv: any) => {
+        const price = vv.salePrice || vv.customerPrice || vv.piecePrice;
+        const withinPriceRange = price >= 0 && price <= priceRange;
+        const matchesColor =
+          selectedFilters.COLOR.size === 0 ||
+          selectedFilters.COLOR.has(vv.colorName);
+        return withinPriceRange && matchesColor;
+      });
+      if (filteredVariations.length === 0) return null;
+      // Use the first matching variation for display
+      displayVariation = filteredVariations[0];
       // Brand filter
       if (
         selectedFilters.BRANDS.size > 0 &&
         !selectedFilters.BRANDS.has(product.brandName)
       )
         return null;
-      // Remove client-side category filter here
       return { ...product, _displayVariation: displayVariation };
     })
     .filter(Boolean);
@@ -237,21 +239,22 @@ const CustomBagsPage: React.FC = () => {
                 />
               </h2>
               {activeTab === "COLOR" && (
-                <div className="mt-4 max-h-48 overflow-y-auto">
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    {colors.map((color) => (
-                      <li key={color} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          className="accent-[#b3ddf3]"
-                          checked={selectedFilters.COLOR.has(color)}
-                          onChange={() => handleFilterChange("COLOR", color)}
-                        />
-                        <span>{color}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ul
+                  className="mt-4 space-y-2 text-sm text-gray-700 max-h-48 overflow-y-auto pr-2"
+                  style={{ scrollbarWidth: "thin" }}
+                >
+                  {colors.map((color) => (
+                    <li key={color} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        className="accent-[#b3ddf3]"
+                        checked={selectedFilters.COLOR.has(color)}
+                        onChange={() => handleFilterChange("COLOR", color)}
+                      />
+                      <span>{color}</span>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
             {/* PRICE */}
@@ -296,43 +299,49 @@ const CustomBagsPage: React.FC = () => {
                 <p className="text-center text-red-500 col-span-full">
                   {error}
                 </p>
-              ) : filteredProducts.length > 0 ? (
-                filteredProducts
-                  .slice(0, visibleCount)
-                  .map((product: any, index: number) => {
-                    const v = product._displayVariation;
-                    return (
-                      <Link
-                        to={`/product/${v.sku}`}
-                        key={v.sku}
-                        className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
-                      >
-                        <img
-                          src={`https://www.ssactivewear.com/${v.colorFrontImage}`}
-                          alt={v.styleName}
-                          className="h-48 w-full object-cover rounded-lg mb-4"
-                        />
-                        <h3 className="text-lg font-bold mb-1 truncate">
-                          {v.brandName} {v.styleName}
-                        </h3>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <div
-                            className="h-4 w-4 rounded-full"
-                            style={{ backgroundColor: v.color1 }}
-                          ></div>
-                          <span className="text-sm text-gray-400">
-                            {v.colorName}
-                          </span>
-                        </div>
-                        <p className="text-[#b3ddf3] font-semibold text-md">
-                          ${v.salePrice.toFixed(2)}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          In Stock: {v.qty}
-                        </p>
-                      </Link>
-                    );
-                  })
+              ) : paginatedProducts.length > 0 ? (
+                paginatedProducts.map((product, index) => (
+                  <Link
+                    to={`/product/${product._displayVariation.sku}`}
+                    key={index}
+                    className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
+                  >
+                    <img
+                      src={`https://www.ssactivewear.com/${product._displayVariation.colorFrontImage}`}
+                      alt={product._displayVariation.styleName}
+                      className="h-48 w-full object-cover rounded-lg mb-4"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/public/img01.avif";
+                      }}
+                    />
+                    <h3 className="text-lg font-bold mb-1 truncate">
+                      {product.brandName} {product._displayVariation.styleName}
+                    </h3>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div
+                        className="h-4 w-4 rounded-full"
+                        style={{
+                          backgroundColor: product._displayVariation.color1,
+                        }}
+                      ></div>
+                      <span className="text-sm text-gray-400">
+                        {product._displayVariation.colorName}
+                      </span>
+                    </div>
+                    <p className="text-[#b3ddf3] font-semibold text-md">
+                      $
+                      {(
+                        product._displayVariation.salePrice ||
+                        product._displayVariation.customerPrice ||
+                        product._displayVariation.piecePrice
+                      ).toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      In Stock: {product._displayVariation.qty}
+                    </p>
+                  </Link>
+                ))
               ) : (
                 <p className="text-gray-400 text-center col-span-full">
                   No products found for this category.

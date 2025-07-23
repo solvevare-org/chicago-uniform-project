@@ -81,7 +81,7 @@ const CustomHeadwearPage: React.FC = () => {
   // Get all valid variations for each product
   const productsWithValidVariation = products
     .map((product) => {
-      const validVariations = (product.variations || [product]).filter(
+      const validVariations = (product.variations || []).filter(
         (v: any) => v.colorFrontImage && v.colorFrontImage.trim() !== ""
       );
       if (validVariations.length === 0) return null;
@@ -110,23 +110,25 @@ const CustomHeadwearPage: React.FC = () => {
   // Filter products client-side
   const filteredProducts = productsWithValidVariation
     .map((product: any) => {
+      // Filter variations by price and color
       let displayVariation = product._validVariations[0];
-      if (selectedFilters.COLOR.size > 0) {
-        const match = product._validVariations.find((vv: any) =>
-          selectedFilters.COLOR.has(vv.colorName)
-        );
-        if (match) displayVariation = match;
-        else return null; // If no variation matches the color, exclude product
-      }
-      // Price filter (use displayVariation.salePrice)
-      if (displayVariation.salePrice > priceRange) return null;
+      let filteredVariations = product._validVariations.filter((vv: any) => {
+        const price = vv.salePrice || vv.customerPrice || vv.piecePrice;
+        const withinPriceRange = price >= 0 && price <= priceRange;
+        const matchesColor =
+          selectedFilters.COLOR.size === 0 ||
+          selectedFilters.COLOR.has(vv.colorName);
+        return withinPriceRange && matchesColor;
+      });
+      if (filteredVariations.length === 0) return null;
+      // Use the first matching variation for display
+      displayVariation = filteredVariations[0];
       // Brand filter
       if (
         selectedFilters.BRANDS.size > 0 &&
         !selectedFilters.BRANDS.has(product.brandName)
       )
         return null;
-      // Remove client-side category filter here
       return { ...product, _displayVariation: displayVariation };
     })
     .filter(Boolean);
@@ -218,7 +220,10 @@ const CustomHeadwearPage: React.FC = () => {
                 />
               </h2>
               {activeTab === "COLOR" && (
-                <ul className="mt-4 space-y-2 text-sm text-gray-700">
+                <ul
+                  className="mt-4 space-y-2 text-sm text-gray-700 max-h-48 overflow-y-auto pr-2"
+                  style={{ scrollbarWidth: "thin" }}
+                >
                   {colors.map((color) => (
                     <li key={color} className="flex items-center space-x-2">
                       <input
@@ -278,7 +283,7 @@ const CustomHeadwearPage: React.FC = () => {
               ) : paginatedProducts.length > 0 ? (
                 paginatedProducts.map((product, index) => (
                   <Link
-                    to={`/product/${product.sku}`}
+                    to={`/product/${product._displayVariation.sku}`}
                     key={index}
                     className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
                   >
@@ -286,6 +291,10 @@ const CustomHeadwearPage: React.FC = () => {
                       src={`https://www.ssactivewear.com/${product._displayVariation.colorFrontImage}`}
                       alt={product._displayVariation.styleName}
                       className="h-48 w-full object-cover rounded-lg mb-4"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/public/img01.avif";
+                      }}
                     />
                     <h3 className="text-lg font-bold mb-1 truncate">
                       {product.brandName} {product._displayVariation.styleName}
@@ -302,7 +311,12 @@ const CustomHeadwearPage: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-[#b3ddf3] font-semibold text-md">
-                      ${product._displayVariation.salePrice.toFixed(2)}
+                      $
+                      {(
+                        product._displayVariation.salePrice ||
+                        product._displayVariation.customerPrice ||
+                        product._displayVariation.piecePrice
+                      ).toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-500">
                       In Stock: {product._displayVariation.qty}

@@ -137,7 +137,6 @@ const CustomBagsPage: React.FC = () => {
 
   // Products to display based on pagination
   const paginatedProducts = filteredProducts.slice(0, visibleCount);
-  console.log(paginatedProducts);
 
   return (
     <div className="min-h-screen bg-white text-[#222] py-12 px-4 md:px-6 lg:px-8">
