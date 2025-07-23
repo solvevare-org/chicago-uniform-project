@@ -290,7 +290,7 @@ const PrintedApparelPage: React.FC = () => {
               ) : paginatedProducts.length > 0 ? (
                 paginatedProducts.map((product, index) => (
                   <Link
-                    to={`/product/${product.sku}`}
+                    to={`/product/${product._displayVariation.sku}`}
                     key={index}
                     className="bg-white p-4 rounded-xl border border-[#b3ddf3] shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 flex flex-col"
                   >
@@ -300,8 +300,7 @@ const PrintedApparelPage: React.FC = () => {
                       className="h-48 w-full object-cover rounded-lg mb-4"
                     />
                     <h3 className="text-lg font-bold mb-1 truncate">
-                      {product._displayVariation.brandName}{" "}
-                      {product._displayVariation.styleName}
+                      {product.productName}{" "}
                     </h3>
                     <div className="flex items-center space-x-2 mb-2">
                       <div
